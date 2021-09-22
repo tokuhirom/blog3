@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
 
 @Mapper
-interface EntryMapper {
+interface PublicEntryMapper {
     @Select(
         """
             select *
@@ -17,4 +17,13 @@ interface EntryMapper {
         """
     )
     fun findPublicEntries(limit: Int, offset: Int) : List<Entry>
+
+    @Select(
+        """
+            select *
+            from entry
+            where status='published' and path=#{path}
+        """
+    )
+    fun findPublicEntryByPath(path: String) : Entry
 }

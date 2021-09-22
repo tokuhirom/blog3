@@ -1,0 +1,17 @@
+#container {
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.entry {
+    margin-bottom: 30px;
+}
+
+.title {
+    margin-bottom: 30px;
+}
+
+.title a {
+    color: black;
+    text-decoration: none;
+}
