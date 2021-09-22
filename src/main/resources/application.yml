@@ -1,1 +1,4 @@
 security.basic.enabled: false
+spring:
+  freemarker:
+    template-loader-path: file:src/main/resources/templates/
