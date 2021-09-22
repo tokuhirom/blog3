@@ -23,6 +23,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     runtimeOnly("mysql:mysql-connector-java")

@@ -16,6 +16,7 @@ class PublicController(
             page,
             30
         )
+        model.addAttribute("page", page)
         model.addAttribute("entries", entries)
         return "index"
     }
