@@ -2,3 +2,9 @@ security.basic.enabled: false
 spring:
   freemarker:
     template-loader-path: file:src/main/resources/templates/
+    charset: UTF-8
+    settings:
+      # default charset for string?url()
+      url_escaping_charset: UTF-8
+      # no auto commify
+      number_format: 0.#######
