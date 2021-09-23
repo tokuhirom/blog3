@@ -16,7 +16,7 @@ interface PublicEntryMapper {
             OFFSET #{offset}
         """
     )
-    fun findPublicEntries(limit: Int, offset: Int) : List<Entry>
+    fun findPublishedEntries(limit: Int, offset: Int): List<Entry>
 
     @Select(
         """
@@ -25,5 +25,17 @@ interface PublicEntryMapper {
             where status='published' and path=#{path}
         """
     )
-    fun findPublicEntryByPath(path: String) : Entry
+    fun findPublishedByPath(path: String): Entry
+
+    @Select(
+        """
+            select *
+            from entry
+            where status='published' and match(title,body) against (#{query})
+            ORDER BY path desc
+            limit #{limit}
+            offset #{offset}
+        """
+    )
+    fun findPublishedByKeyword(query: String, limit: Int, offset: Int): List<Entry>
 }

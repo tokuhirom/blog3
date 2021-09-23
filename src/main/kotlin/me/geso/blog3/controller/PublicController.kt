@@ -4,7 +4,6 @@ import me.geso.blog3.service.PublicEntryService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import javax.servlet.http.HttpServletRequest
 
@@ -32,4 +31,20 @@ class PublicController(
         model.addAttribute("entry", entry)
         return "entry"
     }
+
+    @GetMapping("/search")
+    fun index(
+        @RequestParam("q") query: String,
+        @RequestParam("page", defaultValue = "1") page: Int, model: Model
+    ): String {
+        val entries = publicEntryService.findPublishedByKeyword(
+            query,
+            page,
+            30
+        )
+        model.addAttribute("page", page)
+        model.addAttribute("entries", entries)
+        return "search"
+    }
+
 }

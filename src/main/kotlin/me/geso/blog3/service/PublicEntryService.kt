@@ -8,12 +8,17 @@ import org.springframework.stereotype.Service
 class PublicEntryService(
     val publicEntryMapper: PublicEntryMapper
 ) {
-    fun findPublicEntries(page: Int, limit: Int) : List<Entry> {
-        val offset = (page-1)*limit
-        return publicEntryMapper.findPublicEntries(limit, offset)
+    fun findPublicEntries(page: Int, limit: Int): List<Entry> {
+        val offset = (page - 1) * limit
+        return publicEntryMapper.findPublishedEntries(limit, offset)
     }
 
     fun findPublicEntryByPath(path: String): Entry {
-        return publicEntryMapper.findPublicEntryByPath(path)
+        return publicEntryMapper.findPublishedByPath(path)
+    }
+
+    fun findPublishedByKeyword(query: String, page: Int, limit: Int): List<Entry> {
+        val offset = (page - 1) * limit
+        return publicEntryMapper.findPublishedByKeyword(query, limit, offset)
     }
 }
