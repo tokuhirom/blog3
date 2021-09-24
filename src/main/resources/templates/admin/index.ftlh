@@ -2,6 +2,10 @@
 <#-- @ftlvariable name="entries" type="me.geso.blog3.entity.Entry[]" -->
 <#import "/admin/__wrapper.ftlh" as wrapper>
 <@wrapper.main>
+    <div>
+        <a href="/admin/create" class="btn btn-primary">Create</a>
+    </div>
+
     <table class="table table-bordered">
         <tr>
             <th>Title</th>

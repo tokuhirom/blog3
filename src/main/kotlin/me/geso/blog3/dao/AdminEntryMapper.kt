@@ -1,6 +1,7 @@
 package me.geso.blog3.dao
 
 import me.geso.blog3.entity.Entry
+import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.annotations.Update
@@ -38,4 +39,14 @@ interface AdminEntryMapper {
         """
     )
     fun update(path: String, title: String, body: String, status: String)
+
+    @Insert(
+        """
+            INSERT INTO
+                entry
+                (path, title, body, status)
+            values (#{path}, #{title}, #{body}, #{status})
+        """
+    )
+    fun create(path: String, title: String, body: String, status: String)
 }

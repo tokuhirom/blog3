@@ -25,4 +25,13 @@ class AdminEntryService(
             status = status
         )
     }
+
+    fun create(path: String, title: String, body: String, status: String) {
+        adminEntryMapper.create(
+            path = path,
+            title = title,
+            body = body,
+            status = status
+        )
+    }
 }

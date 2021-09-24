@@ -4,6 +4,7 @@
 <@wrapper.main>
     <#list entries as entry>
         <#include "__entry.ftlh">
+        <#include "__ads.ftlh">
     </#list>
     <nav aria-label="Page navigation example">
         <ul class="pagination">
