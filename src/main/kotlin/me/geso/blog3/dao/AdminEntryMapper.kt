@@ -3,6 +3,7 @@ package me.geso.blog3.dao
 import me.geso.blog3.entity.Entry
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
+import org.apache.ibatis.annotations.Update
 
 @Mapper
 interface AdminEntryMapper {
@@ -25,4 +26,16 @@ interface AdminEntryMapper {
         """
     )
     fun findByPath(path: String): Entry
+
+    @Update(
+        """
+            UPDATE
+                entry
+            SET title=#{title},
+                body=#{body},
+                status=#{status}
+            WHERE path=#{path}
+        """
+    )
+    fun update(path: String, title: String, body: String, status: String)
 }

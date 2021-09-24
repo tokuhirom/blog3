@@ -4,6 +4,7 @@ import me.geso.blog3.service.AdminEntryService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
@@ -27,6 +28,23 @@ class AdminController(
             path
         )
         model.addAttribute("entry", entry)
-        return "admin/index"
+        return "admin/update"
+    }
+
+    @PostMapping("/admin/do_update")
+    fun doUpdate(
+        @RequestParam("path") path: String,
+        @RequestParam("title") title: String,
+        @RequestParam("body") body: String,
+        @RequestParam("status") status: String, // TODO enum
+        model: Model
+    ): String {
+        adminEntryService.update(
+            path,
+            title,
+            body,
+            status
+        )
+        return "redirect:/admin/"
     }
 }

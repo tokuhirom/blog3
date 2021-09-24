@@ -5,11 +5,13 @@
     <table class="table table-bordered">
         <tr>
             <th>Title</th>
+            <th>Status</th>
             <th>Created</th>
         </tr>
         <#list entries as entry>
             <tr>
                 <td><a href="/admin/update?path=${entry.path?url}">${entry.title}</a></td>
+                <td>${entry.status}</td>
                 <td>${entry.createdAt}</td>
             </tr>
         </#list>

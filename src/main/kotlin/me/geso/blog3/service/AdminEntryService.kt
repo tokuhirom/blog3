@@ -16,4 +16,13 @@ class AdminEntryService(
     fun findByPath(path: String): Entry {
         return adminEntryMapper.findByPath(path)
     }
+
+    fun update(path: String, title: String, body: String, status: String) {
+        adminEntryMapper.update(
+            path = path,
+            title = title,
+            body = body,
+            status = status
+        )
+    }
 }
