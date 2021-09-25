@@ -4,4 +4,8 @@
     <p>
         ${entry.html()?no_esc}
     </p>
+    <div class="entry-footer">
+        <div>Created: ${entry.createdAt}</div>
+        <div>Updated: ${entry.updatedAt!'-'}</div>
+    </div>
 </div>
