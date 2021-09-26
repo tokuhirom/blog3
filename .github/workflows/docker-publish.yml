@@ -34,8 +34,10 @@ jobs:
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
+      - name: check env
+        run: echo $REGISTRY/$IMAGE_NAME
       - name: Build docker image
-        run: ./gradlew bootBuildImage --imageName=$IMAGE_NAME
+        run: ./gradlew bootBuildImage --imageName=$REGISTRY/$IMAGE_NAME
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
