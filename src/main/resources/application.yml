@@ -24,8 +24,7 @@ spring:
   config:
     activate:
       on-profile: default
-logging.level:
-  me.geso.blog3.dao: DEBUG
-spring:
   freemarker:
     template-loader-path: file:src/main/resources/templates/
+logging.level:
+  me.geso.blog3.dao: DEBUG
