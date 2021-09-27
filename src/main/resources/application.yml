@@ -1,6 +1,5 @@
 spring:
   freemarker:
-    template-loader-path: file:src/main/resources/templates/
     charset: UTF-8
     settings:
       # default charset for string?url()
@@ -27,3 +26,6 @@ spring:
       on-profile: default
 logging.level:
   me.geso.blog3.dao: DEBUG
+spring:
+  freemarker:
+    template-loader-path: file:src/main/resources/templates/
