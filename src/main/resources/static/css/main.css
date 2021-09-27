@@ -1,3 +1,11 @@
+.title {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+    background-color: #FF9900;
+    width: 100%;
+}
+
 #container {
     padding-left: 100px;
     padding-right: 100px;
