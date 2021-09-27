@@ -11,6 +11,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http {
             authorizeRequests {
+                authorize("/error", permitAll)
                 authorize("/", permitAll)
                 authorize("/search", permitAll)
                 authorize("/entry/**", permitAll)

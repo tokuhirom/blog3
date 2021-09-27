@@ -26,5 +26,9 @@ spring:
       on-profile: default
   freemarker:
     template-loader-path: file:src/main/resources/templates/
+  mvc:
+    log-request-details: true
+
 logging.level:
   me.geso.blog3.dao: DEBUG
+  org.springframework.web: DEBUG
