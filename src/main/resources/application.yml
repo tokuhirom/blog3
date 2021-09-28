@@ -32,3 +32,4 @@ spring:
 logging.level:
   me.geso.blog3.dao: DEBUG
   org.springframework.web: DEBUG
+  org.springframework.security: DEBUG

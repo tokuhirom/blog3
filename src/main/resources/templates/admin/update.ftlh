@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="_csrf" type="org.springframework.security.web.csrf.CsrfToken" -->
 <#-- @ftlvariable name="entry" type="me.geso.blog3.entity.Entry" -->
 <#import "/admin/__wrapper.ftlh" as wrapper>
 <@wrapper.main>
@@ -23,6 +24,7 @@
             </label>
         </div>
         <label>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <button type="submit" class="btn btn-primary form-control">Update</button>
         </label>
     </form>

@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="_csrf" type="org.springframework.security.web.csrf.CsrfToken" -->
 <#import "/admin/__wrapper.ftlh" as wrapper>
 <@wrapper.main>
     <h1>Create new entry</h1>
@@ -21,6 +22,7 @@
             </label>
         </div>
         <label>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <button type="submit" class="btn btn-primary form-control">Create</button>
         </label>
     </form>
