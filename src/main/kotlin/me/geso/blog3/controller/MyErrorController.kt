@@ -2,6 +2,7 @@ package me.geso.blog3.controller
 
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController
+import org.springframework.boot.web.error.ErrorAttributeOptions
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping

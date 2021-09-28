@@ -1,15 +1,21 @@
 package me.geso.blog3.controller
 
+import com.rometools.rome.feed.rss.Channel
+import com.rometools.rome.feed.rss.Item
+import me.geso.blog3.service.FeedService
 import me.geso.blog3.service.PublicEntryService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
 import javax.servlet.http.HttpServletRequest
+
 
 @Controller
 class PublicController(
-    val publicEntryService: PublicEntryService
+    val publicEntryService: PublicEntryService,
+    val feedService: FeedService
 ) {
     @GetMapping("/")
     fun index(@RequestParam("page", defaultValue = "1") page: Int, model: Model): String {
@@ -33,7 +39,7 @@ class PublicController(
     }
 
     @GetMapping("/search")
-    fun index(
+    fun search(
         @RequestParam("q") query: String,
         @RequestParam("page", defaultValue = "1") page: Int, model: Model
     ): String {
@@ -45,6 +51,16 @@ class PublicController(
         model.addAttribute("page", page)
         model.addAttribute("entries", entries)
         return "search"
+    }
+
+    @GetMapping("/feed")
+    @ResponseBody
+    fun feed(): Channel {
+        val entries = publicEntryService.findPublicEntries(
+            page = 1,
+            limit = 10
+        )
+        return feedService.build(entries)
     }
 
 }
