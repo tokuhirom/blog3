@@ -34,3 +34,8 @@
     font-size: 50%;
     text-align: right;
 }
+
+pre {
+    margin-left: 8px;
+    background-color: #f8f9fa;
+}
