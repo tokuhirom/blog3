@@ -33,7 +33,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2")
     implementation("io.github.microutils:kotlin-logging:2.0.11")
     implementation("com.rometools:rome:1.16.0")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
