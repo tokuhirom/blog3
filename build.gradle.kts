@@ -15,7 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencyManagement {
     imports {
-        mavenBom("org.testcontainers:testcontainers-bom:1.16.0")
+        mavenBom("org.testcontainers:testcontainers-bom:1.17.5")
     }
 }
 
