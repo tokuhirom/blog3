@@ -14,4 +14,10 @@
             <li class="page-item"><a class="page-link" href="/?page=${page+1}">Next</a></li>
         </ul>
     </nav>
+
+    <p>
+        <a href="https://github.com/tokuhirom/blog3/commit/${gitShortCommitId}">${gitShortCommitId}
+            @${gitBranch} ${gitCommitTime}</a>
+    </p>
+
 </@wrapper.main>

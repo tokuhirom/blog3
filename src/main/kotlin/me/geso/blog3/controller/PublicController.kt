@@ -4,6 +4,7 @@ import com.rometools.rome.feed.rss.Channel
 import com.rometools.rome.feed.rss.Item
 import me.geso.blog3.service.FeedService
 import me.geso.blog3.service.PublicEntryService
+import org.springframework.boot.info.GitProperties
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,7 +16,8 @@ import javax.servlet.http.HttpServletRequest
 @Controller
 class PublicController(
     val publicEntryService: PublicEntryService,
-    val feedService: FeedService
+    val feedService: FeedService,
+    val gitProperties: GitProperties,
 ) {
     @GetMapping("/")
     fun index(@RequestParam("page", defaultValue = "1") page: Int, model: Model): String {
@@ -25,6 +27,11 @@ class PublicController(
         )
         model.addAttribute("page", page)
         model.addAttribute("entries", entries)
+
+        model.addAttribute("gitBranch", gitProperties.branch)
+        model.addAttribute("gitShortCommitId", gitProperties.shortCommitId)
+        model.addAttribute("gitCommitTime", gitProperties.commitTime)
+
         return "index"
     }
 
