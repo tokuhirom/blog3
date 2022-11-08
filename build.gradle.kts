@@ -43,6 +43,8 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mysql")
+
+    implementation("io.kweb:kweb-core:1.1.3")
 }
 
 tasks.withType<KotlinCompile> {
