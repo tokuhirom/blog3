@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class PublicEntryService(
-    val publicEntryMapper: PublicEntryMapper
+    private val publicEntryMapper: PublicEntryMapper
 ) {
     fun findPublicEntries(page: Int, limit: Int): List<Entry> {
         val offset = (page - 1) * limit

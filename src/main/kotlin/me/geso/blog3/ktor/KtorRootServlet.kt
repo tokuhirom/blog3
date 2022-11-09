@@ -1,0 +1,52 @@
+package me.geso.blog3.ktor
+
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.http.content.*
+import io.ktor.server.netty.*
+import io.ktor.server.plugins.defaultheaders.*
+import io.ktor.server.routing.*
+import me.geso.blog3.service.PublicEntryService
+import org.springframework.boot.info.GitProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import java.util.concurrent.TimeUnit
+
+
+class UserSideServer(
+    private val gitProperties: GitProperties,
+    private val publicEntryService: PublicEntryService,
+) {
+    private val server = embeddedServer(Netty, port = 8180) {
+        install(DefaultHeaders)
+
+        routing {
+            static("/css") {
+                staticBasePackage = "static"
+                resources("css")
+            }
+
+            get("/") {
+                val page = (call.request.queryParameters["page"] ?: "1").toInt()
+                val limit = 20
+                val entries = publicEntryService.findPublicEntries(page, limit)
+
+                renderIndexPage(entries, page, gitProperties)
+            }
+        }
+    }.start(wait = false)
+
+
+    fun stop() {
+        server.stop(1, 1, TimeUnit.SECONDS)
+    }
+}
+
+
+@Configuration(proxyBeanMethods = false)
+class KtorRootConfiguration {
+    @Bean(destroyMethod = "stop")
+    fun init(gitProperties: GitProperties, publicEntryService: PublicEntryService): UserSideServer {
+        return UserSideServer(gitProperties, publicEntryService)
+    }
+}
