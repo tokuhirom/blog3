@@ -1,4 +1,4 @@
-package me.geso.blog3.web
+package blog3.web
 
 import com.rometools.rome.io.WireFeedOutput
 import io.ktor.http.*
@@ -12,11 +12,11 @@ import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import me.geso.blog3.web.service.FeedService
-import me.geso.blog3.web.service.PublicEntryService
-import me.geso.blog3.web.view.renderIndexPage
-import me.geso.blog3.web.view.renderSearchPage
-import me.geso.blog3.web.view.renderSingleEntryPage
+import blog3.web.service.FeedService
+import blog3.web.service.PublicEntryService
+import blog3.web.view.renderIndexPage
+import blog3.web.view.renderSearchPage
+import blog3.web.view.renderSingleEntryPage
 import org.slf4j.event.Level
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean

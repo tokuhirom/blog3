@@ -1,11 +1,11 @@
-package me.geso.blog3.web.service
+package blog3.web.service
 
 import com.rometools.rome.feed.rss.Channel
 import com.rometools.rome.feed.rss.Content
 import com.rometools.rome.feed.rss.Description
 import com.rometools.rome.feed.rss.Item
 import com.rometools.rome.io.WireFeedOutput
-import me.geso.blog3.entity.Entry
+import blog3.entity.Entry
 import org.springframework.stereotype.Service
 
 @Service

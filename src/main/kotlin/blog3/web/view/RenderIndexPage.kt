@@ -1,8 +1,8 @@
-package me.geso.blog3.web.view
+package blog3.web.view
 
 import io.ktor.server.application.*
 import io.ktor.util.pipeline.*
-import me.geso.blog3.entity.Entry
+import blog3.entity.Entry
 import org.springframework.boot.info.GitProperties
 
 suspend fun PipelineContext<Unit, ApplicationCall>.renderIndexPage(

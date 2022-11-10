@@ -1,4 +1,4 @@
-package me.geso.blog3.configuration
+package blog3.configuration
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity

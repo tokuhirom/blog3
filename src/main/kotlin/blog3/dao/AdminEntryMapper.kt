@@ -1,6 +1,6 @@
-package me.geso.blog3.dao
+package blog3.dao
 
-import me.geso.blog3.entity.Entry
+import blog3.entity.Entry
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select

@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="_csrf" type="org.springframework.security.web.csrf.CsrfToken" -->
-<#-- @ftlvariable name="entry" type="me.geso.blog3.entity.Entry" -->
+<#-- @ftlvariable name="entry" type="blog3.entity.Entry" -->
 <#import "/admin/__wrapper.ftlh" as wrapper>
 <@wrapper.main>
     <h1>${entry.path}</h1>

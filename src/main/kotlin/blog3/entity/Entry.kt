@@ -1,4 +1,4 @@
-package me.geso.blog3.entity
+package blog3.entity
 
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension
 import com.vladsch.flexmark.html.HtmlRenderer

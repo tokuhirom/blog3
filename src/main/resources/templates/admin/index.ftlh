@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="page" type="java.lang.Integer" -->
-<#-- @ftlvariable name="entries" type="me.geso.blog3.entity.Entry[]" -->
+<#-- @ftlvariable name="entries" type="blog3.entity.Entry[]" -->
 <#import "/admin/__wrapper.ftlh" as wrapper>
 <@wrapper.main>
     <div>

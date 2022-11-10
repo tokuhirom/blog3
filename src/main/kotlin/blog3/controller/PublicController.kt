@@ -1,8 +1,8 @@
-package me.geso.blog3.controller
+package blog3.controller
 
 import com.rometools.rome.feed.rss.Channel
-import me.geso.blog3.web.service.FeedService
-import me.geso.blog3.web.service.PublicEntryService
+import blog3.web.service.FeedService
+import blog3.web.service.PublicEntryService
 import org.springframework.boot.info.GitProperties
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

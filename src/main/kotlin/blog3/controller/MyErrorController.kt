@@ -1,4 +1,4 @@
-package me.geso.blog3.controller
+package blog3.controller
 
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController
