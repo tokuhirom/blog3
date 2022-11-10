@@ -4,9 +4,12 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.routing.*
 import me.geso.blog3.service.PublicEntryService
+import me.geso.blog3.view.renderIndexPage
+import me.geso.blog3.view.renderSearchPage
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,6 +22,7 @@ class UserSideServer(
 ) {
     private val server = embeddedServer(Netty, port = 8180) {
         install(DefaultHeaders)
+        val limit = 20
 
         routing {
             static("/css") {
@@ -28,10 +32,17 @@ class UserSideServer(
 
             get("/") {
                 val page = (call.request.queryParameters["page"] ?: "1").toInt()
-                val limit = 20
                 val entries = publicEntryService.findPublicEntries(page, limit)
 
                 renderIndexPage(entries, page, gitProperties)
+            }
+
+            get("/search") {
+                val query = call.request.queryParameters["q"] ?: throw BadRequestException("Missing query parameter")
+                val page = (call.request.queryParameters["page"] ?: "1").toInt()
+                val entries = publicEntryService.findPublishedByKeyword(query, page, limit)
+
+                renderSearchPage(query, entries, page, gitProperties)
             }
         }
     }.start(wait = false)

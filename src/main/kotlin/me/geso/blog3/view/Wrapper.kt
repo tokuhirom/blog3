@@ -11,6 +11,7 @@ import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.button
 import kotlinx.html.div
+import kotlinx.html.footer
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
@@ -19,10 +20,17 @@ import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.link
 import kotlinx.html.meta
+import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.title
+import org.springframework.boot.info.GitProperties
+import java.time.ZoneId
 
-suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(title: String, callback: DIV.() -> Unit) {
+suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
+    title: String,
+    gitProperties: GitProperties,
+    callback: DIV.() -> Unit
+) {
     call.respondHtml {
         head {
             meta(charset = "utf-8")
@@ -72,6 +80,17 @@ suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(title: String, 
 
                 apply(callback)
 
+                footer {
+                    p {
+                        a(href = "https://github.com/tokuhirom/blog3/commit/${gitProperties.shortCommitId}") {
+                            +"""${gitProperties.shortCommitId}@${gitProperties.branch} ${
+                                gitProperties.commitTime.atZone(
+                                    ZoneId.of("+0900")
+                                )
+                            }"""
+                        }
+                    }
+                }
                 script(src = "https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js") {
                 }
                 script(src = "https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js") {
