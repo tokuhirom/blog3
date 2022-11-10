@@ -31,6 +31,7 @@ dependencies {
     implementation("io.ktor:ktor-server-servlet")
     implementation("io.ktor:ktor-server-html-builder")
     implementation("io.ktor:ktor-server-default-headers")
+    implementation("io.ktor:ktor-server-call-logging")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-freemarker")

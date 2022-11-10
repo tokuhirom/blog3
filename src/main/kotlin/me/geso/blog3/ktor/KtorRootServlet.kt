@@ -5,6 +5,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
@@ -12,6 +13,7 @@ import me.geso.blog3.service.PublicEntryService
 import me.geso.blog3.view.renderIndexPage
 import me.geso.blog3.view.renderSearchPage
 import me.geso.blog3.view.renderSingleEntryPage
+import org.slf4j.event.Level
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,6 +26,11 @@ class UserSideServer(
 ) {
     private val server = embeddedServer(Netty, port = 8180) {
         install(DefaultHeaders)
+
+        install(CallLogging) {
+            level = Level.INFO
+        }
+
         val limit = 20
 
         routing {
