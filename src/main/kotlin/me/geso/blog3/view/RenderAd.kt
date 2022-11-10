@@ -2,11 +2,13 @@ package me.geso.blog3.view
 
 import kotlinx.html.DIV
 import kotlinx.html.script
+import kotlinx.html.unsafe
 
 internal fun DIV.renderAd() {
     comment("ads")
     script {
-        +"""
+        unsafe {
+            +"""
               function insertScript(src) {
                 const script = document.createElement("script")
                 script.setAttribute("src", src)
@@ -32,7 +34,8 @@ internal fun DIV.renderAd() {
                 ins.setAttribute("data-ad-slot", "7500646436");
                 (adsbygoogle = window.adsbygoogle || []).push({});
               }
-        """.trimIndent()
+            """.trimIndent()
+        }
     }
     comment("/ads")
 }

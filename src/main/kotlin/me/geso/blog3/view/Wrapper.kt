@@ -23,6 +23,7 @@ import kotlinx.html.meta
 import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.title
+import kotlinx.html.unsafe
 import org.springframework.boot.info.GitProperties
 import java.time.ZoneId
 
@@ -55,12 +56,14 @@ suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
                 async = true
             }
             script() {
-                +"""
-                                    window.dataLayer = window.dataLayer || [];
-                                    function gtag(){dataLayer.push(arguments);}
-                                    gtag('js', new Date());
-                                    gtag('config', 'G-N48P264GB5');
-                                """.trimIndent()
+                unsafe {
+                    +"""
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', 'G-N48P264GB5');
+                    """.trimIndent()
+                }
             }
         }
         body {
@@ -81,6 +84,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
                 apply(callback)
 
                 footer {
+                    p {
+                        +"Served by ktor"
+                    }
                     p {
                         a(href = "https://github.com/tokuhirom/blog3/commit/${gitProperties.shortCommitId}") {
                             +"""${gitProperties.shortCommitId}@${gitProperties.branch} ${
