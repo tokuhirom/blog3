@@ -1,5 +1,7 @@
-package me.geso.blog3.ktor
+package me.geso.blog3.web
 
+import com.rometools.rome.io.WireFeedOutput
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
@@ -8,11 +10,13 @@ import io.ktor.server.plugins.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import me.geso.blog3.service.PublicEntryService
-import me.geso.blog3.view.renderIndexPage
-import me.geso.blog3.view.renderSearchPage
-import me.geso.blog3.view.renderSingleEntryPage
+import me.geso.blog3.web.service.FeedService
+import me.geso.blog3.web.service.PublicEntryService
+import me.geso.blog3.web.view.renderIndexPage
+import me.geso.blog3.web.view.renderSearchPage
+import me.geso.blog3.web.view.renderSingleEntryPage
 import org.slf4j.event.Level
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
@@ -23,7 +27,10 @@ import java.util.concurrent.TimeUnit
 class UserSideServer(
     private val gitProperties: GitProperties,
     private val publicEntryService: PublicEntryService,
+    private val feedService: FeedService,
 ) {
+    private val feedContentType = ContentType.parse("application/rss+xml;charset=UTF-8")
+
     private val server = embeddedServer(Netty, port = 8180) {
         install(DefaultHeaders)
 
@@ -63,6 +70,16 @@ class UserSideServer(
 
                 renderSingleEntryPage(entry, gitProperties)
             }
+
+            get("/feed") {
+                val entries = publicEntryService.findPublicEntries(
+                    page = 1,
+                    limit = 10
+                )
+
+                val feedString = feedService.buildString(entries)
+                call.respondText(feedString, feedContentType)
+            }
         }
     }.start(wait = false)
 
@@ -76,7 +93,11 @@ class UserSideServer(
 @Configuration(proxyBeanMethods = false)
 class KtorRootConfiguration {
     @Bean(destroyMethod = "stop")
-    fun init(gitProperties: GitProperties, publicEntryService: PublicEntryService): UserSideServer {
-        return UserSideServer(gitProperties, publicEntryService)
+    fun init(
+        gitProperties: GitProperties,
+        publicEntryService: PublicEntryService,
+        feedService: FeedService
+    ): UserSideServer {
+        return UserSideServer(gitProperties, publicEntryService, feedService)
     }
 }

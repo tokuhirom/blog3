@@ -1,4 +1,4 @@
-package me.geso.blog3.view
+package me.geso.blog3.web.view
 
 import kotlinx.html.DIV
 import kotlinx.html.a

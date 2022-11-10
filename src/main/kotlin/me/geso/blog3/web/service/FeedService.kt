@@ -1,9 +1,10 @@
-package me.geso.blog3.service
+package me.geso.blog3.web.service
 
 import com.rometools.rome.feed.rss.Channel
 import com.rometools.rome.feed.rss.Content
 import com.rometools.rome.feed.rss.Description
 import com.rometools.rome.feed.rss.Item
+import com.rometools.rome.io.WireFeedOutput
 import me.geso.blog3.entity.Entry
 import org.springframework.stereotype.Service
 
@@ -13,6 +14,12 @@ class FeedService(
     val baseUri: String = "http://blog.64p.org",
     val author: String = "tokuhirom"
 ) {
+    fun buildString(entries: List<Entry>): String {
+        val channel = build(entries)
+        val feedOutput = WireFeedOutput()
+        return feedOutput.outputString(channel)
+    }
+
     fun build(entries: List<Entry>): Channel {
         val channel = Channel()
         channel.feedType = "rss_2.0"

@@ -1,6 +1,6 @@
-package me.geso.blog3.service
+package me.geso.blog3.web.service
 
-import me.geso.blog3.dao.PublicEntryMapper
+import me.geso.blog3.web.dao.PublicEntryMapper
 import me.geso.blog3.entity.Entry
 import org.springframework.stereotype.Service
 

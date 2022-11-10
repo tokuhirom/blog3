@@ -1,11 +1,7 @@
-package me.geso.blog3.view
+package me.geso.blog3.web.view
 
 import io.ktor.server.application.*
 import io.ktor.util.pipeline.*
-import kotlinx.html.a
-import kotlinx.html.li
-import kotlinx.html.nav
-import kotlinx.html.ul
 import me.geso.blog3.entity.Entry
 import org.springframework.boot.info.GitProperties
 import java.net.URLEncoder

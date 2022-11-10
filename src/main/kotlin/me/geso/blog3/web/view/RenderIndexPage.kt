@@ -1,4 +1,4 @@
-package me.geso.blog3.view
+package me.geso.blog3.web.view
 
 import io.ktor.server.application.*
 import io.ktor.util.pipeline.*

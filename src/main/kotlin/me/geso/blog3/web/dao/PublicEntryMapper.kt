@@ -1,4 +1,4 @@
-package me.geso.blog3.dao
+package me.geso.blog3.web.dao
 
 import me.geso.blog3.entity.Entry
 import org.apache.ibatis.annotations.Mapper
