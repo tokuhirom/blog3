@@ -25,7 +25,7 @@ interface PublicEntryMapper {
             where status='published' and path=#{path}
         """
     )
-    fun findPublishedByPath(path: String): Entry
+    fun findPublishedByPath(path: String): Entry?
 
     @Select(
         """

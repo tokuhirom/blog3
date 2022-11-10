@@ -6,10 +6,12 @@ import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.defaultheaders.*
+import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import me.geso.blog3.service.PublicEntryService
 import me.geso.blog3.view.renderIndexPage
 import me.geso.blog3.view.renderSearchPage
+import me.geso.blog3.view.renderSingleEntryPage
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -43,6 +45,16 @@ class UserSideServer(
                 val entries = publicEntryService.findPublishedByKeyword(query, page, limit)
 
                 renderSearchPage(query, entries, page, gitProperties)
+            }
+
+            get("/entry/{keys...}") {
+                // I want to get raw keys
+                val path = call.request.path().substring("/entry/".length)
+
+                val entry = publicEntryService.findPublicEntryByPath(path)
+                    ?: throw NotFoundException("Unknown entry: $path")
+
+                renderSingleEntryPage(entry, gitProperties)
             }
         }
     }.start(wait = false)

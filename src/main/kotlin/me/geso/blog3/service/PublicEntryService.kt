@@ -13,7 +13,7 @@ class PublicEntryService(
         return publicEntryMapper.findPublishedEntries(limit, offset)
     }
 
-    fun findPublicEntryByPath(path: String): Entry {
+    fun findPublicEntryByPath(path: String): Entry? {
         return publicEntryMapper.findPublishedByPath(path)
     }
 
