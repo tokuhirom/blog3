@@ -16,6 +16,7 @@ import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.route
 import kweb.select
 import kweb.state.KVar
+import kweb.state.renderEach
 import kweb.table
 import kweb.td
 import kweb.textArea
@@ -92,7 +93,7 @@ class AdminServer(
                     entryForm { title, body, status ->
                         logger.info { "Creating entry: title=$title body=$body status=$status" }
                         adminEntryService.create(title, body, status)
-                        url.value = "/"
+                        url.value = "/entries/1" // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
                     }
                 }
 
@@ -106,7 +107,7 @@ class AdminServer(
                     val entry = adminEntryService.findByPath(path) ?: error("Unknown path: $path")
                     entryForm(entry.title, entry.body, entry.status) { title, body, status ->
                         adminEntryService.update(entry.path, title, body, status)
-                        url.value = "/"
+                        url.value = "/entries/1"
                     }
                 }
             }
