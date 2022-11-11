@@ -93,7 +93,7 @@ class UserSideServer(
 @Configuration(proxyBeanMethods = false)
 class KtorRootConfiguration {
     @Bean(destroyMethod = "stop")
-    fun init(
+    fun userSideServer(
         gitProperties: GitProperties,
         publicEntryService: PublicEntryService,
         feedService: FeedService

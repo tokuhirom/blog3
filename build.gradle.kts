@@ -33,6 +33,8 @@ dependencies {
     implementation("io.ktor:ktor-server-default-headers")
     implementation("io.ktor:ktor-server-call-logging")
 
+    implementation("io.kweb:kweb-core:1.1.3")
+
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-freemarker")
     implementation("org.springframework.boot:spring-boot-starter-security")

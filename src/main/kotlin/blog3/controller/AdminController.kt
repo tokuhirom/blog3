@@ -1,6 +1,6 @@
 package blog3.controller
 
-import blog3.service.AdminEntryService
+import blog3.admin.service.AdminEntryService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping

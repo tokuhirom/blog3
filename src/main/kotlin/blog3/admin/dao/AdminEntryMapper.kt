@@ -1,4 +1,4 @@
-package blog3.dao
+package blog3.admin.dao
 
 import blog3.entity.Entry
 import org.apache.ibatis.annotations.Insert
@@ -26,7 +26,7 @@ interface AdminEntryMapper {
             where path=#{path}
         """
     )
-    fun findByPath(path: String): Entry
+    fun findByPath(path: String): Entry?
 
     @Update(
         """
