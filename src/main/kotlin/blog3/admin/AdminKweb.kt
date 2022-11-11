@@ -133,17 +133,22 @@ class AdminServer(
         lateinit var statusVar: KVar<String>
         val form = form(fomantic.ui.form) {
             div(fomantic.field) {
-                // TODO input should support "required" parameter
-                titleVar = input(initialValue = initialTitle, name = "title").value
+                titleVar = input(
+                    initialValue = initialTitle,
+                    name = "title",
+                    attributes = mapOf("required" to true.json)
+                ).value
             }
             div(fomantic.field) {
                 // TODO textarea should support initialValue?
+                // https://github.com/kwebio/kweb-core/pull/382
                 val textArea = textArea(required = true, cols = 80, rows = 20)
                 textArea.text(initialBody ?: "")
                 bodyVar = textArea.value
             }
             div(fomantic.field) {
                 // TODO select should support initialValue?
+                // https://github.com/kwebio/kweb-core/pull/382
                 statusVar = select(required = true) {
                     listOf("draft", "published").forEach { status ->
                         option(mapOf("value" to status.json)) {
