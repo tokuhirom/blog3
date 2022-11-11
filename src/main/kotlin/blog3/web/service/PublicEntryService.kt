@@ -1,19 +1,19 @@
-package me.geso.blog3.service
+package blog3.web.service
 
-import me.geso.blog3.dao.PublicEntryMapper
-import me.geso.blog3.entity.Entry
+import blog3.web.dao.PublicEntryMapper
+import blog3.entity.Entry
 import org.springframework.stereotype.Service
 
 @Service
 class PublicEntryService(
-    val publicEntryMapper: PublicEntryMapper
+    private val publicEntryMapper: PublicEntryMapper
 ) {
     fun findPublicEntries(page: Int, limit: Int): List<Entry> {
         val offset = (page - 1) * limit
         return publicEntryMapper.findPublishedEntries(limit, offset)
     }
 
-    fun findPublicEntryByPath(path: String): Entry {
+    fun findPublicEntryByPath(path: String): Entry? {
         return publicEntryMapper.findPublishedByPath(path)
     }
 

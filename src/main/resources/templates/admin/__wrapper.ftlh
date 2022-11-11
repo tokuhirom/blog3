@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="page" type="java.lang.Integer" -->
-<#-- @ftlvariable name="entries" type="me.geso.blog3.entity.Entry[]" -->
+<#-- @ftlvariable name="entries" type="blog3.entity.Entry[]" -->
 <#macro main subtitle="">
     <!doctype html>
     <html lang="ja">

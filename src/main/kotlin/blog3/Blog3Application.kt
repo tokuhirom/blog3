@@ -1,4 +1,4 @@
-package me.geso.blog3
+package blog3
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

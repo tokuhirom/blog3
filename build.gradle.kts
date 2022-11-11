@@ -17,6 +17,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:1.17.5")
+        mavenBom("io.ktor:ktor-bom:2.1.3")
     }
 }
 
@@ -25,6 +26,15 @@ repositories {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-server-core-jvm")
+    implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-servlet")
+    implementation("io.ktor:ktor-server-html-builder")
+    implementation("io.ktor:ktor-server-default-headers")
+    implementation("io.ktor:ktor-server-call-logging")
+
+    implementation("io.kweb:kweb-core:1.1.3")
+
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-freemarker")
     implementation("org.springframework.boot:spring-boot-starter-security")

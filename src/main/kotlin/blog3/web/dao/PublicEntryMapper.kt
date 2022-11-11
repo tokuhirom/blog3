@@ -1,6 +1,6 @@
-package me.geso.blog3.dao
+package blog3.web.dao
 
-import me.geso.blog3.entity.Entry
+import blog3.entity.Entry
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
 
@@ -25,7 +25,7 @@ interface PublicEntryMapper {
             where status='published' and path=#{path}
         """
     )
-    fun findPublishedByPath(path: String): Entry
+    fun findPublishedByPath(path: String): Entry?
 
     @Select(
         """

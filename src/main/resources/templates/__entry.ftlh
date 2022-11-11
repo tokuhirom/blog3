@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="entry" type="me.geso.blog3.entity.Entry" -->
+<#-- @ftlvariable name="entry" type="blog3.entity.Entry" -->
 <div class="entry">
     <h2><a href="/entry/${entry.path}">${entry.title}</a></h2>
     <p>
