@@ -36,21 +36,27 @@ dependencies {
     implementation("io.kweb:kweb-core:1.1.4")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-freemarker")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.session:spring-session-core")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    // markdown
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
+
+    // mybatis, mysql
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2")
-    implementation("io.github.microutils:kotlin-logging:3.0.4")
-    implementation("com.rometools:rome:1.18.0")
-    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     runtimeOnly("mysql:mysql-connector-java")
+
+    implementation("io.github.microutils:kotlin-logging:3.0.4")
+
+    // feed generation
+    implementation("com.rometools:rome:1.18.0")
+
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
+    // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
+
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mysql")
 }
