@@ -34,7 +34,7 @@ dependencies {
     implementation("io.ktor:ktor-server-default-headers")
     implementation("io.ktor:ktor-server-call-logging")
 
-    implementation("io.kweb:kweb-core:1.1.4")
+    implementation("io.kweb:kweb-core:1.1.5")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
