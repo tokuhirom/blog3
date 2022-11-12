@@ -26,6 +26,7 @@ class Blog3ApplicationTests {
 
     @Test
     fun contextLoads() {
+        println("OK")
     }
 
 }
