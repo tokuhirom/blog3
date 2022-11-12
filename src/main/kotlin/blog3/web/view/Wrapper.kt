@@ -1,8 +1,9 @@
 package blog3.web.view
 
-import io.ktor.server.application.*
-import io.ktor.server.html.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.html.respondHtml
+import io.ktor.util.pipeline.PipelineContext
 import kotlinx.html.ButtonType
 import kotlinx.html.DIV
 import kotlinx.html.FormMethod
@@ -27,6 +28,7 @@ import kotlinx.html.unsafe
 import org.springframework.boot.info.GitProperties
 import java.time.ZoneId
 
+@SuppressWarnings("LongMethod")
 suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
     title: String,
     gitProperties: GitProperties,

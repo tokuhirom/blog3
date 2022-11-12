@@ -1,0 +1,8 @@
+---
+naming:
+  PackageNaming:
+    active: true
+    packagePattern: 'blog3(\.[a-z][A-Za-z0-9]*)*'
+style:
+  MagicNumber:
+    active: false

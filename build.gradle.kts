@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.spring") version "1.7.21"
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC3"
 }
 
 group = "me.geso"
@@ -85,4 +86,8 @@ tasks.withType<BootBuildImage> {
     environment = mapOf("BPL_JVM_THREAD_COUNT" to "30")
 }
 
+detekt {
+    config = files("config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+}
 
