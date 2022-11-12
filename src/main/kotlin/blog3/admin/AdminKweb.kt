@@ -74,7 +74,7 @@ class AdminServer(
                 }
 
                 path("/entry/create") {
-                    render(EntryForm() { title, body, status ->
+                    render(EntryForm(buttonTitle = "Create") { title, body, status ->
                         logger.info { "Creating entry: title=$title body=$body status=$status" }
                         adminEntryService.create(title, body, status)
                         // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
@@ -86,11 +86,18 @@ class AdminServer(
                     val path = decodeURL((params["path"] ?: error("Missing path")).value)
                     logger.info { "Updating entry: $path" }
 
-                    val entry = adminEntryService.findByPath(path) ?: error("Unknown path: $path")
-                    render(EntryForm(entry.title, entry.body, entry.status) { title, body, status ->
-                        adminEntryService.update(entry.path, title, body, status)
-                        url.value = "/entries/1"
-                    })
+                    val entry = adminEntryService.findByPath(path)
+                        ?: error("Unknown path: $path")
+                    render(
+                        EntryForm(
+                            entry.title,
+                            entry.body,
+                            entry.status,
+                            buttonTitle = "Update"
+                        ) { title, body, status ->
+                            adminEntryService.update(entry.path, title, body, status)
+                            url.value = "/entries/1"
+                        })
                 }
             }
             div {

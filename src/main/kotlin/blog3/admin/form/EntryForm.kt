@@ -19,6 +19,7 @@ class EntryForm(
     private val initialTitle: String? = null,
     private val initialBody: String? = null,
     private val initialStatus: String = "draft", // TODO make this enum
+    private val buttonTitle: String,
     private val onSubmit: (title: String, body: String, status: String) -> Unit,
 ) : Component {
     override fun render(elementCreator: ElementCreator<Element>) {
@@ -58,7 +59,7 @@ class EntryForm(
                     statusVar.value = initialStatus
                 }
                 div(fomantic.field) {
-                    button(fomantic.button, type = ButtonType.submit).text("Update")
+                    button(fomantic.button, type = ButtonType.submit).text(buttonTitle)
                 }
             }
             form.on(preventDefault = true).submit {
