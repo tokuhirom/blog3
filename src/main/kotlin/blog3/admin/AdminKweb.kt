@@ -1,6 +1,8 @@
 package blog3.admin
 
 import blog3.admin.service.AdminEntryService
+import blog3.decodeURL
+import blog3.encodeURL
 import kweb.ButtonType
 import kweb.ElementCreator
 import kweb.Kweb
@@ -16,7 +18,6 @@ import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.route
 import kweb.select
 import kweb.state.KVar
-import kweb.state.renderEach
 import kweb.table
 import kweb.td
 import kweb.textArea
@@ -29,7 +30,6 @@ import mu.KotlinLogging
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.ZoneId
@@ -73,14 +73,7 @@ class AdminServer(
                         entries.forEach { entry ->
                             tr {
                                 td {
-                                    a(
-                                        href = "/entry/update/${
-                                            URLEncoder.encode(
-                                                entry.path,
-                                                StandardCharsets.UTF_8
-                                            )
-                                        }"
-                                    ).text(entry.title)
+                                    a(href = "/entry/update/${encodeURL(entry.path)}").text(entry.title)
                                 }
                                 td().text(entry.status)
                                 td().text(entry.createdAt.atZone(ZoneId.systemDefault()).toString())
@@ -93,15 +86,13 @@ class AdminServer(
                     entryForm { title, body, status ->
                         logger.info { "Creating entry: title=$title body=$body status=$status" }
                         adminEntryService.create(title, body, status)
-                        url.value = "/entries/1" // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
+                        // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
+                        url.value = "/entries/1"
                     }
                 }
 
                 path("/entry/update/{path}") { params ->
-                    val path = URLDecoder.decode(
-                        (params["path"] ?: error("Missing path")).value,
-                        StandardCharsets.UTF_8
-                    )
+                    val path = decodeURL((params["path"] ?: error("Missing path")).value)
                     logger.info { "Updating entry: $path" }
 
                     val entry = adminEntryService.findByPath(path) ?: error("Unknown path: $path")
