@@ -82,7 +82,7 @@ class AdminServer(
                     }
                 }
 
-                path("/entry/create") { params ->
+                path("/entry/create") {
                     entryForm { title, body, status ->
                         logger.info { "Creating entry: title=$title body=$body status=$status" }
                         adminEntryService.create(title, body, status)
@@ -135,7 +135,7 @@ class AdminServer(
                 // TODO textarea should support initialValue?
                 // https://github.com/kwebio/kweb-core/pull/382
                 val textArea = textArea(required = true, cols = 80, rows = 20)
-                textArea.text(initialBody ?: "")
+                textArea.text(initialBody.orEmpty())
                 bodyVar = textArea.value
             }
             div(fomantic.field) {
