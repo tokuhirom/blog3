@@ -1,26 +1,19 @@
 package blog3.admin
 
+import blog3.admin.form.EntryForm
 import blog3.admin.service.AdminEntryService
 import blog3.decodeURL
 import blog3.encodeURL
-import kweb.ButtonType
-import kweb.ElementCreator
 import kweb.Kweb
 import kweb.a
-import kweb.button
 import kweb.div
-import kweb.form
-import kweb.input
-import kweb.option
 import kweb.p
 import kweb.plugins.fomanticUI.fomantic
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.route
-import kweb.select
-import kweb.state.KVar
+import kweb.state.render
 import kweb.table
 import kweb.td
-import kweb.textArea
 import kweb.th
 import kweb.title
 import kweb.toInt
@@ -47,7 +40,7 @@ class AdminServer(
         doc.body {
             div(fomantic.ui.menu) {
                 div(fomantic.header.item) {
-                    a(href = "/").text("Blog admin")
+                    a(href = "/entries/1").text("Blog admin")
                 }
                 a(fomantic.item, href = "/entry/create").text("Create new entry")
             }
@@ -81,12 +74,12 @@ class AdminServer(
                 }
 
                 path("/entry/create") {
-                    entryForm { title, body, status ->
+                    render(EntryForm() { title, body, status ->
                         logger.info { "Creating entry: title=$title body=$body status=$status" }
                         adminEntryService.create(title, body, status)
                         // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
                         url.value = "/entries/1"
-                    }
+                    })
                 }
 
                 path("/entry/update/{path}") { params ->
@@ -94,10 +87,10 @@ class AdminServer(
                     logger.info { "Updating entry: $path" }
 
                     val entry = adminEntryService.findByPath(path) ?: error("Unknown path: $path")
-                    entryForm(entry.title, entry.body, entry.status) { title, body, status ->
+                    render(EntryForm(entry.title, entry.body, entry.status) { title, body, status ->
                         adminEntryService.update(entry.path, title, body, status)
                         url.value = "/entries/1"
-                    }
+                    })
                 }
             }
             div {
@@ -109,55 +102,6 @@ class AdminServer(
                     }"
                 )
             }
-        }
-    }
-
-    private fun ElementCreator<*>.entryForm(
-        initialTitle: String? = null,
-        initialBody: String? = null,
-        initialStatus: String = "draft", // TODO make this enum
-        onSubmit: (title: String, body: String, status: String) -> Unit,
-    ) {
-        lateinit var titleVar: KVar<String>
-        lateinit var bodyVar: KVar<String>
-        lateinit var statusVar: KVar<String>
-        val form = form(fomantic.ui.form) {
-            div(fomantic.field) {
-                titleVar = input(
-                    initialValue = initialTitle,
-                    name = "title",
-                    attributes = mapOf("required" to true.json)
-                ).value
-            }
-            div(fomantic.field) {
-                // TODO textarea should support initialValue?
-                // https://github.com/kwebio/kweb-core/pull/382
-                val textArea = textArea(required = true, cols = 80, rows = 20)
-                textArea.text(initialBody.orEmpty())
-                bodyVar = textArea.value
-            }
-            div(fomantic.field) {
-                // TODO select should support initialValue?
-                // https://github.com/kwebio/kweb-core/pull/382
-                statusVar = select(required = true) {
-                    listOf("draft", "published").forEach { status ->
-                        option(mapOf("value" to status.json)) {
-                            it.text(status)
-                            if (initialStatus == status) {
-                                it.setAttributes("selected" to "selected".json)
-                            }
-                        }
-                    }
-                }.value
-                statusVar.value = initialStatus
-            }
-            div(fomantic.field) {
-                button(fomantic.button, type = ButtonType.submit).text("Update")
-            }
-        }
-        form.on(preventDefault = true).submit {
-            println("SUBMIT! title=${titleVar.value} body=${bodyVar.value} status=${statusVar.value}")
-            onSubmit(titleVar.value, bodyVar.value, statusVar.value)
         }
     }
 
