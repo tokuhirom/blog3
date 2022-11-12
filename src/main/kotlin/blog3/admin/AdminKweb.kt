@@ -30,8 +30,6 @@ import mu.KotlinLogging
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.time.ZoneId
 import java.time.ZoneOffset
 
