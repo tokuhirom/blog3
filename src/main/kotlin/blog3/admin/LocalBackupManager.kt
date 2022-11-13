@@ -63,6 +63,7 @@ class LocalBackupManager(
         }
     }
 
+    @SuppressWarnings("ReturnCount")
     private fun saveRequired(item: LocalBackupEntry): Boolean {
         val latestItem = lastSavedItem
             ?: return true

@@ -6,3 +6,6 @@ naming:
 style:
   MagicNumber:
     active: false
+complexity:
+  LongParameterList:
+    constructorThreshold: 10
