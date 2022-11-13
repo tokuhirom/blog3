@@ -105,7 +105,7 @@ class AdminServer(
                         })
                 }
 
-                path("/local-backup") { params ->
+                path("/local-backup") {
                     table(fomantic.ui.table) {
                         tr {
                             th().text("path")
