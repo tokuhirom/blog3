@@ -7,7 +7,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.spring") version "1.7.21"
-    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.21"
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC3"
 }
