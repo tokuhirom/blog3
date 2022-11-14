@@ -4,6 +4,7 @@ import blog3.admin.form.EntryForm
 import blog3.admin.service.AdminEntryService
 import blog3.decodeURL
 import blog3.encodeURL
+import kotlinx.coroutines.launch
 import kweb.Kweb
 import kweb.a
 import kweb.div
@@ -31,8 +32,9 @@ class AdminServer(
     private val adminEntryService: AdminEntryService,
 ) {
     private val logger = KotlinLogging.logger {}
+    private val localBackupManager = LocalBackupManager()
 
-    private val kweb = Kweb(port = 8280, plugins = listOf(fomanticUIPlugin)) {
+    private val kweb = Kweb(port = 8280, debug = true, plugins = listOf(fomanticUIPlugin)) {
         doc.head {
             element("meta", mapOf("charset" to "utf-8".json))
             title().text("blog admin")
@@ -43,6 +45,7 @@ class AdminServer(
                     a(href = "/entries/1").text("Blog admin")
                 }
                 a(fomantic.item, href = "/entry/create").text("Create new entry")
+                a(fomantic.item, href = "/local-backup").text("Local backup")
             }
 
             route {
@@ -74,7 +77,7 @@ class AdminServer(
                 }
 
                 path("/entry/create") {
-                    render(EntryForm(buttonTitle = "Create") { title, body, status ->
+                    render(EntryForm(localBackupManager, buttonTitle = "Create") { title, body, status ->
                         logger.info { "Creating entry: title=$title body=$body status=$status" }
                         adminEntryService.create(title, body, status)
                         // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
@@ -90,6 +93,8 @@ class AdminServer(
                         ?: error("Unknown path: $path")
                     render(
                         EntryForm(
+                            localBackupManager,
+                            entry.path,
                             entry.title,
                             entry.body,
                             entry.status,
@@ -98,6 +103,36 @@ class AdminServer(
                             adminEntryService.update(entry.path, title, body, status)
                             url.value = "/entries/1"
                         })
+                }
+
+                path("/local-backup") {
+                    table(fomantic.ui.table) {
+                        tr {
+                            th().text("path")
+                            th().text("title")
+                            th().text("body")
+                        }
+
+                        elementScope().launch {
+                            localBackupManager.loadOnDemand(browser).forEach { item ->
+                                tr {
+                                    td {
+                                        if (item.path != null) {
+                                            a(href = "/entry/update/${encodeURL(item.path)}").text(item.path)
+                                        }
+                                    }
+                                    td {
+                                        p().text(item.title)
+                                    }
+                                    td {
+                                        element("pre") {
+                                            it.text(item.body)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             div {

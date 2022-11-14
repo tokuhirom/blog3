@@ -1,5 +1,7 @@
 package blog3.admin.form
 
+import blog3.admin.LocalBackupEntry
+import blog3.admin.LocalBackupManager
 import kweb.ButtonType
 import kweb.Element
 import kweb.ElementCreator
@@ -16,6 +18,8 @@ import kweb.textArea
 import kweb.util.json
 
 class EntryForm(
+    private val localBackupManager: LocalBackupManager,
+    private val path: String? = null,
     private val initialTitle: String? = null,
     private val initialBody: String? = null,
     private val initialStatus: String = "draft", // TODO make this enum
@@ -65,6 +69,15 @@ class EntryForm(
             form.on(preventDefault = true).submit {
                 println("SUBMIT! title=${titleVar.value} body=${bodyVar.value} status=${statusVar.value}")
                 onSubmit(titleVar.value, bodyVar.value, statusVar.value)
+            }
+
+            listOf(titleVar, bodyVar).forEach {
+                it.addListener { _, _ ->
+                    localBackupManager.save(
+                        browser,
+                        LocalBackupEntry(path, titleVar.value, bodyVar.value, statusVar.value)
+                    )
+                }
             }
         }
     }
