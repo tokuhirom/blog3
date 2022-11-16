@@ -2,7 +2,7 @@ package blog3.admin.form
 
 import blog3.admin.LocalBackupEntry
 import blog3.admin.LocalBackupManager
-import blog3.admin.S3Client
+import blog3.admin.S3Service
 import com.amazonaws.services.s3.model.ObjectMetadata
 import io.ktor.util.decodeBase64Bytes
 import kotlinx.serialization.json.jsonPrimitive
@@ -36,7 +36,7 @@ class EntryForm(
     private val initialBody: String? = null,
     private val initialStatus: String = "draft", // TODO make this enum
     private val buttonTitle: String,
-    private val s3Client: S3Client,
+    private val s3Service: S3Service,
     private val onSubmit: (title: String, body: String, status: String) -> Unit,
 ) : Component {
     override fun render(elementCreator: ElementCreator<Element>) {
@@ -58,7 +58,7 @@ class EntryForm(
                     // https://github.com/kwebio/kweb-core/pull/382
                     val textArea = textArea(required = true, cols = 80, rows = 20)
                     textArea.text(initialBody.orEmpty())
-                    textArea.makeImageUploadable(s3Client)
+                    textArea.makeImageUploadable(s3Service)
                     bodyVar = textArea.value
                 }
                 div(fomantic.field) {
@@ -97,7 +97,7 @@ class EntryForm(
     }
 }
 
-private fun TextAreaElement.makeImageUploadable(s3Client: S3Client) {
+private fun TextAreaElement.makeImageUploadable(s3Service: S3Service) {
     val logger = KotlinLogging.logger {}
     val id = random.nextInt().absoluteValue
 
@@ -129,7 +129,7 @@ private fun TextAreaElement.makeImageUploadable(s3Client: S3Client) {
             objectMetadata.contentType = "image/$imageFormat"
             objectMetadata.contentLength = imageContent.size.toLong()
 
-            val url = s3Client.upload(key, ByteArrayInputStream(imageContent), objectMetadata)
+            val url = s3Service.upload(key, ByteArrayInputStream(imageContent), objectMetadata)
             logger.info("Uploaded image: {}", url)
             browser.callJsFunction(
                 """

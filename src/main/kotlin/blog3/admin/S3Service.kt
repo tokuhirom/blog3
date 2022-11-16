@@ -25,8 +25,8 @@ data class S3ConfigurationProperties(
 @EnableConfigurationProperties(S3ConfigurationProperties::class)
 class S3Configuration {
     @Bean
-    fun s3Client(s3ConfigurationProperties: S3ConfigurationProperties): S3Client {
-        return S3Client(
+    fun s3Client(s3ConfigurationProperties: S3ConfigurationProperties): S3Service {
+        return S3Service(
             region = s3ConfigurationProperties.region,
             bucketName = s3ConfigurationProperties.bucketName,
             publicDomain = s3ConfigurationProperties.publicDomain,
@@ -34,19 +34,19 @@ class S3Configuration {
     }
 }
 
-class S3Client(
+class S3Service(
     region: String,
     private val bucketName: String,
     private val publicDomain: String,
     credentialProvider: AWSCredentialsProvider = EnvironmentVariableCredentialsProvider(),
 ) {
+    private val logger = KotlinLogging.logger {}
+
     // Build S3 client using ENV[AWS_ACCESS_KEY_ID], ENV[AWS_SECRET_KEY]
-    private var s3Client = AmazonS3ClientBuilder.standard()
+    private val s3Client = AmazonS3ClientBuilder.standard()
         .withCredentials(credentialProvider)
         .withRegion(region)
         .build()
-
-    private val logger = KotlinLogging.logger {}
 
     fun listBuckets(): List<Bucket> {
         return s3Client.listBuckets()!!
@@ -65,7 +65,7 @@ class S3Client(
 }
 
 fun main() {
-    val client = S3Client(
+    val client = S3Service(
         region = "ap-northeast-1", bucketName = "blog3-attachments",
         publicDomain = "blog-attachments.64p.org"
     )

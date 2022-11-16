@@ -32,7 +32,7 @@ import java.time.ZoneOffset
 class AdminServer(
     private val gitProperties: GitProperties,
     private val adminEntryService: AdminEntryService,
-    private val s3Client: S3Client,
+    private val s3Service: S3Service,
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
@@ -91,7 +91,7 @@ class AdminServer(
                         EntryForm(
                             localBackupManager,
                             buttonTitle = "Create",
-                            s3Client = s3Client
+                            s3Service = s3Service
                         ) { title, body, status ->
                             logger.info { "Creating entry: title=$title body=$body status=$status" }
                             adminEntryService.create(title, body, status)
@@ -114,7 +114,7 @@ class AdminServer(
                             entry.body,
                             entry.status,
                             buttonTitle = "Update",
-                            s3Client = s3Client,
+                            s3Service = s3Service,
                         ) { title, body, status ->
                             adminEntryService.update(entry.path, title, body, status)
                             url.value = "/entries/1"
@@ -156,7 +156,7 @@ class AdminServer(
                             th().text("name")
                             th().text("owner")
                         }
-                        s3Client.listBuckets().forEach { bucket ->
+                        s3Service.listBuckets().forEach { bucket ->
                             tr {
                                 td().text(bucket.name)
                                 td().text(bucket.owner.displayName)
@@ -188,8 +188,8 @@ class AdminKwebConfiguration {
     fun adminServer(
         gitProperties: GitProperties,
         adminEntryService: AdminEntryService,
-        s3Client: S3Client,
+        s3Service: S3Service,
     ): AdminServer {
-        return AdminServer(gitProperties, adminEntryService, s3Client)
+        return AdminServer(gitProperties, adminEntryService, s3Service)
     }
 }
