@@ -11,6 +11,8 @@ import kweb.div
 import kweb.p
 import kweb.plugins.fomanticUI.fomantic
 import kweb.plugins.fomanticUI.fomanticUIPlugin
+import kweb.plugins.staticFiles.ResourceFolder
+import kweb.plugins.staticFiles.StaticFilesPlugin
 import kweb.route
 import kweb.state.render
 import kweb.table
@@ -35,12 +37,19 @@ class AdminServer(
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
 
-    private val kweb = Kweb(port = 8280, debug = true, plugins = listOf(fomanticUIPlugin)) {
+    private val kweb = Kweb(
+        port = 8280, debug = true, plugins = listOf(
+            fomanticUIPlugin,
+            StaticFilesPlugin(ResourceFolder("static"), "static")
+        )
+    ) {
         doc.head {
             element("meta", mapOf("charset" to "utf-8".json))
             title().text("blog admin")
         }
         doc.body {
+            element("script", mapOf("src" to "/static/js/admin.js".json))
+
             div(fomantic.ui.menu) {
                 div(fomantic.header.item) {
                     a(href = "/entries/1").text("Blog admin")
