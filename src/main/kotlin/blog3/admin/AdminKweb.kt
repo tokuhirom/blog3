@@ -30,6 +30,7 @@ import java.time.ZoneOffset
 class AdminServer(
     private val gitProperties: GitProperties,
     private val adminEntryService: AdminEntryService,
+    private val s3Client: S3Client,
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
@@ -77,12 +78,17 @@ class AdminServer(
                 }
 
                 path("/entry/create") {
-                    render(EntryForm(localBackupManager, buttonTitle = "Create") { title, body, status ->
-                        logger.info { "Creating entry: title=$title body=$body status=$status" }
-                        adminEntryService.create(title, body, status)
-                        // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
-                        url.value = "/entries/1"
-                    })
+                    render(
+                        EntryForm(
+                            localBackupManager,
+                            buttonTitle = "Create",
+                            s3Client = s3Client
+                        ) { title, body, status ->
+                            logger.info { "Creating entry: title=$title body=$body status=$status" }
+                            adminEntryService.create(title, body, status)
+                            // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
+                            url.value = "/entries/1"
+                        })
                 }
 
                 path("/entry/update/{path}") { params ->
@@ -98,7 +104,8 @@ class AdminServer(
                             entry.title,
                             entry.body,
                             entry.status,
-                            buttonTitle = "Update"
+                            buttonTitle = "Update",
+                            s3Client = s3Client,
                         ) { title, body, status ->
                             adminEntryService.update(entry.path, title, body, status)
                             url.value = "/entries/1"
@@ -134,6 +141,20 @@ class AdminServer(
                         }
                     }
                 }
+                path("/s3/buckets") {
+                    table(fomantic.ui.table) {
+                        tr {
+                            th().text("name")
+                            th().text("owner")
+                        }
+                        s3Client.listBuckets().forEach { bucket ->
+                            tr {
+                                td().text(bucket.name)
+                                td().text(bucket.owner.displayName)
+                            }
+                        }
+                    }
+                }
             }
             div {
                 p().text(
@@ -158,7 +179,8 @@ class AdminKwebConfiguration {
     fun adminServer(
         gitProperties: GitProperties,
         adminEntryService: AdminEntryService,
+        s3Client: S3Client,
     ): AdminServer {
-        return AdminServer(gitProperties, adminEntryService)
+        return AdminServer(gitProperties, adminEntryService, s3Client)
     }
 }
