@@ -11,6 +11,8 @@ import kweb.div
 import kweb.p
 import kweb.plugins.fomanticUI.fomantic
 import kweb.plugins.fomanticUI.fomanticUIPlugin
+import kweb.plugins.staticFiles.ResourceFolder
+import kweb.plugins.staticFiles.StaticFilesPlugin
 import kweb.route
 import kweb.state.render
 import kweb.table
@@ -30,16 +32,24 @@ import java.time.ZoneOffset
 class AdminServer(
     private val gitProperties: GitProperties,
     private val adminEntryService: AdminEntryService,
+    private val s3Service: S3Service,
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
 
-    private val kweb = Kweb(port = 8280, debug = true, plugins = listOf(fomanticUIPlugin)) {
+    private val kweb = Kweb(
+        port = 8280, debug = true, plugins = listOf(
+            fomanticUIPlugin,
+            StaticFilesPlugin(ResourceFolder("static"), "static")
+        )
+    ) {
         doc.head {
             element("meta", mapOf("charset" to "utf-8".json))
             title().text("blog admin")
         }
         doc.body {
+            element("script", mapOf("src" to "/static/js/admin.js".json))
+
             div(fomantic.ui.menu) {
                 div(fomantic.header.item) {
                     a(href = "/entries/1").text("Blog admin")
@@ -77,12 +87,17 @@ class AdminServer(
                 }
 
                 path("/entry/create") {
-                    render(EntryForm(localBackupManager, buttonTitle = "Create") { title, body, status ->
-                        logger.info { "Creating entry: title=$title body=$body status=$status" }
-                        adminEntryService.create(title, body, status)
-                        // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
-                        url.value = "/entries/1"
-                    })
+                    render(
+                        EntryForm(
+                            localBackupManager,
+                            buttonTitle = "Create",
+                            s3Service = s3Service
+                        ) { title, body, status ->
+                            logger.info { "Creating entry: title=$title body=$body status=$status" }
+                            adminEntryService.create(title, body, status)
+                            // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
+                            url.value = "/entries/1"
+                        })
                 }
 
                 path("/entry/update/{path}") { params ->
@@ -98,7 +113,8 @@ class AdminServer(
                             entry.title,
                             entry.body,
                             entry.status,
-                            buttonTitle = "Update"
+                            buttonTitle = "Update",
+                            s3Service = s3Service,
                         ) { title, body, status ->
                             adminEntryService.update(entry.path, title, body, status)
                             url.value = "/entries/1"
@@ -134,6 +150,20 @@ class AdminServer(
                         }
                     }
                 }
+                path("/s3/buckets") {
+                    table(fomantic.ui.table) {
+                        tr {
+                            th().text("name")
+                            th().text("owner")
+                        }
+                        s3Service.listBuckets().forEach { bucket ->
+                            tr {
+                                td().text(bucket.name)
+                                td().text(bucket.owner.displayName)
+                            }
+                        }
+                    }
+                }
             }
             div {
                 p().text(
@@ -158,7 +188,8 @@ class AdminKwebConfiguration {
     fun adminServer(
         gitProperties: GitProperties,
         adminEntryService: AdminEntryService,
+        s3Service: S3Service,
     ): AdminServer {
-        return AdminServer(gitProperties, adminEntryService)
+        return AdminServer(gitProperties, adminEntryService, s3Service)
     }
 }

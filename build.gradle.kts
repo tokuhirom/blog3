@@ -20,6 +20,7 @@ dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:1.17.5")
         mavenBom("io.ktor:ktor-bom:2.1.3")
+        mavenBom("com.amazonaws:aws-java-sdk-bom:1.11.1000")
     }
 }
 
@@ -35,12 +36,15 @@ dependencies {
     implementation("io.ktor:ktor-server-default-headers")
     implementation("io.ktor:ktor-server-call-logging")
 
+    implementation("com.amazonaws:aws-java-sdk-s3")
+
     implementation("io.kweb:kweb-core:1.1.5")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
 
     // markdown
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
