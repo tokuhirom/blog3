@@ -20,7 +20,7 @@ dependencyManagement {
     imports {
         mavenBom("org.testcontainers:testcontainers-bom:1.17.5")
         mavenBom("io.ktor:ktor-bom:2.1.3")
-        mavenBom("com.amazonaws:aws-java-sdk-bom:1.12.343")
+        mavenBom("com.amazonaws:aws-java-sdk-bom:1.12.344")
     }
 }
 
