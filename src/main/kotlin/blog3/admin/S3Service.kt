@@ -64,11 +64,11 @@ class S3Service(
     }
 }
 
-fun main() {
-    val client = S3Service(
-        region = "ap-northeast-1", bucketName = "blog3-attachments",
-        publicDomain = "blog-attachments.64p.org"
-    )
-    val key = "hello.txt"
-    println(client.upload(key, "haha"))
-}
+//fun main() {
+//    val client = S3Service(
+//        region = "ap-northeast-1", bucketName = "blog3-attachments",
+//        publicDomain = "blog-attachments.64p.org"
+//    )
+//    val key = "hello.txt"
+//    println(client.upload(key, "haha"))
+//}
