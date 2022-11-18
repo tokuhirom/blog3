@@ -2,7 +2,6 @@ package blog3.admin.form
 
 import blog3.admin.LocalBackupEntry
 import blog3.admin.LocalBackupManager
-import blog3.admin.S3Service
 import kweb.ButtonType
 import kweb.Element
 import kweb.ElementCreator
@@ -25,7 +24,6 @@ class EntryForm(
     private val initialBody: String? = null,
     private val initialStatus: String = "draft", // TODO make this enum
     private val buttonTitle: String,
-    private val s3Service: S3Service,
     private val onSubmit: (title: String, body: String, status: String) -> Unit,
 ) : Component {
     override fun render(elementCreator: ElementCreator<Element>) {

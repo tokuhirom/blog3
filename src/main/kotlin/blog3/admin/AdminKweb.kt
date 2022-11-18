@@ -92,8 +92,7 @@ class AdminServer(
                     render(
                         EntryForm(
                             localBackupManager,
-                            buttonTitle = "Create",
-                            s3Service = s3Service
+                            buttonTitle = "Create"
                         ) { title, body, status ->
                             logger.info { "Creating entry: title=$title body=$body status=$status" }
                             adminEntryService.create(title, body, status)
@@ -116,7 +115,6 @@ class AdminServer(
                             entry.body,
                             entry.status,
                             buttonTitle = "Update",
-                            s3Service = s3Service,
                         ) { title, body, status ->
                             adminEntryService.update(entry.path, title, body, status)
                             url.value = "/entries/1"
