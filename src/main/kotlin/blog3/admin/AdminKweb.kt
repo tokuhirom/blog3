@@ -1,6 +1,7 @@
 package blog3.admin
 
 import blog3.admin.form.EntryForm
+import blog3.admin.plugin.FileUploadPlugin
 import blog3.admin.service.AdminEntryService
 import blog3.decodeURL
 import blog3.encodeURL
@@ -36,11 +37,13 @@ class AdminServer(
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
+    private val staticFileCacheManager = StaticFileCacheManager()
 
     private val kweb = Kweb(
         port = 8280, debug = true, plugins = listOf(
             fomanticUIPlugin,
-            StaticFilesPlugin(ResourceFolder("static"), "static")
+            StaticFilesPlugin(ResourceFolder("static"), "static"),
+            FileUploadPlugin("/upload_attachments", s3Service)
         )
     ) {
         doc.head {
@@ -48,7 +51,7 @@ class AdminServer(
             title().text("blog admin")
         }
         doc.body {
-            element("script", mapOf("src" to "/static/js/admin.js".json))
+            element("script", mapOf("src" to staticFileCacheManager.addTimestamp("/static/js/admin.js")))
 
             div(fomantic.ui.menu) {
                 div(fomantic.header.item) {
@@ -90,8 +93,7 @@ class AdminServer(
                     render(
                         EntryForm(
                             localBackupManager,
-                            buttonTitle = "Create",
-                            s3Service = s3Service
+                            buttonTitle = "Create"
                         ) { title, body, status ->
                             logger.info { "Creating entry: title=$title body=$body status=$status" }
                             adminEntryService.create(title, body, status)
@@ -114,7 +116,6 @@ class AdminServer(
                             entry.body,
                             entry.status,
                             buttonTitle = "Update",
-                            s3Service = s3Service,
                         ) { title, body, status ->
                             adminEntryService.update(entry.path, title, body, status)
                             url.value = "/entries/1"
