@@ -57,140 +57,143 @@ class AdminServer(
         doc.body {
             element("script", mapOf("src" to staticFileCacheManager.addTimestamp("/static/js/admin.js")))
 
-            div(fomantic.ui.menu) {
-                div(fomantic.header.item) {
-                    a(href = "/entries/1").text("Blog admin")
-                }
-                a(fomantic.item, href = "/entry/create").text("Create new entry")
-                a(fomantic.item, href = "/local-backup").text("Local backup")
-            }
+            div(fomantic.ui.container) {
 
-            route {
-                // list of entries
-                path("/") {
-                    url.value = "/entries/1"
-                }
-                path("/entries/{page}") { params ->
-                    val page = params.getValue("page").toInt()
-                    val limit = 20
-
-                    lateinit var searchVar: KVar<String>
-                    p() {
-                        i(fomantic.icon.search)
-                        searchVar = input(type = InputType.text).value
+                div(fomantic.ui.menu) {
+                    div(fomantic.header.item) {
+                        a(href = "/entries/1").text("Blog admin")
                     }
+                    a(fomantic.item, href = "/entry/create").text("Create new entry")
+                    a(fomantic.item, href = "/local-backup").text("Local backup")
+                }
 
-                    render(searchVar) { keyword ->
-                        val entries = if (keyword.isNotEmpty()) {
-                            adminEntryService.findByKeyword(keyword, page.value, limit)
-                        } else {
-                            adminEntryService.findEntries(page.value, limit)
+                route {
+                    // list of entries
+                    path("/") {
+                        url.value = "/entries/1"
+                    }
+                    path("/entries/{page}") { params ->
+                        val page = params.getValue("page").toInt()
+                        val limit = 20
+
+                        lateinit var searchVar: KVar<String>
+                        p() {
+                            i(fomantic.icon.search)
+                            searchVar = input(type = InputType.text).value
                         }
 
+                        render(searchVar) { keyword ->
+                            val entries = if (keyword.isNotEmpty()) {
+                                adminEntryService.findByKeyword(keyword, page.value, limit)
+                            } else {
+                                adminEntryService.findEntries(page.value, limit)
+                            }
+
+                            table(fomantic.ui.table) {
+                                tr {
+                                    th().text("Title")
+                                    th().text("Status")
+                                    th().text("Created")
+                                }
+                                entries.forEach { entry ->
+                                    tr {
+                                        td {
+                                            a(href = "/entry/update/${encodeURL(entry.path)}").text(entry.title)
+                                        }
+                                        td().text(entry.status)
+                                        td().text(entry.createdAt.atZone(ZoneId.systemDefault()).toString())
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    path("/entry/create") {
+                        render(
+                            EntryForm(
+                                localBackupManager,
+                                buttonTitle = "Create"
+                            ) { title, body, status ->
+                                logger.info { "Creating entry: title=$title body=$body status=$status" }
+                                adminEntryService.create(title, body, status)
+                                // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
+                                url.value = "/entries/1"
+                            })
+                    }
+
+                    path("/entry/update/{path}") { params ->
+                        val path = decodeURL((params["path"] ?: error("Missing path")).value)
+                        logger.info { "Updating entry: $path" }
+
+                        val entry = adminEntryService.findByPath(path)
+                            ?: error("Unknown path: $path")
+                        render(
+                            EntryForm(
+                                localBackupManager,
+                                entry.path,
+                                entry.title,
+                                entry.body,
+                                entry.status,
+                                buttonTitle = "Update",
+                            ) { title, body, status ->
+                                adminEntryService.update(entry.path, title, body, status)
+                                url.value = "/entries/1"
+                            })
+                    }
+
+                    path("/local-backup") {
                         table(fomantic.ui.table) {
                             tr {
-                                th().text("Title")
-                                th().text("Status")
-                                th().text("Created")
+                                th().text("path")
+                                th().text("title")
+                                th().text("body")
                             }
-                            entries.forEach { entry ->
-                                tr {
-                                    td {
-                                        a(href = "/entry/update/${encodeURL(entry.path)}").text(entry.title)
-                                    }
-                                    td().text(entry.status)
-                                    td().text(entry.createdAt.atZone(ZoneId.systemDefault()).toString())
-                                }
-                            }
-                        }
-                    }
-                }
 
-                path("/entry/create") {
-                    render(
-                        EntryForm(
-                            localBackupManager,
-                            buttonTitle = "Create"
-                        ) { title, body, status ->
-                            logger.info { "Creating entry: title=$title body=$body status=$status" }
-                            adminEntryService.create(title, body, status)
-                            // TODO I want to redirect to "/", but it kicks buggy behaviour of Kweb.
-                            url.value = "/entries/1"
-                        })
-                }
-
-                path("/entry/update/{path}") { params ->
-                    val path = decodeURL((params["path"] ?: error("Missing path")).value)
-                    logger.info { "Updating entry: $path" }
-
-                    val entry = adminEntryService.findByPath(path)
-                        ?: error("Unknown path: $path")
-                    render(
-                        EntryForm(
-                            localBackupManager,
-                            entry.path,
-                            entry.title,
-                            entry.body,
-                            entry.status,
-                            buttonTitle = "Update",
-                        ) { title, body, status ->
-                            adminEntryService.update(entry.path, title, body, status)
-                            url.value = "/entries/1"
-                        })
-                }
-
-                path("/local-backup") {
-                    table(fomantic.ui.table) {
-                        tr {
-                            th().text("path")
-                            th().text("title")
-                            th().text("body")
-                        }
-
-                        elementScope().launch {
-                            localBackupManager.loadOnDemand(browser).forEach { item ->
-                                tr {
-                                    td {
-                                        if (item.path != null) {
-                                            a(href = "/entry/update/${encodeURL(item.path)}").text(item.path)
+                            elementScope().launch {
+                                localBackupManager.loadOnDemand(browser).forEach { item ->
+                                    tr {
+                                        td {
+                                            if (item.path != null) {
+                                                a(href = "/entry/update/${encodeURL(item.path)}").text(item.path)
+                                            }
                                         }
-                                    }
-                                    td {
-                                        p().text(item.title)
-                                    }
-                                    td {
-                                        element("pre") {
-                                            it.text(item.body)
+                                        td {
+                                            p().text(item.title)
+                                        }
+                                        td {
+                                            element("pre") {
+                                                it.text(item.body)
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                path("/s3/buckets") {
-                    table(fomantic.ui.table) {
-                        tr {
-                            th().text("name")
-                            th().text("owner")
-                        }
-                        s3Service.listBuckets().forEach { bucket ->
+                    path("/s3/buckets") {
+                        table(fomantic.ui.table) {
                             tr {
-                                td().text(bucket.name)
-                                td().text(bucket.owner.displayName)
+                                th().text("name")
+                                th().text("owner")
+                            }
+                            s3Service.listBuckets().forEach { bucket ->
+                                tr {
+                                    td().text(bucket.name)
+                                    td().text(bucket.owner.displayName)
+                                }
                             }
                         }
                     }
                 }
-            }
-            div {
-                p().text(
-                    "${gitProperties.shortCommitId}@${gitProperties.branch} ${
-                        gitProperties.commitTime.atOffset(
-                            ZoneOffset.ofHours(9)
-                        )
-                    }"
-                )
+                div {
+                    p().text(
+                        "${gitProperties.shortCommitId}@${gitProperties.branch} ${
+                            gitProperties.commitTime.atOffset(
+                                ZoneOffset.ofHours(9)
+                            )
+                        }"
+                    )
+                }
             }
         }
     }
