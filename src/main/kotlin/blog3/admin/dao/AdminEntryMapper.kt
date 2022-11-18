@@ -28,6 +28,23 @@ interface AdminEntryMapper {
     )
     fun findByPath(path: String): Entry?
 
+    // Use slow but good query... Since this query only called from admin site.
+    @Select(
+        """
+            select * from (
+                select *
+                    , title COLLATE UTF8MB4_GENERAL_CI like concat('%', #{query}, '%') AS title_score
+                    , match(title,body) against (#{query}) AS ft_score
+                from entry
+            ) x
+            where title_score or ft_score>1
+            ORDER BY title_score desc, ft_score desc
+            limit #{limit}
+            offset #{offset}
+        """
+    )
+    fun findByKeyword(query: String, limit: Int, offset: Int): List<Entry>
+
     @Update(
         """
             UPDATE

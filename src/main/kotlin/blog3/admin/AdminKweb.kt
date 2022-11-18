@@ -6,15 +6,19 @@ import blog3.admin.service.AdminEntryService
 import blog3.decodeURL
 import blog3.encodeURL
 import kotlinx.coroutines.launch
+import kweb.InputType
 import kweb.Kweb
 import kweb.a
 import kweb.div
+import kweb.i
+import kweb.input
 import kweb.p
 import kweb.plugins.fomanticUI.fomantic
 import kweb.plugins.fomanticUI.fomanticUIPlugin
 import kweb.plugins.staticFiles.ResourceFolder
 import kweb.plugins.staticFiles.StaticFilesPlugin
 import kweb.route
+import kweb.state.KVar
 import kweb.state.render
 import kweb.table
 import kweb.td
@@ -69,21 +73,34 @@ class AdminServer(
                 path("/entries/{page}") { params ->
                     val page = params.getValue("page").toInt()
                     val limit = 20
-                    val entries = adminEntryService.findEntries(page.value, limit)
 
-                    table(fomantic.ui.table) {
-                        tr {
-                            th().text("Title")
-                            th().text("Status")
-                            th().text("Created")
+                    lateinit var searchVar: KVar<String>
+                    p() {
+                        i(fomantic.icon.search)
+                        searchVar = input(type = InputType.text).value
+                    }
+
+                    render(searchVar) { keyword ->
+                        val entries = if (keyword.isNotEmpty()) {
+                            adminEntryService.findByKeyword(keyword, page.value, limit)
+                        } else {
+                            adminEntryService.findEntries(page.value, limit)
                         }
-                        entries.forEach { entry ->
+
+                        table(fomantic.ui.table) {
                             tr {
-                                td {
-                                    a(href = "/entry/update/${encodeURL(entry.path)}").text(entry.title)
+                                th().text("Title")
+                                th().text("Status")
+                                th().text("Created")
+                            }
+                            entries.forEach { entry ->
+                                tr {
+                                    td {
+                                        a(href = "/entry/update/${encodeURL(entry.path)}").text(entry.title)
+                                    }
+                                    td().text(entry.status)
+                                    td().text(entry.createdAt.atZone(ZoneId.systemDefault()).toString())
                                 }
-                                td().text(entry.status)
-                                td().text(entry.createdAt.atZone(ZoneId.systemDefault()).toString())
                             }
                         }
                     }
