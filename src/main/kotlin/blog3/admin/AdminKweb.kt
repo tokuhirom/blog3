@@ -37,6 +37,7 @@ class AdminServer(
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
+    private val staticFileCacheManager = StaticFileCacheManager()
 
     private val kweb = Kweb(
         port = 8280, debug = true, plugins = listOf(
@@ -50,7 +51,7 @@ class AdminServer(
             title().text("blog admin")
         }
         doc.body {
-            element("script", mapOf("src" to "/static/js/admin.js?2".json))
+            element("script", mapOf("src" to staticFileCacheManager.addTimestamp("/static/js/admin.js")))
 
             div(fomantic.ui.menu) {
                 div(fomantic.header.item) {
