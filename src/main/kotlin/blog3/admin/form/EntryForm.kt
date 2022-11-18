@@ -3,13 +3,9 @@ package blog3.admin.form
 import blog3.admin.LocalBackupEntry
 import blog3.admin.LocalBackupManager
 import blog3.admin.S3Service
-import com.amazonaws.services.s3.model.ObjectMetadata
-import io.ktor.util.decodeBase64Bytes
-import kotlinx.serialization.json.jsonPrimitive
 import kweb.ButtonType
 import kweb.Element
 import kweb.ElementCreator
-import kweb.TextAreaElement
 import kweb.button
 import kweb.div
 import kweb.form
@@ -21,13 +17,6 @@ import kweb.state.Component
 import kweb.state.KVar
 import kweb.textArea
 import kweb.util.json
-import kweb.util.random
-import mu.KotlinLogging
-import java.io.ByteArrayInputStream
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.UUID
-import kotlin.math.absoluteValue
 
 class EntryForm(
     private val localBackupManager: LocalBackupManager,
@@ -58,7 +47,9 @@ class EntryForm(
                     // https://github.com/kwebio/kweb-core/pull/382
                     val textArea = textArea(required = true, cols = 80, rows = 20)
                     textArea.text(initialBody.orEmpty())
-                    textArea.makeImageUploadable(s3Service)
+
+                    browser.callJsFunction("makeImageUploadable({});", textArea.id.json)
+
                     bodyVar = textArea.value
                 }
                 div(fomantic.field) {
@@ -97,47 +88,3 @@ class EntryForm(
     }
 }
 
-private fun TextAreaElement.makeImageUploadable(s3Service: S3Service) {
-    val logger = KotlinLogging.logger {}
-    val id = random.nextInt().absoluteValue
-
-    // https://stackoverflow.com/questions/11076975/how-to-insert-text-into-the-textarea-at-the-current-cursor-position
-    // https://stackoverflow.com/questions/40753816/html5-clipboarddata-filereader-seeing-all-file-types-as-image-png
-    browser.callJsFunctionWithCallback(
-        "makeImageUploadable({}, {});", id, { jsonElement ->
-            val dataUrl = jsonElement.jsonPrimitive.content
-            logger.info(
-                "dataUrlLength=${dataUrl.length} prefix=${
-                    if (dataUrl.length > 100) {
-                        dataUrl.substring(0, 100)
-                    } else {
-                        dataUrl
-                    }
-                }"
-            )
-
-            val dataUrlPattern = """^data:image/([a-z]+);base64,(.*)$""".toRegex()
-            val m = dataUrlPattern.find(dataUrl)
-            val imageFormat = m!!.groupValues[1]
-            val imageContent = m.groupValues[2].decodeBase64Bytes()
-
-            val keyPrefixFormatter = DateTimeFormatter.ofPattern("YYYYMMdd-HHmmss")
-            val key =
-                LocalDateTime.now().format(keyPrefixFormatter) + UUID.randomUUID()
-                    .toString() + ".$imageFormat"
-            val objectMetadata = ObjectMetadata()
-            objectMetadata.contentType = "image/$imageFormat"
-            objectMetadata.contentLength = imageContent.size.toLong()
-
-            val url = s3Service.upload(key, ByteArrayInputStream(imageContent), objectMetadata)
-            logger.info("Uploaded image: {}", url)
-            browser.callJsFunction(
-                """
-                    const el = document.getElementById({});
-                    const [start, end] = [el.selectionStart, el.selectionEnd];
-                    el.setRangeText({}, start, end);
-                """.trimIndent(), this.id.json, """<img src="$url">""".json
-            )
-        }, this.id.json, id.json
-    )
-}

@@ -1,6 +1,7 @@
 package blog3.admin
 
 import blog3.admin.form.EntryForm
+import blog3.admin.plugin.FileUploadPlugin
 import blog3.admin.service.AdminEntryService
 import blog3.decodeURL
 import blog3.encodeURL
@@ -40,7 +41,8 @@ class AdminServer(
     private val kweb = Kweb(
         port = 8280, debug = true, plugins = listOf(
             fomanticUIPlugin,
-            StaticFilesPlugin(ResourceFolder("static"), "static")
+            StaticFilesPlugin(ResourceFolder("static"), "static"),
+            FileUploadPlugin("/upload_attachments", s3Service)
         )
     ) {
         doc.head {
@@ -48,7 +50,7 @@ class AdminServer(
             title().text("blog admin")
         }
         doc.body {
-            element("script", mapOf("src" to "/static/js/admin.js".json))
+            element("script", mapOf("src" to "/static/js/admin.js?2".json))
 
             div(fomantic.ui.menu) {
                 div(fomantic.header.item) {
