@@ -21,6 +21,11 @@ class AdminEntryService(
         return adminEntryMapper.findByPath(path)
     }
 
+    fun findByKeyword(keyword: String, page: Int, limit: Int): List<Entry> {
+        val offset = (page - 1) * limit
+        return adminEntryMapper.findByKeyword(keyword, limit, offset)
+    }
+
     fun update(path: String, title: String, body: String, status: String) {
         adminEntryMapper.update(
             path = path,
