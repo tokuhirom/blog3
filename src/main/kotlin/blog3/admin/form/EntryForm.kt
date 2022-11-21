@@ -30,6 +30,7 @@ class EntryForm(
     private val markdownRenderer: MarkdownRenderer,
     private val onSubmit: (title: String, body: String, status: String) -> Unit,
 ) : Component {
+    @SuppressWarnings("LongMethod")
     override fun render(elementCreator: ElementCreator<Element>) {
         with(elementCreator) {
             lateinit var titleVar: KVar<String>
