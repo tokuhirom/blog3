@@ -38,7 +38,7 @@ dependencies {
 
     implementation("com.amazonaws:aws-java-sdk-s3")
 
-    implementation("io.kweb:kweb-core:1.1.5")
+    implementation("io.kweb:kweb-core:1.1.6")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
