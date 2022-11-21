@@ -7,7 +7,7 @@ import com.vladsch.flexmark.util.data.MutableDataSet
 import java.time.LocalDateTime
 
 
-class MarkdownRenderer(val parser: Parser, val renderer: HtmlRenderer) {
+class MarkdownRenderer(private val parser: Parser, private val renderer: HtmlRenderer) {
 
     fun render(mkdn: String): String {
         val document = parser.parse(mkdn)
