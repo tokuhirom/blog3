@@ -2,9 +2,11 @@ package blog3.admin
 
 import blog3.admin.form.EntryForm
 import blog3.admin.plugin.FileUploadPlugin
+import blog3.admin.plugin.PrismPlugin
 import blog3.admin.service.AdminEntryService
 import blog3.decodeURL
 import blog3.encodeURL
+import blog3.entity.MarkdownRenderer
 import kotlinx.coroutines.launch
 import kweb.InputType
 import kweb.Kweb
@@ -38,6 +40,7 @@ class AdminServer(
     private val gitProperties: GitProperties,
     private val adminEntryService: AdminEntryService,
     private val s3Service: S3Service,
+    private val markdownRenderer: MarkdownRenderer,
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
@@ -47,7 +50,8 @@ class AdminServer(
         port = 8280, debug = true, plugins = listOf(
             fomanticUIPlugin,
             StaticFilesPlugin(ResourceFolder("static"), "static"),
-            FileUploadPlugin("/upload_attachments", s3Service)
+            FileUploadPlugin("/upload_attachments", s3Service),
+            PrismPlugin()
         )
     ) {
         doc.head {
@@ -112,7 +116,8 @@ class AdminServer(
                         render(
                             EntryForm(
                                 localBackupManager,
-                                buttonTitle = "Create"
+                                buttonTitle = "Create",
+                                markdownRenderer = markdownRenderer,
                             ) { title, body, status ->
                                 logger.info { "Creating entry: title=$title body=$body status=$status" }
                                 adminEntryService.create(title, body, status)
@@ -135,6 +140,7 @@ class AdminServer(
                                 entry.body,
                                 entry.status,
                                 buttonTitle = "Update",
+                                markdownRenderer = markdownRenderer,
                             ) { title, body, status ->
                                 adminEntryService.update(entry.path, title, body, status)
                                 url.value = "/entries/1"
@@ -211,6 +217,8 @@ class AdminKwebConfiguration {
         adminEntryService: AdminEntryService,
         s3Service: S3Service,
     ): AdminServer {
-        return AdminServer(gitProperties, adminEntryService, s3Service)
+        return AdminServer(
+            gitProperties, adminEntryService, s3Service, MarkdownRenderer.build()
+        )
     }
 }
