@@ -157,7 +157,8 @@ class AdminServer(
                                 relatedEntries.forEach { relatedEntry ->
                                     li() {
                                         // When moving the tab, we can't go to the page.
-                                        a(href = "/entry/update/${encodeURL(relatedEntry.path)}").text(relatedEntry.title)
+                                        a(href = "/entry/update/${encodeURL(relatedEntry.path)}")
+                                            .text(relatedEntry.title)
                                     }
                                 }
                             }
