@@ -26,6 +26,7 @@ import org.slf4j.event.Level
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import java.util.concurrent.TimeUnit
 
 
@@ -98,6 +99,7 @@ class UserSideServer(
 @Configuration(proxyBeanMethods = false)
 class KtorRootConfiguration {
     @Bean(destroyMethod = "stop")
+    @Profile("!test")
     fun userSideServer(
         gitProperties: GitProperties,
         publicEntryService: PublicEntryService,

@@ -1,5 +1,6 @@
 package blog3.admin
 
+import blog3.admin.dao.AdminEntryMapper
 import blog3.admin.form.EntryForm
 import blog3.admin.plugin.FileUploadPlugin
 import blog3.admin.plugin.PrismPlugin
@@ -7,7 +8,9 @@ import blog3.admin.service.AdminEntryService
 import blog3.admin.service.RelatedEntriesService
 import blog3.decodeURL
 import blog3.encodeURL
+import blog3.entity.Entry
 import blog3.entity.MarkdownRenderer
+import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.coroutines.launch
 import kweb.InputType
 import kweb.Kweb
@@ -36,15 +39,19 @@ import mu.KotlinLogging
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Repository
+import java.time.Duration
 import java.time.ZoneId
 import java.time.ZoneOffset
+
 
 class AdminServer(
     private val gitProperties: GitProperties,
     private val adminEntryService: AdminEntryService,
     private val s3Service: S3Service,
     private val markdownRenderer: MarkdownRenderer,
-    private val relatedEntriesMap: Map<String, List<String>>,
+    private val relatedEntriesRepository: RelatedEntriesRepository,
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
@@ -151,8 +158,7 @@ class AdminServer(
                                     url.value = "/entries/1"
                                 })
 
-                            val related = relatedEntriesMap[entry.path] ?: emptyList()
-                            val relatedEntries = adminEntryService.findByPaths(related)
+                            val relatedEntries = relatedEntriesRepository[entry.path]
                             ul() {
                                 relatedEntries.forEach { relatedEntry ->
                                     li() {
@@ -231,24 +237,44 @@ class AdminServer(
     }
 }
 
+@Repository
+class RelatedEntriesRepository(
+    private val relatedEntriesService: RelatedEntriesService,
+    private val adminEntryMapper: AdminEntryMapper,
+) {
+    private val cache = Caffeine.newBuilder()
+        .maximumSize(1)
+        .expireAfterWrite(Duration.ofHours(24))
+        .refreshAfterWrite(Duration.ofHours(24))
+        .build<String, Map<String, List<String>>> {
+            relatedEntriesService.getRelatedEntriesMap()
+        }
+
+    operator fun get(path: String): List<Entry> {
+        val relatedPaths = cache.get("DUMMY")[path]
+            ?: return emptyList()
+        return adminEntryMapper.findByPaths(relatedPaths)
+    }
+}
+
 @Configuration(proxyBeanMethods = false)
 class AdminKwebConfiguration {
     private val logger = KotlinLogging.logger {}
 
     @Bean(destroyMethod = "stop")
+    @Profile("!test")
     fun adminServer(
         gitProperties: GitProperties,
         adminEntryService: AdminEntryService,
         s3Service: S3Service,
-        relatedEntriesService: RelatedEntriesService,
+        relatedEntriesRepository: RelatedEntriesRepository,
     ): AdminServer {
         val start = System.currentTimeMillis()
-        val relatedEntries = relatedEntriesService.getRelatedEntriesMap()
         logger.info { "Calculated related entries in ${(System.currentTimeMillis() - start) / 1000} seconds" }
 
         return AdminServer(
             gitProperties, adminEntryService, s3Service, MarkdownRenderer.build(),
-            relatedEntries,
+            relatedEntriesRepository,
         )
     }
 }

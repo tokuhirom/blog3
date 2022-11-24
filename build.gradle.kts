@@ -45,6 +45,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.2")
+
     // NLP
     implementation("com.atilika.kuromoji:kuromoji-ipadic:0.9.0")
 
