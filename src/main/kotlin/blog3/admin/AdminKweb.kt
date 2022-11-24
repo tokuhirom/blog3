@@ -131,7 +131,7 @@ class AdminServer(
                     }
 
                     path("/entry/update/{path}") { params ->
-                        (params["path"] ?: error("Missing path")).map { encodedPath ->
+                        render(params["path"] ?: error("Missing path")) { encodedPath ->
                             val path = decodeURL(encodedPath)
                             logger.info { "Updating entry: $path" }
 
@@ -159,6 +159,10 @@ class AdminServer(
                                         // When moving the tab, we can't go to the page.
                                         a(href = "/entry/update/${encodeURL(relatedEntry.path)}")
                                             .text(relatedEntry.title)
+                                            .on.click {
+                                                println("ON CLICK!!!")
+                                                url.value = "/entry/update/${encodeURL(relatedEntry.path)}"
+                                            }
                                     }
                                 }
                             }
