@@ -4,6 +4,7 @@ import blog3.admin.form.EntryForm
 import blog3.admin.plugin.FileUploadPlugin
 import blog3.admin.plugin.PrismPlugin
 import blog3.admin.service.AdminEntryService
+import blog3.admin.service.RelatedEntriesService
 import blog3.decodeURL
 import blog3.encodeURL
 import blog3.entity.MarkdownRenderer
@@ -14,6 +15,7 @@ import kweb.a
 import kweb.div
 import kweb.i
 import kweb.input
+import kweb.li
 import kweb.p
 import kweb.plugins.fomanticUI.fomantic
 import kweb.plugins.fomanticUI.fomanticUIPlugin
@@ -28,6 +30,7 @@ import kweb.th
 import kweb.title
 import kweb.toInt
 import kweb.tr
+import kweb.ul
 import kweb.util.json
 import mu.KotlinLogging
 import org.springframework.boot.info.GitProperties
@@ -41,6 +44,7 @@ class AdminServer(
     private val adminEntryService: AdminEntryService,
     private val s3Service: S3Service,
     private val markdownRenderer: MarkdownRenderer,
+    private val relatedEntriesMap: Map<String, List<String>>,
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
@@ -127,24 +131,37 @@ class AdminServer(
                     }
 
                     path("/entry/update/{path}") { params ->
-                        val path = decodeURL((params["path"] ?: error("Missing path")).value)
-                        logger.info { "Updating entry: $path" }
+                        (params["path"] ?: error("Missing path")).map { encodedPath ->
+                            val path = decodeURL(encodedPath)
+                            logger.info { "Updating entry: $path" }
 
-                        val entry = adminEntryService.findByPath(path)
-                            ?: error("Unknown path: $path")
-                        render(
-                            EntryForm(
-                                localBackupManager,
-                                entry.path,
-                                entry.title,
-                                entry.body,
-                                entry.status,
-                                buttonTitle = "Update",
-                                markdownRenderer = markdownRenderer,
-                            ) { title, body, status ->
-                                adminEntryService.update(entry.path, title, body, status)
-                                url.value = "/entries/1"
-                            })
+                            val entry = adminEntryService.findByPath(path)
+                                ?: error("Unknown path: $path")
+                            render(
+                                EntryForm(
+                                    localBackupManager,
+                                    entry.path,
+                                    entry.title,
+                                    entry.body,
+                                    entry.status,
+                                    buttonTitle = "Update",
+                                    markdownRenderer = markdownRenderer,
+                                ) { title, body, status ->
+                                    adminEntryService.update(entry.path, title, body, status)
+                                    url.value = "/entries/1"
+                                })
+
+                            val related = relatedEntriesMap[entry.path] ?: emptyList()
+                            val relatedEntries = adminEntryService.findByPaths(related)
+                            ul() {
+                                relatedEntries.forEach { relatedEntry ->
+                                    li() {
+                                        // When moving the tab, we can't go to the page.
+                                        a(href = "/entry/update/${encodeURL(relatedEntry.path)}").text(relatedEntry.title)
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     path("/local-backup") {
@@ -211,14 +228,22 @@ class AdminServer(
 
 @Configuration(proxyBeanMethods = false)
 class AdminKwebConfiguration {
+    private val logger = KotlinLogging.logger {}
+
     @Bean(destroyMethod = "stop")
     fun adminServer(
         gitProperties: GitProperties,
         adminEntryService: AdminEntryService,
         s3Service: S3Service,
+        relatedEntriesService: RelatedEntriesService,
     ): AdminServer {
+        val start = System.currentTimeMillis()
+        val relatedEntries = relatedEntriesService.getRelatedEntriesMap()
+        logger.info { "Calculated related entries in ${(System.currentTimeMillis() - start) / 1000} seconds" }
+
         return AdminServer(
-            gitProperties, adminEntryService, s3Service, MarkdownRenderer.build()
+            gitProperties, adminEntryService, s3Service, MarkdownRenderer.build(),
+            relatedEntries,
         )
     }
 }

@@ -45,6 +45,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    // NLP
+    implementation("com.atilika.kuromoji:kuromoji-ipadic:0.9.0")
 
     // markdown
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
@@ -63,8 +65,10 @@ dependencies {
     // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.25")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mysql")
+    testImplementation("io.mockk:mockk-jvm:1.13.2")
 }
 
 tasks.withType<KotlinCompile> {
