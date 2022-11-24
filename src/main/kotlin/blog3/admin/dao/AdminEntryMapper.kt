@@ -66,4 +66,25 @@ interface AdminEntryMapper {
         """
     )
     fun create(path: String, title: String, body: String, status: String)
+
+    @Select(
+        """
+            SELECT * FROM entry WHERE format=#{format}
+        """
+    )
+    fun findByFormat(format: String): List<Entry>
+
+    @Select(
+        """
+            <script>
+                select *
+                from entry
+                where path in
+                <foreach item="item" collection="paths" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </script>
+        """
+    )
+    fun findByPaths(paths: List<String>): List<Entry>
 }

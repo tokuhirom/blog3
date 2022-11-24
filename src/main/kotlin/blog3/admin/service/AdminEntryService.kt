@@ -21,6 +21,14 @@ class AdminEntryService(
         return adminEntryMapper.findByPath(path)
     }
 
+    fun findByPaths(paths: List<String>): List<Entry> {
+        return if (paths.isEmpty()) {
+            emptyList()
+        } else {
+            adminEntryMapper.findByPaths(paths)
+        }
+    }
+
     fun findByKeyword(keyword: String, page: Int, limit: Int): List<Entry> {
         val offset = (page - 1) * limit
         return adminEntryMapper.findByKeyword(keyword, limit, offset)
@@ -51,5 +59,9 @@ class AdminEntryService(
             body = body,
             status = status
         )
+    }
+
+    fun findByFormat(format: String): List<Entry> {
+        return adminEntryMapper.findByFormat(format)
     }
 }
