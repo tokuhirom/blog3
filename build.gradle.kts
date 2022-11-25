@@ -40,6 +40,8 @@ dependencies {
 
     implementation("io.kweb:kweb-core:1.2.0")
 
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
+
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

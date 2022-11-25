@@ -2,6 +2,7 @@ package blog3.admin
 
 import blog3.admin.dao.AdminEntryMapper
 import blog3.admin.form.EntryForm
+import blog3.admin.plugin.EasyMDEPlugin
 import blog3.admin.plugin.FileUploadPlugin
 import blog3.admin.plugin.PrismPlugin
 import blog3.admin.service.AdminEntryService
@@ -9,9 +10,7 @@ import blog3.admin.service.RelatedEntriesService
 import blog3.decodeURL
 import blog3.encodeURL
 import blog3.entity.Entry
-import blog3.entity.MarkdownRenderer
 import com.github.benmanes.caffeine.cache.Caffeine
-import kotlinx.coroutines.launch
 import kweb.InputType
 import kweb.Kweb
 import kweb.a
@@ -50,19 +49,17 @@ class AdminServer(
     private val gitProperties: GitProperties,
     private val adminEntryService: AdminEntryService,
     private val s3Service: S3Service,
-    private val markdownRenderer: MarkdownRenderer,
     private val relatedEntriesRepository: RelatedEntriesRepository,
 ) {
     private val logger = KotlinLogging.logger {}
-    private val localBackupManager = LocalBackupManager()
-    private val staticFileCacheManager = StaticFileCacheManager()
 
     private val kweb = Kweb(
         port = 8280, debug = true, plugins = listOf(
             fomanticUIPlugin,
             StaticFilesPlugin(ResourceFolder("static"), "static"),
             FileUploadPlugin("/upload_attachments", s3Service),
-            PrismPlugin()
+            PrismPlugin(),
+            EasyMDEPlugin(),
         )
     ) {
         doc.head {
@@ -70,8 +67,6 @@ class AdminServer(
             title().text("blog admin")
         }
         doc.body {
-            element("script", mapOf("src" to staticFileCacheManager.addTimestamp("/static/js/admin.js")))
-
             div(fomantic.ui.container) {
 
                 div(fomantic.ui.menu) {
@@ -79,7 +74,6 @@ class AdminServer(
                         a(href = "/entries/1").text("Blog admin")
                     }
                     a(fomantic.item, href = "/entry/create").text("Create new entry")
-                    a(fomantic.item, href = "/local-backup").text("Local backup")
                 }
 
                 route {
@@ -126,9 +120,7 @@ class AdminServer(
                     path("/entry/create") {
                         render(
                             EntryForm(
-                                localBackupManager,
                                 buttonTitle = "Create",
-                                markdownRenderer = markdownRenderer,
                             ) { title, body, status ->
                                 logger.info { "Creating entry: title=$title body=$body status=$status" }
                                 adminEntryService.create(title, body, status)
@@ -146,13 +138,11 @@ class AdminServer(
                                 ?: error("Unknown path: $path")
                             render(
                                 EntryForm(
-                                    localBackupManager,
                                     entry.path,
                                     entry.title,
                                     entry.body,
                                     entry.status,
                                     buttonTitle = "Update",
-                                    markdownRenderer = markdownRenderer,
                                 ) { title, body, status ->
                                     adminEntryService.update(entry.path, title, body, status)
                                     url.value = "/entries/1"
@@ -175,35 +165,6 @@ class AdminServer(
                         }
                     }
 
-                    path("/local-backup") {
-                        table(fomantic.ui.table) {
-                            tr {
-                                th().text("path")
-                                th().text("title")
-                                th().text("body")
-                            }
-
-                            elementScope().launch {
-                                localBackupManager.loadOnDemand(browser).forEach { item ->
-                                    tr {
-                                        td {
-                                            if (item.path != null) {
-                                                a(href = "/entry/update/${encodeURL(item.path)}").text(item.path)
-                                            }
-                                        }
-                                        td {
-                                            p().text(item.title)
-                                        }
-                                        td {
-                                            element("pre") {
-                                                it.text(item.body)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                     path("/s3/buckets") {
                         table(fomantic.ui.table) {
                             tr {
@@ -242,12 +203,16 @@ class RelatedEntriesRepository(
     private val relatedEntriesService: RelatedEntriesService,
     private val adminEntryMapper: AdminEntryMapper,
 ) {
+    private val logger = KotlinLogging.logger {}
     private val cache = Caffeine.newBuilder()
         .maximumSize(1)
         .expireAfterWrite(Duration.ofHours(24))
         .refreshAfterWrite(Duration.ofHours(24))
         .build<String, Map<String, List<String>>> {
-            relatedEntriesService.getRelatedEntriesMap()
+            val start = System.currentTimeMillis()
+            val result = relatedEntriesService.getRelatedEntriesMap()
+            logger.info { "Calculated related entries in ${(System.currentTimeMillis() - start) / 1000} seconds" }
+            result
         }
 
     operator fun get(path: String): List<Entry> {
@@ -259,8 +224,6 @@ class RelatedEntriesRepository(
 
 @Configuration(proxyBeanMethods = false)
 class AdminKwebConfiguration {
-    private val logger = KotlinLogging.logger {}
-
     @Bean(destroyMethod = "stop")
     @Profile("!test")
     fun adminServer(
@@ -269,12 +232,8 @@ class AdminKwebConfiguration {
         s3Service: S3Service,
         relatedEntriesRepository: RelatedEntriesRepository,
     ): AdminServer {
-        val start = System.currentTimeMillis()
-        logger.info { "Calculated related entries in ${(System.currentTimeMillis() - start) / 1000} seconds" }
-
         return AdminServer(
-            gitProperties, adminEntryService, s3Service, MarkdownRenderer.build(),
-            relatedEntriesRepository,
+            gitProperties, adminEntryService, s3Service, relatedEntriesRepository,
         )
     }
 }

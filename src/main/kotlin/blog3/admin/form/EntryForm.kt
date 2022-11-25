@@ -1,12 +1,11 @@
 package blog3.admin.form
 
-import blog3.admin.LocalBackupEntry
-import blog3.admin.LocalBackupManager
-import blog3.entity.MarkdownRenderer
+import blog3.admin.plugin.easyMDE
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kweb.ButtonType
 import kweb.Element
 import kweb.ElementCreator
-import kweb.a
 import kweb.button
 import kweb.div
 import kweb.form
@@ -14,27 +13,23 @@ import kweb.input
 import kweb.option
 import kweb.plugins.fomanticUI.fomantic
 import kweb.select
-import kweb.set
 import kweb.state.Component
 import kweb.state.KVar
 import kweb.textArea
 import kweb.util.json
 
 class EntryForm(
-    private val localBackupManager: LocalBackupManager,
     private val path: String? = null,
     private val initialTitle: String? = null,
     private val initialBody: String? = null,
     private val initialStatus: String = "draft", // TODO make this enum
     private val buttonTitle: String,
-    private val markdownRenderer: MarkdownRenderer,
     private val onSubmit: (title: String, body: String, status: String) -> Unit,
 ) : Component {
     @SuppressWarnings("LongMethod")
     override fun render(elementCreator: ElementCreator<Element>) {
         with(elementCreator) {
             lateinit var titleVar: KVar<String>
-            lateinit var bodyVar: KVar<String>
             lateinit var statusVar: KVar<String>
 
             val form = form(fomantic.ui.form) {
@@ -46,25 +41,28 @@ class EntryForm(
                     ).value
                 }
 
-                div(fomantic.ui.top.attached.tabular.menu) {
-                    a(fomantic.item.active.set("data-tab", "raw".json)).text("Raw")
-                    a(fomantic.item.set("data-tab", "preview".json)).text("Preview")
-                }
                 div(fomantic.field) {
-                    div(fomantic.ui.bottom.attached.active.tab.segment.set("data-tab", "raw".json)) {
-                        val textArea = textArea(required = true, cols = 80, rows = 20)
-                        textArea.text(initialBody.orEmpty())
+                    val textArea = textArea(cols = 80, rows = 20)
+                    textArea.text(initialBody.orEmpty())
+                    textArea.easyMDE(
+                        JsonObject(
+                            mapOf(
+                                "spellChecker" to false.json,
+                                "autosave" to JsonObject(
+                                    mapOf(
+                                        "enabled" to true.json,
+                                        "uniqueId" to (path ?: "create").json,
+                                    )
+                                ),
+                                "tabSize" to 4.json,
 
-                        browser.callJsFunction("makeImageUploadable({});", textArea.id.json)
-
-                        bodyVar = textArea.value
-                        bodyVar.value = initialBody.orEmpty()
-                    }
-                    div(fomantic.ui.bottom.attached.tab.segment.set("data-tab", "preview".json)) {
-                        div().innerHTML(bodyVar.map { markdownRenderer.render(it) })
-                    }
+                                "uploadImage" to true.json,
+                                "imageUploadEndpoint" to "/upload_attachments".json,
+                                "imagePathAbsolute" to true.json,
+                            )
+                        )
+                    )
                 }
-                element("script").text("$('.menu .item').tab()")
 
                 div(fomantic.field) {
                     statusVar = select(required = true) {
@@ -83,18 +81,10 @@ class EntryForm(
                     button(fomantic.button, type = ButtonType.submit).text(buttonTitle)
                 }
             }
-            form.on(preventDefault = true).submit {
-                println("SUBMIT! title=${titleVar.value} body=${bodyVar.value} status=${statusVar.value}")
-                onSubmit(titleVar.value, bodyVar.value, statusVar.value)
-            }
-
-            listOf(titleVar, bodyVar).forEach {
-                it.addListener { _, _ ->
-                    localBackupManager.save(
-                        browser,
-                        LocalBackupEntry(path, titleVar.value, bodyVar.value, statusVar.value)
-                    )
-                }
+            form.on(preventDefault = true, retrieveJs = "window.easyMDE.value()").submit { event ->
+                val body = event.retrieved.jsonPrimitive.content
+                println("SUBMIT! title=${titleVar.value} body=${body} status=${statusVar.value}")
+                onSubmit(titleVar.value, body, statusVar.value)
             }
         }
     }
