@@ -2,6 +2,7 @@ package blog3.admin
 
 import blog3.admin.dao.AdminEntryMapper
 import blog3.admin.form.EntryForm
+import blog3.admin.plugin.EasyMDEPlugin
 import blog3.admin.plugin.FileUploadPlugin
 import blog3.admin.plugin.PrismPlugin
 import blog3.admin.service.AdminEntryService
@@ -55,14 +56,14 @@ class AdminServer(
 ) {
     private val logger = KotlinLogging.logger {}
     private val localBackupManager = LocalBackupManager()
-    private val staticFileCacheManager = StaticFileCacheManager()
 
     private val kweb = Kweb(
         port = 8280, debug = true, plugins = listOf(
             fomanticUIPlugin,
             StaticFilesPlugin(ResourceFolder("static"), "static"),
             FileUploadPlugin("/upload_attachments", s3Service),
-            PrismPlugin()
+            PrismPlugin(),
+            EasyMDEPlugin(),
         )
     ) {
         doc.head {
@@ -70,8 +71,6 @@ class AdminServer(
             title().text("blog admin")
         }
         doc.body {
-            element("script", mapOf("src" to staticFileCacheManager.addTimestamp("/static/js/admin.js")))
-
             div(fomantic.ui.container) {
 
                 div(fomantic.ui.menu) {
