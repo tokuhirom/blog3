@@ -1,8 +1,6 @@
 package blog3.admin.form
 
-import blog3.admin.LocalBackupManager
 import blog3.admin.plugin.easyMDE
-import blog3.entity.MarkdownRenderer
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kweb.ButtonType
@@ -21,13 +19,11 @@ import kweb.textArea
 import kweb.util.json
 
 class EntryForm(
-    private val localBackupManager: LocalBackupManager,
     private val path: String? = null,
     private val initialTitle: String? = null,
     private val initialBody: String? = null,
     private val initialStatus: String = "draft", // TODO make this enum
     private val buttonTitle: String,
-    private val markdownRenderer: MarkdownRenderer,
     private val onSubmit: (title: String, body: String, status: String) -> Unit,
 ) : Component {
     @SuppressWarnings("LongMethod")
