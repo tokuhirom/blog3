@@ -56,7 +56,7 @@ dependencies {
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
 
     // mybatis, mysql
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.0")
     runtimeOnly("mysql:mysql-connector-java")
 
     implementation("io.github.microutils:kotlin-logging:3.0.4")
