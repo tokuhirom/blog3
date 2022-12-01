@@ -14,7 +14,7 @@ plugins {
 
 group = "me.geso"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 dependencyManagement {
     imports {
@@ -78,7 +78,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
@@ -96,7 +96,10 @@ tasks.withType<Test> {
 }
 
 tasks.withType<BootBuildImage> {
-    environment = mapOf("BPL_JVM_THREAD_COUNT" to "30")
+    environment = mapOf(
+        "BPL_JVM_THREAD_COUNT" to "30",
+        "BP_JVM_VERSION" to "17",
+    )
 }
 
 detekt {
