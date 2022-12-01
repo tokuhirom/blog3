@@ -16,6 +16,7 @@ import kweb.state.KVar
 import kweb.textArea
 import kweb.util.json
 
+@SuppressWarnings("LongParameterList")
 fun Component.entryForm(
     path: String? = null,
     initialTitle: String? = null,
