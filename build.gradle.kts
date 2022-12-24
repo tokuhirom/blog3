@@ -38,7 +38,7 @@ dependencies {
 
     implementation("com.amazonaws:aws-java-sdk-s3")
 
-    implementation("io.kweb:kweb-core:1.3.1")
+    implementation("io.kweb:kweb-core:1.3.2")
 
     implementation("javax.xml.bind:jaxb-api:2.3.1")
 
