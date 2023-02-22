@@ -62,7 +62,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     // feed generation
-    implementation("com.rometools:rome:1.18.0")
+    implementation("com.rometools:rome:1.19.0")
 
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
