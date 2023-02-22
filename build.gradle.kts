@@ -59,7 +59,7 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")
     runtimeOnly("mysql:mysql-connector-java")
 
-    implementation("io.github.microutils:kotlin-logging:3.0.4")
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     // feed generation
     implementation("com.rometools:rome:1.18.0")
