@@ -53,7 +53,7 @@ dependencies {
     implementation("com.atilika.kuromoji:kuromoji-ipadic:0.9.0")
 
     // markdown
-    implementation("com.vladsch.flexmark:flexmark-all:0.64.2")
+    implementation("com.vladsch.flexmark:flexmark-all:0.64.4")
 
     // mybatis, mysql
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")
