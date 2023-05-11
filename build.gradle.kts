@@ -18,7 +18,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 dependencyManagement {
     imports {
-        mavenBom("org.testcontainers:testcontainers-bom:1.18.0")
+        mavenBom("org.testcontainers:testcontainers-bom:1.18.1")
         mavenBom("io.ktor:ktor-bom:2.3.0")
         mavenBom("com.amazonaws:aws-java-sdk-bom:1.12.467")
     }
