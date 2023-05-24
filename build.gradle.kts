@@ -9,7 +9,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.21"
     kotlin("plugin.serialization") version "1.8.21"
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.0"
 }
 
 group = "me.geso"
