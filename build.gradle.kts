@@ -97,9 +97,11 @@ tasks.withType<Test> {
 }
 
 tasks.withType<BootBuildImage> {
-    environment = mapOf(
-        "BPL_JVM_THREAD_COUNT" to "30",
-        "BP_JVM_VERSION" to "17",
+    environment.set(
+        mapOf(
+            "BPL_JVM_THREAD_COUNT" to "30",
+            "BP_JVM_VERSION" to "17",
+        )
     )
 }
 
