@@ -7,13 +7,11 @@ import com.amazonaws.services.s3.model.Bucket
 import com.amazonaws.services.s3.model.ObjectMetadata
 import mu.two.KotlinLogging
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.InputStream
 
-@ConstructorBinding
 @ConfigurationProperties("s3")
 data class S3ConfigurationProperties(
     val region: String = "ap-northeast-1",
