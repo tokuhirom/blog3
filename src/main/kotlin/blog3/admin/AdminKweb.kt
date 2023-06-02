@@ -34,7 +34,7 @@ import kweb.toInt
 import kweb.tr
 import kweb.ul
 import kweb.util.json
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import org.springframework.boot.info.GitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

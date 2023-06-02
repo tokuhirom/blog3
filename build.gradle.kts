@@ -10,6 +10,7 @@ plugins {
     kotlin("plugin.serialization") version "1.8.21"
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
+    `project-report`
 }
 
 group = "me.geso"
@@ -59,7 +60,7 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")
     runtimeOnly("mysql:mysql-connector-java")
 
-    implementation("io.github.microutils:kotlin-logging:3.0.5")
+    implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
 
     // feed generation
     implementation("com.rometools:rome:2.1.0")
