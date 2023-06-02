@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
-    id("org.springframework.boot") version "2.7.7"
+    id("org.springframework.boot") version "2.7.12"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
@@ -58,7 +58,7 @@ dependencies {
 
     // mybatis, mysql
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1")
-    runtimeOnly("mysql:mysql-connector-java")
+    runtimeOnly("com.mysql:mysql-connector-j")
 
     implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
 
