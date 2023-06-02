@@ -16,7 +16,7 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.post
 import kweb.plugins.KwebPlugin
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
