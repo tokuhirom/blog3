@@ -7,6 +7,7 @@ import blog3.admin.plugin.FileUploadPlugin
 import blog3.admin.plugin.PrismPlugin
 import blog3.admin.service.AdminEntryService
 import blog3.admin.service.RelatedEntriesService
+import blog3.admin.service.S3Service
 import blog3.decodeURL
 import blog3.encodeURL
 import blog3.entity.Entry
