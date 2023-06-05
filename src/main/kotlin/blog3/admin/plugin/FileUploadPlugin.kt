@@ -1,6 +1,6 @@
 package blog3.admin.plugin
 
-import blog3.admin.S3Service
+import blog3.admin.service.S3Service
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder

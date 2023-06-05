@@ -1,4 +1,4 @@
-package blog3.admin
+package blog3.admin.service
 
 import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
