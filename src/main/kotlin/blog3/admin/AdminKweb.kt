@@ -34,54 +34,7 @@ class AdminServer(
 //        doc.body {
 //            div(fomantic.ui.container) {
 //
-//                div(fomantic.ui.menu) {
-//                    div(fomantic.header.item) {
-//                        a(href = "/entries/1").text("Blog admin")
-//                    }
-//                    a(fomantic.item, href = "/entry/create").text("Create new entry")
-//                }
-//
 //                route {
-//                    // list of entries
-//                    path("/") {
-//                        url.value = "/entries/1"
-//                    }
-//                    path("/entries/{page}") { params ->
-//                        val page = params.getValue("page").toInt()
-//                        val limit = 20
-//
-//                        lateinit var searchVar: KVar<String>
-//                        p() {
-//                            i(fomantic.icon.search)
-//                            searchVar = input(type = InputType.text).value
-//                        }
-//
-//                        render(searchVar) { keyword ->
-//                            val entries = if (keyword.isNotEmpty()) {
-//                                adminEntryService.findByKeyword(keyword, page.value, limit)
-//                            } else {
-//                                adminEntryService.findEntries(page.value, limit)
-//                            }
-//
-//                            table(fomantic.ui.table) {
-//                                tr {
-//                                    th().text("Title")
-//                                    th().text("Status")
-//                                    th().text("Created")
-//                                }
-//                                entries.forEach { entry ->
-//                                    tr {
-//                                        td {
-//                                            a(href = "/entry/update/${encodeURL(entry.path)}").text(entry.title)
-//                                        }
-//                                        td().text(entry.status)
-//                                        td().text(entry.createdAt.atZone(ZoneId.systemDefault()).toString())
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//
 //                    path("/entry/create") {
 //                        entryForm(
 //                            buttonTitle = "Create",

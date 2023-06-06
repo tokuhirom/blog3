@@ -1,5 +1,6 @@
 package blog3.admin.view.parts
 
+import blog3.admin.view.js.easyMDEHeader
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
@@ -50,6 +51,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
                 rel = "stylesheet",
             )
             link(href = "/css/admin.css", rel = "stylesheet")
+
+            easyMDEHeader()
         }
         body {
             div {

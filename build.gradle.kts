@@ -46,6 +46,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
 
     // NLP
