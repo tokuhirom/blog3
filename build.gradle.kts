@@ -36,10 +36,10 @@ dependencies {
     implementation("io.ktor:ktor-server-html-builder")
     implementation("io.ktor:ktor-server-default-headers")
     implementation("io.ktor:ktor-server-call-logging")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm")
 
     implementation("com.amazonaws:aws-java-sdk-s3")
-
-    implementation("io.kweb:kweb-core:1.4.6")
 
     implementation("javax.xml.bind:jaxb-api:2.3.1")
 
@@ -47,6 +47,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
 

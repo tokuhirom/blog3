@@ -87,8 +87,12 @@ class UserSideServer(
                 call.respondText(feedString, feedContentType)
             }
         }
-    }.start(wait = false)
+    }
 
+
+    fun start(wait: Boolean) {
+        server.start(wait = wait)
+    }
 
     fun stop() {
         server.stop(1, 1, TimeUnit.SECONDS)
