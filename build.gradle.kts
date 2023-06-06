@@ -36,6 +36,8 @@ dependencies {
     implementation("io.ktor:ktor-server-html-builder")
     implementation("io.ktor:ktor-server-default-headers")
     implementation("io.ktor:ktor-server-call-logging")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm")
 
     implementation("com.amazonaws:aws-java-sdk-s3")
 
