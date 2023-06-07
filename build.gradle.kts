@@ -4,7 +4,6 @@ import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     id("org.springframework.boot") version "3.1.0"
-    id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
     kotlin("plugin.serialization") version "1.8.21"
@@ -17,19 +16,16 @@ group = "me.geso"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:1.18.3")
-        mavenBom("io.ktor:ktor-bom:2.3.1")
-        mavenBom("com.amazonaws:aws-java-sdk-bom:1.12.483")
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation(platform("org.testcontainers:testcontainers-bom:1.18.3"))
+    implementation(platform("io.ktor:ktor-bom:2.3.1"))
+    implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.483"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.1.0"))
+
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-servlet")
@@ -60,14 +56,14 @@ dependencies {
 
     // mybatis, mysql
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
-    runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly("com.mysql:mysql-connector-j:8.0.33")
 
     implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
 
     // feed generation
     implementation("com.rometools:rome:2.1.0")
 
-    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus:1.11.0")
 
     // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -108,7 +104,7 @@ tasks.withType<BootBuildImage> {
 }
 
 detekt {
-    config = files("config/detekt/detekt.yml")
+    config.setFrom(files("config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
 }
 
