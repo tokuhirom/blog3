@@ -10,9 +10,7 @@ import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.engine.stop
-import io.ktor.server.http.content.resources
-import io.ktor.server.http.content.static
-import io.ktor.server.http.content.staticBasePackage
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.NotFoundException
@@ -47,10 +45,7 @@ class UserSideServer(
         val limit = 20
 
         routing {
-            static("/css") {
-                staticBasePackage = "static"
-                resources("css")
-            }
+            staticResources("/css", "static.css")
 
             get("/") {
                 val page = (call.request.queryParameters["page"] ?: "1").toInt()
