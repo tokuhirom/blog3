@@ -56,7 +56,7 @@ dependencies {
 
     // mybatis, mysql
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2")
-    runtimeOnly("com.mysql:mysql-connector-j:8.0.33")
+    runtimeOnly("com.mysql:mysql-connector-j:8.1.0")
 
     implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
 
