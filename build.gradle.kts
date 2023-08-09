@@ -46,7 +46,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.7")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
     // NLP
     implementation("com.atilika.kuromoji:kuromoji-ipadic:0.9.0")
