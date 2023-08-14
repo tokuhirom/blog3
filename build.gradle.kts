@@ -23,7 +23,7 @@ repositories {
 dependencies {
     implementation(platform("org.testcontainers:testcontainers-bom:1.18.3"))
     implementation(platform("io.ktor:ktor-bom:2.3.3"))
-    implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.528"))
+    implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.529"))
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.1.2"))
 
     implementation("io.ktor:ktor-server-core-jvm")
