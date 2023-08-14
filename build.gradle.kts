@@ -71,7 +71,7 @@ dependencies {
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.26.1")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mysql")
-    testImplementation("io.mockk:mockk-jvm:1.13.5")
+    testImplementation("io.mockk:mockk-jvm:1.13.7")
 }
 
 tasks.withType<KotlinCompile> {
