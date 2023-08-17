@@ -41,7 +41,11 @@ import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 
-fun Application.setupAdmin(adminEntryService: AdminEntryService, gitProperties: GitProperties, s3Service: S3Service) {
+fun Application.setupAdmin(
+    adminEntryService: AdminEntryService,
+    gitProperties: GitProperties,
+    s3Service: S3Service
+) {
     val logger = KotlinLogging.logger {}
     val keyPrefixFormatter = DateTimeFormatter.ofPattern("YYYYMMdd-HHmmss")
 
