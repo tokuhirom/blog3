@@ -26,6 +26,7 @@ dependencies {
     implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.531"))
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.1.2"))
 
+    implementation("io.ktor:ktor-server-auth")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-servlet")
