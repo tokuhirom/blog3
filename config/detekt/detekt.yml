@@ -9,3 +9,5 @@ style:
 complexity:
   LongParameterList:
     constructorThreshold: 10
+  LongMethod:
+    threshold: 200
