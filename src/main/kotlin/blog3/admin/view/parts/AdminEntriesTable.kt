@@ -19,7 +19,7 @@ internal fun DIV.adminEntriesTable(entries: List<Entry>) {
         entries.forEach { entry ->
             tr {
                 td {
-                    a(href = "/entry/${entry.path}") {
+                    a(href = "/admin/entry/${entry.path}") {
                         +entry.title
                     }
                 }

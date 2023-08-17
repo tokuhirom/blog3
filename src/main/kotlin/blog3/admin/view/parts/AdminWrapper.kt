@@ -50,7 +50,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
                 href = "https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css",
                 rel = "stylesheet",
             )
-            link(href = "/css/admin.css", rel = "stylesheet")
+            link(href = "/admin/css/admin.css", rel = "stylesheet")
 
             easyMDEHeader()
         }
@@ -62,7 +62,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
                     nav(classes = "navbar navbar-expand-lg bg-body-tertiary") {
                         div(classes = "container-fluid") {
                             a(classes = "navbar-brand") {
-                                href = "/"
+                                href = "/admin/"
                                 span {
                                     +"Blog admin"
                                 }
@@ -72,7 +72,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
                                 ul(classes = "navbar-nav me-auto mb-2 mb-lg-0") {
                                     li(classes = "nav-item") {
                                         a(classes = "nav-link active") {
-                                            href = "/entry/create"
+                                            href = "/admin/entry/create"
                                             +"Create new entry"
                                         }
                                     }

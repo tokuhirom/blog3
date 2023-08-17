@@ -9,7 +9,7 @@ import kotlinx.html.label
 import kotlinx.html.textInput
 
 internal fun DIV.searchBox(query: String = "") {
-    form(method = FormMethod.get, action = "/search") {
+    form(method = FormMethod.get, action = "/admin/search") {
         label {
             textInput(name = "q") { value = query }
             button(type = ButtonType.submit, classes = "btn btn-primary") { +"Search" }

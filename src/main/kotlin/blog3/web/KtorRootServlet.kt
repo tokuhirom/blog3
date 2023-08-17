@@ -1,5 +1,8 @@
 package blog3.web
 
+import blog3.admin.service.AdminEntryService
+import blog3.admin.service.S3Service
+import blog3.admin.setupAdmin
 import blog3.web.service.FeedService
 import blog3.web.service.PublicEntryService
 import blog3.web.view.renderIndexPage
@@ -32,6 +35,8 @@ class UserSideServer(
     private val gitProperties: GitProperties,
     private val publicEntryService: PublicEntryService,
     private val feedService: FeedService,
+    private val adminEntryService: AdminEntryService,
+    private val s3Service: S3Service,
 ) {
     private val feedContentType = ContentType.parse("application/rss+xml;charset=UTF-8")
 
@@ -82,6 +87,8 @@ class UserSideServer(
                 call.respondText(feedString, feedContentType)
             }
         }
+
+        setupAdmin(adminEntryService, gitProperties, s3Service)
     }
 
 
@@ -102,8 +109,10 @@ class KtorRootConfiguration {
     fun userSideServer(
         gitProperties: GitProperties,
         publicEntryService: PublicEntryService,
-        feedService: FeedService
+        feedService: FeedService,
+        adminEntryService: AdminEntryService,
+        s3Service: S3Service
     ): UserSideServer {
-        return UserSideServer(gitProperties, publicEntryService, feedService)
+        return UserSideServer(gitProperties, publicEntryService, feedService, adminEntryService, s3Service)
     }
 }

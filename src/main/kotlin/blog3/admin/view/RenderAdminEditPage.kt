@@ -22,7 +22,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderAdminEditPage(
     adminWrapper("tokuhirom's blog", gitProperties) {
         val textAreaId = "entry-update-textarea-" + entry.path
 
-        form(action = "/entry/update", method = FormMethod.post) {
+        form(action = "/admin/entry/update", method = FormMethod.post) {
             textInput(name = "title") { value = entry.title }
             textArea(rows = "20", cols = "80") {
                 name = "body"
