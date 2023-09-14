@@ -18,7 +18,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderAdminCreatePage(
 ) {
     adminWrapper("tokuhirom's blog", gitProperties) {
         val textAreaId = "entry-create-textarea"
-        form(action = "/entry/create", method = FormMethod.post) {
+        form(action = "/admin/entry/create", method = FormMethod.post) {
             textInput(name = "title")
             textArea(rows = "20", cols = "80") {
                 name = "body"
