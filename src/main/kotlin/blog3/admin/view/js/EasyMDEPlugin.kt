@@ -36,7 +36,7 @@ internal fun DIV.easyMDEHook(id: String, path: String?) {
                         "tabSize" to JsonPrimitive(4),
 
                         "uploadImage" to JsonPrimitive(true),
-                        "imageUploadEndpoint" to JsonPrimitive("/upload_attachments"),
+                        "imageUploadEndpoint" to JsonPrimitive("/admin/upload_attachments"),
                         "imagePathAbsolute" to JsonPrimitive(true),
                     )
                 ).toString(),
