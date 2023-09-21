@@ -68,7 +68,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
                                 }
                             }
 
-                            div(classes = "collapse navbar-collapse") {
+                            div() {
                                 ul(classes = "navbar-nav me-auto mb-2 mb-lg-0") {
                                     li(classes = "nav-item") {
                                         a(classes = "nav-link active") {
