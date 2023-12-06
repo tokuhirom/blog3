@@ -69,7 +69,7 @@ dependencies {
     // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.27.0")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.0")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mysql")
     testImplementation("io.mockk:mockk-jvm:1.13.8")
