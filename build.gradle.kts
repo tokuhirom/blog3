@@ -64,7 +64,7 @@ dependencies {
     // feed generation
     implementation("com.rometools:rome:2.1.0")
 
-    runtimeOnly("io.micrometer:micrometer-registry-prometheus:1.12.1")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus:1.12.2")
 
     // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
