@@ -9,7 +9,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderSingleEntryPage(
     entry: Entry,
     gitProperties: GitProperties,
 ) {
-    publicWrapper("tokuhirom's blog", gitProperties) {
+    publicWrapper("${entry.title} - tokuhirom's blog", gitProperties) {
         renderEntry(entry)
         renderAd()
     }
