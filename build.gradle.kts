@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
-    id("org.springframework.boot") version "3.2.2"
+    id("org.springframework.boot") version "3.2.3"
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
     kotlin("plugin.serialization") version "1.9.22"
@@ -24,7 +24,7 @@ dependencies {
     implementation(platform("org.testcontainers:testcontainers-bom:1.19.6"))
     implementation(platform("io.ktor:ktor-bom:2.3.8"))
     implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.664"))
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.2"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.3"))
 
     implementation("io.ktor:ktor-server-auth")
     implementation("io.ktor:ktor-server-core-jvm")
