@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.serialization") version "1.9.23"
-    id("com.gorylenko.gradle-git-properties") version "2.4.1"
+    id("com.gorylenko.gradle-git-properties") version "2.4.2"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
     `project-report`
 }
