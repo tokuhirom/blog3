@@ -6,7 +6,7 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.24"
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
     `project-report`
