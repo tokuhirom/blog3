@@ -73,7 +73,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
                 id = "container"
                 h1(classes = "title") {
                     a(href = "/") {
-                        +"Blog"
+                        +"tokuhirom's Blog"
                     }
                 }
                 form(method = FormMethod.get, action = "/search") {
