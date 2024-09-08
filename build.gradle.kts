@@ -8,7 +8,7 @@ plugins {
     kotlin("plugin.spring") version "2.0.20"
     kotlin("plugin.serialization") version "2.0.20"
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
-    id("io.gitlab.arturbosch.detekt") version "1.23.6"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
     `project-report`
 }
 
