@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     id("org.springframework.boot") version "3.4.0"
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.1.0"
     kotlin("plugin.spring") version "2.0.21"
     kotlin("plugin.serialization") version "2.0.21"
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
