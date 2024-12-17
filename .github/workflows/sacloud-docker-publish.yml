@@ -33,12 +33,9 @@ jobs:
           username: uploader
           password: ${{ secrets.SACLOUD_CONTAINER_REGISTRY_PASSWORD }}
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
       - name: Build docker image
         run: ./gradlew bootBuildImage --imageName=tokuhirom-priv.sakuracr.jp/tokuhirom/blog3
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
+      # Push the image
       - name: Build and push Docker image
         run: docker push tokuhirom-priv.sakuracr.jp/tokuhirom/blog3:latest
