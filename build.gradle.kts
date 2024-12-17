@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
@@ -14,7 +15,7 @@ plugins {
 
 group = "me.geso"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
@@ -68,6 +69,7 @@ dependencies {
 
     // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
     testImplementation("org.testcontainers:junit-jupiter")
@@ -75,10 +77,10 @@ dependencies {
     testImplementation("io.mockk:mockk-jvm:1.13.13")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
@@ -99,7 +101,7 @@ tasks.withType<BootBuildImage> {
     environment.set(
         mapOf(
             "BPL_JVM_THREAD_COUNT" to "30",
-            "BP_JVM_VERSION" to "17",
+            "BP_JVM_VERSION" to "21",
         ),
     )
 }
