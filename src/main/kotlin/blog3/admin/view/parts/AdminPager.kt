@@ -6,7 +6,10 @@ import kotlinx.html.li
 import kotlinx.html.nav
 import kotlinx.html.ul
 
-internal fun DIV.adminPager(path: String, page: Int) {
+internal fun DIV.adminPager(
+    path: String,
+    page: Int,
+) {
     nav {
         attributes["aria-label"] = "Page navigation"
         ul(classes = "pagination") {

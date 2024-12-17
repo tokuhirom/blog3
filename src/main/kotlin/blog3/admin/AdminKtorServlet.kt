@@ -10,11 +10,10 @@ import blog3.admin.view.renderAdminSearchPage
 import com.amazonaws.services.s3.model.ObjectMetadata
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
-import io.ktor.http.content.readAllParts
+import io.ktor.http.content.asFlow
 import io.ktor.http.content.streamProvider
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.UserIdPrincipal
@@ -34,17 +33,17 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.util.getOrFail
+import kotlinx.coroutines.flow.firstOrNull
 import mu.two.KotlinLogging
 import org.springframework.boot.info.GitProperties
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-
 fun Application.setupAdmin(
     adminEntryService: AdminEntryService,
     gitProperties: GitProperties,
-    s3Service: S3Service
+    s3Service: S3Service,
 ) {
     val logger = KotlinLogging.logger {}
     val keyPrefixFormatter = DateTimeFormatter.ofPattern("YYYYMMdd-HHmmss")
@@ -105,7 +104,7 @@ fun Application.setupAdmin(
                 adminEntryService.create(
                     params.getOrFail<String>("title"),
                     params.getOrFail<String>("body"),
-                    params.getOrFail<String>("status")
+                    params.getOrFail<String>("status"),
                 )
                 call.respondRedirect("/admin/")
             }
@@ -114,8 +113,9 @@ fun Application.setupAdmin(
                 // I want to get raw keys
                 val path = call.request.path().substring("/admin/entry/".length)
 
-                val entry = adminEntryService.findByPath(path)
-                    ?: throw NotFoundException("Unknown entry: $path")
+                val entry =
+                    adminEntryService.findByPath(path)
+                        ?: throw NotFoundException("Unknown entry: $path")
 
                 renderAdminEditPage(entry, gitProperties)
             }
@@ -126,26 +126,32 @@ fun Application.setupAdmin(
                     path = params.getOrFail<String>("path"),
                     title = params.getOrFail<String>("title"),
                     body = params.getOrFail<String>("body"),
-                    status = params.getOrFail<String>("status")
+                    status = params.getOrFail<String>("status"),
                 )
                 call.respondRedirect("/admin/")
             }
 
             post("/admin/upload_attachments") {
-                val imagePart = (
-                        call.receiveMultipart()
-                            .readAllParts()
-                            .firstOrNull { it.name == "image" }
-                            ?: error("Missing 'image' parameter")
-                        ) as PartData.FileItem
+                val imagePart =
+                    (
+                        call
+                            .receiveMultipart()
+                            .asFlow()
+                            .firstOrNull {
+                                it.name == "image"
+                            } ?: error("Missing 'image' parameter")
+                    ) as PartData.FileItem
 
                 logger.info {
                     "Caught file upload request to /upload_attachments:" +
-                            " type=${imagePart.contentType}"
+                        " type=${imagePart.contentType}"
                 }
 
-                val key = LocalDateTime.now().format(keyPrefixFormatter) + UUID.randomUUID()
-                    .toString() + ".${imagePart.contentType!!.contentSubtype}"
+                val key =
+                    LocalDateTime.now().format(keyPrefixFormatter) +
+                        UUID
+                            .randomUUID()
+                            .toString() + ".${imagePart.contentType!!.contentSubtype}"
 
                 imagePart.streamProvider().use { inputStream ->
                     val bytes = inputStream.readAllBytes()
@@ -159,10 +165,11 @@ fun Application.setupAdmin(
                     call.respond(
                         HttpStatusCode.OK,
                         mapOf(
-                            "data" to mapOf(
-                                "filePath" to url
-                            )
-                        )
+                            "data" to
+                                mapOf(
+                                    "filePath" to url,
+                                ),
+                        ),
                     )
                 }
             }

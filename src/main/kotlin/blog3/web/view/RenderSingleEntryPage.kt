@@ -1,11 +1,10 @@
 package blog3.web.view
 
 import blog3.entity.Entry
-import io.ktor.server.application.ApplicationCall
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 import org.springframework.boot.info.GitProperties
 
-suspend fun PipelineContext<Unit, ApplicationCall>.renderSingleEntryPage(
+suspend fun RoutingContext.renderSingleEntryPage(
     entry: Entry,
     gitProperties: GitProperties,
 ) {
@@ -14,4 +13,3 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderSingleEntryPage(
         renderAd()
     }
 }
-

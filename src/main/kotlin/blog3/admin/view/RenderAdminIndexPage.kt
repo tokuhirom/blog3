@@ -5,11 +5,10 @@ import blog3.admin.view.parts.adminPager
 import blog3.admin.view.parts.adminWrapper
 import blog3.admin.view.parts.searchBox
 import blog3.entity.Entry
-import io.ktor.server.application.ApplicationCall
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 import org.springframework.boot.info.GitProperties
 
-suspend fun PipelineContext<Unit, ApplicationCall>.renderAdminIndexPage(
+suspend fun RoutingContext.renderAdminIndexPage(
     entries: List<Entry>,
     page: Int,
     gitProperties: GitProperties,
@@ -22,4 +21,3 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderAdminIndexPage(
         adminPager("/?page=", page)
     }
 }
-

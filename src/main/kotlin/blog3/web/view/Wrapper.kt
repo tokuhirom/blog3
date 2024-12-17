@@ -1,9 +1,7 @@
 package blog3.web.view
 
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 import kotlinx.html.ButtonType
 import kotlinx.html.DIV
 import kotlinx.html.FormMethod
@@ -29,10 +27,10 @@ import org.springframework.boot.info.GitProperties
 import java.time.ZoneId
 
 @SuppressWarnings("LongMethod")
-suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
+suspend fun RoutingContext.publicWrapper(
     title: String,
     gitProperties: GitProperties,
-    callback: DIV.() -> Unit
+    callback: DIV.() -> Unit,
 ) {
     call.respondHtml {
         head {
@@ -47,7 +45,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
             }
             link(
                 href = "https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-solarizedlight.min.css",
-                rel = "stylesheet"
+                rel = "stylesheet",
             )
             link(
                 href = "https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css",
@@ -57,14 +55,15 @@ suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
             script(src = "https://www.googletagmanager.com/gtag/js?id=G-N48P264GB5") {
                 async = true
             }
-            script() {
+            script {
                 unsafe {
-                    +"""
+                    +
+                        """
                         window.dataLayer = window.dataLayer || [];
                         function gtag(){dataLayer.push(arguments);}
                         gtag('js', new Date());
                         gtag('config', 'G-N48P264GB5');
-                    """.trimIndent()
+                        """.trimIndent()
                 }
             }
         }
@@ -93,7 +92,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.publicWrapper(
                         a(href = "https://github.com/tokuhirom/blog3/commit/${gitProperties.shortCommitId}") {
                             +"""${gitProperties.shortCommitId}@${gitProperties.branch} ${
                                 gitProperties.commitTime.atZone(
-                                    ZoneId.of("+0900")
+                                    ZoneId.of("+0900"),
                                 )
                             }"""
                         }

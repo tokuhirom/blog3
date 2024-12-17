@@ -4,8 +4,7 @@ import blog3.admin.view.js.easyMDEHook
 import blog3.admin.view.parts.adminStatusForm
 import blog3.admin.view.parts.adminWrapper
 import blog3.entity.Entry
-import io.ktor.server.application.ApplicationCall
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 import kotlinx.html.FormMethod
 import kotlinx.html.form
 import kotlinx.html.hiddenInput
@@ -15,7 +14,7 @@ import kotlinx.html.textArea
 import kotlinx.html.textInput
 import org.springframework.boot.info.GitProperties
 
-suspend fun PipelineContext<Unit, ApplicationCall>.renderAdminEditPage(
+suspend fun RoutingContext.renderAdminEditPage(
     entry: Entry,
     gitProperties: GitProperties,
 ) {

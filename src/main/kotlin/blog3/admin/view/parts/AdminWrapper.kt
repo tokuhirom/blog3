@@ -1,10 +1,8 @@
 package blog3.admin.view.parts
 
 import blog3.admin.view.js.easyMDEHeader
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 import kotlinx.html.DIV
 import kotlinx.html.a
 import kotlinx.html.body
@@ -26,10 +24,10 @@ import org.springframework.boot.info.GitProperties
 import java.time.ZoneId
 
 @SuppressWarnings("LongMethod")
-suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
+suspend fun RoutingContext.adminWrapper(
     title: String,
     gitProperties: GitProperties,
-    callback: DIV.() -> Unit
+    callback: DIV.() -> Unit,
 ) {
     call.respondHtml {
         head {
@@ -44,7 +42,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
             }
             link(
                 href = "https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-solarizedlight.min.css",
-                rel = "stylesheet"
+                rel = "stylesheet",
             )
             link(
                 href = "https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css",
@@ -68,7 +66,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
                                 }
                             }
 
-                            div() {
+                            div {
                                 ul(classes = "navbar-nav me-auto mb-2 mb-lg-0") {
                                     li(classes = "nav-item") {
                                         a(classes = "nav-link active") {
@@ -92,7 +90,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.adminWrapper(
                         a(href = "https://github.com/tokuhirom/blog3/commit/${gitProperties.shortCommitId}") {
                             +"""${gitProperties.shortCommitId}@${gitProperties.branch} ${
                                 gitProperties.commitTime.atZone(
-                                    ZoneId.of("+0900")
+                                    ZoneId.of("+0900"),
                                 )
                             }"""
                         }

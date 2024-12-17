@@ -100,7 +100,7 @@ tasks.withType<BootBuildImage> {
         mapOf(
             "BPL_JVM_THREAD_COUNT" to "30",
             "BP_JVM_VERSION" to "17",
-        )
+        ),
     )
 }
 
@@ -108,4 +108,3 @@ detekt {
     config.setFrom(files("config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
 }
-

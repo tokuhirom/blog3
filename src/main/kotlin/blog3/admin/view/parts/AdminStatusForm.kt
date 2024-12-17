@@ -12,7 +12,7 @@ internal fun FORM.adminStatusForm(status: String) {
             required = true
 
             listOf("draft", "published").forEach {
-                option() {
+                option {
                     value = it
                     selected = status == it
                     +it
