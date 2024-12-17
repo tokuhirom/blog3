@@ -12,6 +12,9 @@ jobs:
       contents: read
       packages: write
 
+    env:
+      REGISTRY: tokuhirom-priv.sakuracr.jp
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -29,6 +32,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/login-action@7ca345011ac4304463197fac0e56eab1bc7e6af0
         with:
+          registry: ${{ env.REGISTRY }}
           username: uploader
           password: ${{ secrets.SACLOUD_CONTAINER_REGISTRY_PASSWORD }}
 
