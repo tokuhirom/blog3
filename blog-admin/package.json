@@ -36,6 +36,8 @@
 		"vitest": "^2.0.4"
 	},
 	"dependencies": {
-		"@tailwindcss/typography": "^0.5.15"
+		"@tailwindcss/typography": "^0.5.15",
+		"dotenv": "^16.4.7",
+		"mysql2": "^3.11.5"
 	}
 }
