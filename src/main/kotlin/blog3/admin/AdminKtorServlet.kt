@@ -8,11 +8,9 @@ import blog3.admin.view.renderAdminEditPage
 import blog3.admin.view.renderAdminIndexPage
 import blog3.admin.view.renderAdminS3BucketListPage
 import blog3.admin.view.renderAdminSearchPage
-import com.amazonaws.services.s3.model.ObjectMetadata
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.asFlow
-import io.ktor.http.content.streamProvider
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -30,19 +28,18 @@ import io.ktor.server.request.receiveMultipart
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.util.getOrFail
+import io.ktor.util.encodeBase64
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.io.bytestring.encodeToByteString
 import mu.two.KotlinLogging
 import org.springframework.boot.info.GitProperties
-import java.io.ByteArrayInputStream
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.UUID
 
 fun Application.setupAdmin(
@@ -159,13 +156,17 @@ fun Application.setupAdmin(
                             .randomUUID()
                             .toString() + ".${imagePart.contentType!!.contentSubtype}"
 
-                imagePart.streamProvider().use { inputStream ->
+                imagePart.provider().toInputStream().use { inputStream ->
                     val bytes = inputStream.readAllBytes()
-                    val objectMetadata = ObjectMetadata()
-                    objectMetadata.contentType = call.request.contentType().toString()
-                    objectMetadata.contentLength = bytes.size.toLong()
 
-                    val url = s3Service.upload(key, bytes.inputStream(), objectMetadata)
+                    val url =
+                        s3Service.upload(
+                            key,
+                            bytes,
+                            mapOf(
+                                "Content-Type" to call.request.contentType().toString(),
+                            ),
+                        )
 
                     //                 {"data": {"filePath": "<filePath>"}}
                     call.respond(
@@ -184,25 +185,34 @@ fun Application.setupAdmin(
                 renderAdminS3BucketListPage(s3Service.listBuckets(), gitProperties)
             }
 
+            // migration 用のパス。移行後に消す。
             get("/admin/up-to-obs") {
                 val entries = adminEntryService.findAll()
                 entries.forEach { entry ->
                     println("Uploading: ${entry.path}")
                     val txt: String = entry.body
-                    val bytes = txt.encodeToByteString()
-                    val objectMetadata = ObjectMetadata()
-                    objectMetadata.contentType = "text/plain"
-                    objectMetadata.contentLength = bytes.size.toLong()
-                    objectMetadata.setHeader("x-blog3-title", entry.title)
-                    objectMetadata.setHeader("x-blog3-format", entry.format)
-                    objectMetadata.setHeader("x-blog3-status", entry.status)
-                    objectMetadata.lastModified =
-                        Date.from(
-                            (
-                                entry.updatedAt ?: entry.createdAt
-                            ).atZone(ZoneId.of("Asia/Tokyo")).toInstant(),
-                        )
-                    contentService.upload(entry.path, ByteArrayInputStream(bytes.toByteArray()), objectMetadata)
+                    val bytes = txt.encodeToByteArray()
+                    // https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html
+                    val objectMetadata =
+                        buildMap<String, String> {
+                            put("content-type", "text/plain")
+                            put("x-blog3-title-b64", entry.title.encodeBase64())
+                            put("x-blog3-format", entry.format)
+                            put("x-blog3-status", entry.status)
+                            put("x-blog3-created", entry.createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                            entry.updatedAt?.let {
+                                put("x-blog3-updated", it.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                            }
+                        }
+                    contentService.upload(entry.path, bytes, objectMetadata)
+                }
+            }
+
+            // 移行時に動作確認用
+            get("/admin/list") {
+                call.respondText {
+                    contentService.findAllObjects()
+                    ""
                 }
             }
         }
