@@ -1,5 +1,6 @@
 import { db } from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
+import { format } from 'date-fns';
 
 export const GET: RequestHandler = async ({ url }) => {
     // クエリパラメータの取得
@@ -46,3 +47,42 @@ export const GET: RequestHandler = async ({ url }) => {
         });
     }
 };
+
+
+export const POST: RequestHandler = async ({ request }) => {
+    try {
+        const { title, body, status } = await request.json();
+
+        // 入力値のバリデーション
+        if (!title || !body || !status) {
+            return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400 });
+        }
+
+        const pathFormatter = "yyyy/MM/dd/HHmmss";
+        const path = format(new Date(), pathFormatter);
+
+        // エントリ作成クエリ
+        const [result] = await db.query(
+            `
+      INSERT INTO entry (path, title, body, status)
+      VALUES (?, ?, ?, ?)
+      `,
+            [path, title, body, status]
+        );
+
+        return new Response(
+            JSON.stringify({
+                message: 'Entry created successfully',
+                entry: { path, title, body, status },
+            }),
+            { status: 201, headers: { 'Content-Type': 'application/json' } }
+        );
+    } catch (error) {
+        console.error(error);
+        return new Response(JSON.stringify({ error: 'Failed to create entry' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }
+};
+
