@@ -1,6 +1,7 @@
 package blog3.admin
 
 import blog3.admin.service.AdminEntryService
+import blog3.admin.service.ContentService
 import blog3.admin.service.S3Service
 import blog3.admin.view.renderAdminCreatePage
 import blog3.admin.view.renderAdminEditPage
@@ -34,8 +35,10 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.util.getOrFail
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.io.bytestring.encodeToByteString
 import mu.two.KotlinLogging
 import org.springframework.boot.info.GitProperties
+import java.io.ByteArrayInputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -44,6 +47,7 @@ fun Application.setupAdmin(
     adminEntryService: AdminEntryService,
     gitProperties: GitProperties,
     s3Service: S3Service,
+    contentService: ContentService,
 ) {
     val logger = KotlinLogging.logger {}
     val keyPrefixFormatter = DateTimeFormatter.ofPattern("YYYYMMdd-HHmmss")
@@ -176,6 +180,19 @@ fun Application.setupAdmin(
 
             get("/admin/s3/buckets") {
                 renderAdminS3BucketListPage(s3Service.listBuckets(), gitProperties)
+            }
+
+            get("/admin/up-to-obs") {
+                val entries = adminEntryService.findAll()
+                entries.forEach { entry ->
+                    println("Uploading: ${entry.path}")
+                    val txt: String = entry.toText()
+                    val bytes = txt.encodeToByteString()
+                    val objectMetadata = ObjectMetadata()
+                    objectMetadata.contentType = "text/plain"
+                    objectMetadata.contentLength = bytes.size.toLong()
+                    contentService.upload(entry.path, ByteArrayInputStream(bytes.toByteArray()), objectMetadata)
+                }
             }
         }
     }

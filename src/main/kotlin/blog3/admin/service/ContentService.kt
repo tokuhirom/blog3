@@ -4,7 +4,6 @@ import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.amazonaws.services.s3.model.Bucket
 import com.amazonaws.services.s3.model.ObjectMetadata
 import mu.two.KotlinLogging
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -13,31 +12,28 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.InputStream
 
-@ConfigurationProperties("s3")
-data class S3ConfigurationProperties(
+@ConfigurationProperties("content")
+data class ContentConfigurationProperties(
     val region: String = "jp-north-1",
-    val bucketName: String = "blog3-attachments",
-    val publicDomain: String = "blog-attachments.64p.org",
+    val bucketName: String = "blog3-content",
     val serviceEndpoint: String = "https://s3.isk01.sakurastorage.jp",
 )
 
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(S3ConfigurationProperties::class)
-class S3Configuration {
+@EnableConfigurationProperties(ContentConfigurationProperties::class)
+class ContentConfiguration {
     @Bean
-    fun s3Service(s3ConfigurationProperties: S3ConfigurationProperties): S3Service =
-        S3Service(
-            region = s3ConfigurationProperties.region,
-            bucketName = s3ConfigurationProperties.bucketName,
-            serviceEndpoint = s3ConfigurationProperties.serviceEndpoint,
-            publicDomain = s3ConfigurationProperties.publicDomain,
+    fun contentService(contentConfigurationProperties: ContentConfigurationProperties): ContentService =
+        ContentService(
+            region = contentConfigurationProperties.region,
+            bucketName = contentConfigurationProperties.bucketName,
+            serviceEndpoint = contentConfigurationProperties.serviceEndpoint,
         )
 }
 
-class S3Service(
+class ContentService(
     region: String,
     private val bucketName: String,
-    private val publicDomain: String,
     serviceEndpoint: String,
     credentialProvider: AWSCredentialsProvider = EnvironmentVariableCredentialsProvider(),
 ) {
@@ -51,24 +47,26 @@ class S3Service(
             .withCredentials(credentialProvider)
             .build()
 
-    fun listBuckets(): List<Bucket> = s3Client.listBuckets()!!
-
     fun upload(
         key: String,
         inputStream: InputStream,
         metadata: ObjectMetadata,
-    ): String {
+    ) {
         logger.info("Uploading file: bucketName=$bucketName key=$key region=${s3Client.regionName}")
         s3Client.putObject(bucketName, key, inputStream, metadata)!!
-        return "https://$publicDomain/$key"
     }
 }
 
 // fun main() {
-//    val client = S3Service(
-//        region = "ap-northeast-1", bucketName = "blog3-attachments",
-//        publicDomain = "blog-attachments.64p.org"
-//    )
-//    val key = "hello.txt"
+//    val client =
+//        ContentService(
+//            region = "jp-north-1",
+//            bucketName = "blog3-content",
+//            serviceEndpoint = "https://s3.isk01.sakurastorage.jp",
+//        )
+//
+//     list up entries.
+//
 //    println(client.upload(key, "haha"))
 // }
+//

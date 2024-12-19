@@ -6,9 +6,10 @@ import com.vladsch.flexmark.parser.Parser
 import com.vladsch.flexmark.util.data.MutableDataSet
 import java.time.LocalDateTime
 
-
-class MarkdownRenderer(private val parser: Parser, private val renderer: HtmlRenderer) {
-
+class MarkdownRenderer(
+    private val parser: Parser,
+    private val renderer: HtmlRenderer,
+) {
     fun render(mkdn: String): String {
         val document = parser.parse(mkdn)
         return renderer.render(document)
@@ -37,11 +38,26 @@ data class Entry(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime?,
 ) {
-    fun html(): String {
-        return if (format == "mkdn") {
+    fun html(): String =
+        if (format == "mkdn") {
             renderer.render(body)
         } else {
             body
         }
+
+    fun toText(): String {
+        // https://note.com/kodai1_jp/n/n507793165034
+        // use frontmatter
+        return "---\n" +
+            "status: ${status}\n" +
+            "format: ${format}\n" +
+            "created: ${createdAt}\n" +
+            if (updatedAt != null) {
+                "updated: ${updatedAt}\n"
+            } else {
+                ""
+            } +
+            "---\n\n" +
+            body
     }
 }

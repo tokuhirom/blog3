@@ -13,18 +13,30 @@ interface AdminEntryMapper {
             select *
             from entry
             order by path desc
+        """,
+    )
+    fun findAll(): List<Entry>
+
+    @Select(
+        """
+            select *
+            from entry
+            order by path desc
             LIMIT #{limit}
             OFFSET #{offset}
-        """
+        """,
     )
-    fun findEntries(limit: Int, offset: Int): List<Entry>
+    fun findEntries(
+        limit: Int,
+        offset: Int,
+    ): List<Entry>
 
     @Select(
         """
             select *
             from entry
             where path=#{path}
-        """
+        """,
     )
     fun findByPath(path: String): Entry?
 
@@ -41,9 +53,13 @@ interface AdminEntryMapper {
             ORDER BY title_score desc, ft_score desc
             limit #{limit}
             offset #{offset}
-        """
+        """,
     )
-    fun findByKeyword(query: String, limit: Int, offset: Int): List<Entry>
+    fun findByKeyword(
+        query: String,
+        limit: Int,
+        offset: Int,
+    ): List<Entry>
 
     @Update(
         """
@@ -53,9 +69,14 @@ interface AdminEntryMapper {
                 body=#{body},
                 status=#{status}
             WHERE path=#{path}
-        """
+        """,
     )
-    fun update(path: String, title: String, body: String, status: String)
+    fun update(
+        path: String,
+        title: String,
+        body: String,
+        status: String,
+    )
 
     @Insert(
         """
@@ -63,14 +84,19 @@ interface AdminEntryMapper {
                 entry
                 (path, title, body, status)
             values (#{path}, #{title}, #{body}, #{status})
-        """
+        """,
     )
-    fun create(path: String, title: String, body: String, status: String)
+    fun create(
+        path: String,
+        title: String,
+        body: String,
+        status: String,
+    )
 
     @Select(
         """
             SELECT * FROM entry WHERE format=#{format}
-        """
+        """,
     )
     fun findByFormat(format: String): List<Entry>
 
@@ -84,7 +110,7 @@ interface AdminEntryMapper {
                     #{item}
                 </foreach>
             </script>
-        """
+        """,
     )
     fun findByPaths(paths: List<String>): List<Entry>
 }
