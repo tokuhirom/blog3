@@ -2,6 +2,7 @@ package blog3.admin.service
 
 import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
+import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.s3.model.Bucket
 import com.amazonaws.services.s3.model.ObjectMetadata
@@ -14,9 +15,10 @@ import java.io.InputStream
 
 @ConfigurationProperties("s3")
 data class S3ConfigurationProperties(
-    val region: String = "ap-northeast-1",
+    val region: String = "jp-north-1",
     val bucketName: String = "blog3-attachments",
     val publicDomain: String = "blog-attachments.64p.org",
+    val serviceEndpoint: String = "https://s3.isk01.sakurastorage.jp",
 )
 
 @Configuration(proxyBeanMethods = false)
@@ -27,6 +29,7 @@ class S3Configuration {
         S3Service(
             region = s3ConfigurationProperties.region,
             bucketName = s3ConfigurationProperties.bucketName,
+            serviceEndpoint = s3ConfigurationProperties.serviceEndpoint,
             publicDomain = s3ConfigurationProperties.publicDomain,
         )
 }
@@ -35,6 +38,7 @@ class S3Service(
     region: String,
     private val bucketName: String,
     private val publicDomain: String,
+    serviceEndpoint: String,
     credentialProvider: AWSCredentialsProvider = EnvironmentVariableCredentialsProvider(),
 ) {
     private val logger = KotlinLogging.logger {}
@@ -43,8 +47,8 @@ class S3Service(
     private val s3Client =
         AmazonS3ClientBuilder
             .standard()
+            .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(serviceEndpoint, region))
             .withCredentials(credentialProvider)
-            .withRegion(region)
             .build()
 
     fun listBuckets(): List<Bucket> = s3Client.listBuckets()!!
