@@ -1,17 +1,16 @@
 package blog3.admin.service
 
-import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
-import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.amazonaws.services.s3.model.Bucket
-import com.amazonaws.services.s3.model.ObjectMetadata
-import mu.two.KotlinLogging
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.io.InputStream
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
+import software.amazon.awssdk.core.sync.RequestBody
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.Bucket
+import software.amazon.awssdk.services.s3.model.PutObjectRequest
 
 @ConfigurationProperties("s3")
 data class S3ConfigurationProperties(
@@ -35,48 +34,47 @@ class S3Configuration {
 }
 
 class S3Service(
-    region: String,
+    private val region: String,
     private val bucketName: String,
     private val publicDomain: String,
     serviceEndpoint: String,
-    credentialProvider: AWSCredentialsProvider = EnvironmentVariableCredentialsProvider(),
 ) {
-    private val logger = KotlinLogging.logger {}
+    private val logger = LoggerFactory.getLogger(S3Service::class.java)
 
-    // Build S3 client using ENV[AWS_ACCESS_KEY_ID], ENV[AWS_SECRET_KEY]
-    private val s3Client =
-        AmazonS3ClientBuilder
-            .standard()
-            .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(serviceEndpoint, region))
-            .withCredentials(credentialProvider)
+    // Build S3 client using ENV[AWS_ACCESS_KEY_ID], ENV[AWS_SECRET_ACCESS_KEY]
+    private val s3Client: S3Client =
+        S3Client
+            .builder()
+            .endpointOverride(java.net.URI.create(serviceEndpoint))
+            .region(Region.of(region))
+            .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
             .build()
 
-    fun listBuckets(): List<Bucket> = s3Client.listBuckets()!!
-
-    fun upload(
-        key: String,
-        content: String,
-    ): String {
-        s3Client.putObject(bucketName, key, content)!!
-        return "https://$publicDomain/$key"
+    fun listBuckets(): List<Bucket> {
+        val response = s3Client.listBuckets()
+        return response.buckets() ?: emptyList()
     }
 
     fun upload(
         key: String,
-        inputStream: InputStream,
-        metadata: ObjectMetadata,
+        bytes: ByteArray,
+        metadata: Map<String, String>,
     ): String {
-        logger.info("Uploading file: bucketName=$bucketName key=$key region=${s3Client.regionName}")
-        s3Client.putObject(bucketName, key, inputStream, metadata)!!
+        logger.info("Uploading file: bucketName=$bucketName key=$key region=$region")
+
+        val request =
+            PutObjectRequest
+                .builder()
+                .bucket(bucketName)
+                .key(key)
+                .metadata(metadata)
+                .build()
+
+        s3Client.putObject(
+            request,
+            RequestBody.fromBytes(bytes),
+        )
+
         return "https://$publicDomain/$key"
     }
 }
-
-// fun main() {
-//    val client = S3Service(
-//        region = "ap-northeast-1", bucketName = "blog3-attachments",
-//        publicDomain = "blog-attachments.64p.org"
-//    )
-//    val key = "hello.txt"
-//    println(client.upload(key, "haha"))
-// }
