@@ -44,20 +44,4 @@ data class Entry(
         } else {
             body
         }
-
-    fun toText(): String {
-        // https://note.com/kodai1_jp/n/n507793165034
-        // use frontmatter
-        return "---\n" +
-            "status: ${status}\n" +
-            "format: ${format}\n" +
-            "created: ${createdAt}\n" +
-            if (updatedAt != null) {
-                "updated: ${updatedAt}\n"
-            } else {
-                ""
-            } +
-            "---\n\n" +
-            body
-    }
 }
