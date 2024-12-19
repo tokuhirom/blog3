@@ -7,11 +7,9 @@ import blog3.admin.view.renderAdminEditPage
 import blog3.admin.view.renderAdminIndexPage
 import blog3.admin.view.renderAdminS3BucketListPage
 import blog3.admin.view.renderAdminSearchPage
-import com.amazonaws.services.s3.model.ObjectMetadata
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.asFlow
-import io.ktor.http.content.streamProvider
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -33,6 +31,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.util.getOrFail
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.flow.firstOrNull
 import mu.two.KotlinLogging
 import org.springframework.boot.info.GitProperties
@@ -153,13 +152,17 @@ fun Application.setupAdmin(
                             .randomUUID()
                             .toString() + ".${imagePart.contentType!!.contentSubtype}"
 
-                imagePart.streamProvider().use { inputStream ->
+                imagePart.provider().toInputStream().use { inputStream ->
                     val bytes = inputStream.readAllBytes()
-                    val objectMetadata = ObjectMetadata()
-                    objectMetadata.contentType = call.request.contentType().toString()
-                    objectMetadata.contentLength = bytes.size.toLong()
 
-                    val url = s3Service.upload(key, bytes.inputStream(), objectMetadata)
+                    val url =
+                        s3Service.upload(
+                            key,
+                            bytes,
+                            mapOf(
+                                "Content-Type" to call.request.contentType().toString(),
+                            ),
+                        )
 
                     //                 {"data": {"filePath": "<filePath>"}}
                     call.respond(

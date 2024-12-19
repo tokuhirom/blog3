@@ -24,7 +24,7 @@ repositories {
 dependencies {
     implementation(platform("org.testcontainers:testcontainers-bom:1.20.4"))
     implementation(platform("io.ktor:ktor-bom:3.0.3"))
-    implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.780"))
+    implementation(platform("software.amazon.awssdk:bom:2.29.36"))
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.4.0"))
 
     implementation("io.ktor:ktor-server-auth")
@@ -37,7 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
 
-    implementation("com.amazonaws:aws-java-sdk-s3")
+    implementation("software.amazon.awssdk:s3")
 
     implementation("javax.xml.bind:jaxb-api:2.3.1")
 
