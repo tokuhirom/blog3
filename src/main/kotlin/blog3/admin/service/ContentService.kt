@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import com.amazonaws.services.s3.model.ListObjectsV2Request
 import com.amazonaws.services.s3.model.ObjectMetadata
 import mu.two.KotlinLogging
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -54,6 +55,17 @@ class ContentService(
     ) {
         logger.info("Uploading file: bucketName=$bucketName key=$key region=${s3Client.regionName}")
         s3Client.putObject(bucketName, key, inputStream, metadata)!!
+    }
+
+    fun findAllObjects() {
+        val request =
+            ListObjectsV2Request()
+                .withBucketName(bucketName)
+        val resp = s3Client.listObjectsV2(request)
+        resp.nextContinuationToken
+        resp.objectSummaries.map {
+            it.key
+        }
     }
 }
 

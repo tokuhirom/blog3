@@ -9,8 +9,13 @@ import java.time.format.DateTimeFormatter
 @Service
 class AdminEntryService(
     private val adminEntryMapper: AdminEntryMapper,
+    private val contentService: ContentService,
 ) {
     private val pathFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("YYYY/MM/dd/HHmmss")
+
+    fun findAll2() {
+        contentService.findAllObjects()
+    }
 
     fun findAll(): List<Entry> = adminEntryMapper.findAll()
 

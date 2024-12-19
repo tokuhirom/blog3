@@ -40,7 +40,9 @@ import mu.two.KotlinLogging
 import org.springframework.boot.info.GitProperties
 import java.io.ByteArrayInputStream
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.UUID
 
 fun Application.setupAdmin(
@@ -186,11 +188,20 @@ fun Application.setupAdmin(
                 val entries = adminEntryService.findAll()
                 entries.forEach { entry ->
                     println("Uploading: ${entry.path}")
-                    val txt: String = entry.toText()
+                    val txt: String = entry.body
                     val bytes = txt.encodeToByteString()
                     val objectMetadata = ObjectMetadata()
                     objectMetadata.contentType = "text/plain"
                     objectMetadata.contentLength = bytes.size.toLong()
+                    objectMetadata.setHeader("x-blog3-title", entry.title)
+                    objectMetadata.setHeader("x-blog3-format", entry.format)
+                    objectMetadata.setHeader("x-blog3-status", entry.status)
+                    objectMetadata.lastModified =
+                        Date.from(
+                            (
+                                entry.updatedAt ?: entry.createdAt
+                            ).atZone(ZoneId.of("Asia/Tokyo")).toInstant(),
+                        )
                     contentService.upload(entry.path, ByteArrayInputStream(bytes.toByteArray()), objectMetadata)
                 }
             }
