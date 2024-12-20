@@ -21,6 +21,12 @@ export type Entry = {
 };
 
 export class EntryModel {
+	static async getAllEntries(): Promise<Entry | null> {
+		const [rows] = await db.query<Entry[] & RowDataPacket[]>('SELECT * FROM entry ORDER BY path DESC', [
+		]);
+		return rows;
+	}
+
 	static async getEntry(path: string): Promise<Entry | null> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>('SELECT * FROM entry WHERE path = ?', [
 			path
