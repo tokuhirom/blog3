@@ -6,8 +6,8 @@ dotenv.config();
 // 環境変数から設定を取得
 const REGION = process.env.S3_REGION || 'jp-north-1';
 const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'blog3-attachments';
-const ACCESS_KEY_ID: string | null = process.env.S3_ACCESS_KEY_ID;
-const SECRET_ACCESS_KEY: string | null = process.env.S3_SECRET_ACCESS_KEY;
+const ACCESS_KEY_ID: string | undefined = process.env.S3_ACCESS_KEY_ID;
+const SECRET_ACCESS_KEY: string | undefined = process.env.S3_SECRET_ACCESS_KEY;
 const ENDPOINT = process.env.S3_ENDPOINT || 'https://s3.isk01.sakurastorage.jp';
 
 if (!ACCESS_KEY_ID || !SECRET_ACCESS_KEY) {
