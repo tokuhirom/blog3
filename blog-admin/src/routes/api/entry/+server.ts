@@ -7,7 +7,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		// データ取得
 		const [rows] = await db.query(
 			`
-      SELECT path, title, status, format, created_at, updated_at
+      SELECT path, title, body, status, format, created_at, updated_at
       FROM entry
       ORDER BY created_at DESC
       `,

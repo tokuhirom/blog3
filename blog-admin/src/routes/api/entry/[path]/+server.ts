@@ -44,37 +44,37 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 };
 
 export const DELETE: RequestHandler = async ({ params }) => {
-  const { path } = params;
+	const { path } = params;
 
-  if (!path) {
-    return new Response(JSON.stringify({ error: 'Path parameter is required' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+	if (!path) {
+		return new Response(JSON.stringify({ error: 'Path parameter is required' }), {
+			status: 400,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
 
-  try {
-    console.log(`Deleting entry with path: '${path}'`);
+	try {
+		console.log(`Deleting entry with path: '${path}'`);
 
-    // データベースからエントリを削除
-    const [result] = await db.query('DELETE FROM entry WHERE path = ?', [path]);
+		// データベースからエントリを削除
+		const [result] = await db.query('DELETE FROM entry WHERE path = ?', [path]);
 
-    if (result.affectedRows === 0) {
-      return new Response(JSON.stringify({ error: 'Entry not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+		if (result.affectedRows === 0) {
+			return new Response(JSON.stringify({ error: 'Entry not found' }), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		}
 
-    return new Response(
-      JSON.stringify({ message: 'Entry deleted successfully', path }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
-  } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: 'Failed to delete entry' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+		return new Response(JSON.stringify({ message: 'Entry deleted successfully', path }), {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	} catch (error) {
+		console.error(error);
+		return new Response(JSON.stringify({ error: 'Failed to delete entry' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
 };
