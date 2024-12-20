@@ -3,13 +3,6 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { format } from 'date-fns';
 
 export const GET: RequestHandler = async ({ url }) => {
-    // クエリパラメータの取得
-    const page = parseInt(url.searchParams.get('page') || '1', 10);
-    const entriesPerPage = parseInt(url.searchParams.get('entries') || '30', 10);
-
-    // ページングに基づくデータ取得
-    const offset = (page - 1) * entriesPerPage;
-
     try {
         // データ取得
         const [rows] = await db.query(
@@ -17,25 +10,14 @@ export const GET: RequestHandler = async ({ url }) => {
       SELECT path, title, status, format, created_at, updated_at
       FROM entry
       ORDER BY created_at DESC
-      LIMIT ? OFFSET ?
       `,
-            [entriesPerPage, offset]
+            []
         );
-
-        // 総エントリ数を取得（ページ総数計算のため）
-        const [totalRows] = await db.query('SELECT COUNT(*) AS total FROM entry');
-        const totalEntries = totalRows[0]?.total || 0;
 
         // ページング情報を含めたレスポンスを返す
         return new Response(
             JSON.stringify({
                 entries: rows,
-                pagination: {
-                    currentPage: page,
-                    entriesPerPage,
-                    totalPages: Math.ceil(totalEntries / entriesPerPage),
-                    totalEntries,
-                },
             }),
             { headers: { 'Content-Type': 'application/json' } }
         );
@@ -62,7 +44,7 @@ export const POST: RequestHandler = async ({ request }) => {
         const path = format(new Date(), pathFormatter);
 
         // エントリ作成クエリ
-        const [result] = await db.query(
+        await db.query(
             `
       INSERT INTO entry (path, title, body, status)
       VALUES (?, ?, ?, ?)
