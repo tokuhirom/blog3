@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Entry } from "$lib/db";
+	import type { Entry } from '$lib/db';
 
 	export let entries: Entry[] = [];
 </script>
