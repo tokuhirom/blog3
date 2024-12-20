@@ -1,10 +1,10 @@
 import type { PageServerLoad } from './$types';
-import { EntryModel } from '$lib/db';
+import { EntryCache } from '$lib/cache';
 
 export const load: PageServerLoad = async () => {
 	console.log('Loading entry page content!');
 
-	const entries = await EntryModel.getAllEntries();
+	const entries = await EntryCache.get();
 	return {
 		entries
 	};

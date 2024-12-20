@@ -1,5 +1,6 @@
 import mysql, { type Pool, type RowDataPacket } from 'mysql2/promise';
 import * as dotenv from 'dotenv';
+import { EntryCache } from './cache';
 dotenv.config();
 
 export const db: Pool = mysql.createPool({
@@ -21,7 +22,7 @@ export type Entry = {
 };
 
 export class EntryModel {
-	static async getAllEntries(): Promise<Entry | null> {
+	static async getAllEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			'SELECT * FROM entry ORDER BY path DESC',
 			[]
@@ -58,6 +59,8 @@ export class EntryModel {
 		if (result.affectedRows === 0) {
 			throw new Error('Entry not found or no changes applied');
 		}
+
+		EntryCache.clear();
 	}
 
 	/**
@@ -69,5 +72,7 @@ export class EntryModel {
 		if (result.affectedRows === 0) {
 			throw new Error('Entry not found');
 		}
+
+		EntryCache.clear();
 	}
 }
