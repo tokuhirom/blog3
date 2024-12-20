@@ -26,6 +26,8 @@ export const actions: Actions = {
 		if (!title || !body || !status) {
 			return { error: 'Missing required fields' };
 		}
+
+        console.log('Updating entry with path: ', path, " body=", body, " title=", title, " status=", status);
 		await EntryModel.updateEntry(path, { title, body, status });
 		return { success: true };
 	},
