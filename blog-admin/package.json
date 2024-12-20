@@ -19,6 +19,7 @@
 		"@sveltejs/adapter-node": "^5.2.9",
 		"@sveltejs/kit": "^2.9.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@types/node": "^22.10.2",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.7.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -36,6 +37,7 @@
 		"vitest": "^2.0.4"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.716.0",
 		"@codemirror/commands": "^6.7.1",
 		"@codemirror/lang-javascript": "^6.2.2",
 		"@codemirror/lang-markdown": "^6.3.1",

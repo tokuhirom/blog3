@@ -15,3 +15,4 @@
 - [ ] ウェブアクセラレータのトークン確認機能
 - [ ] 認証機能
   - Basic auth かな？
+- [ ] publish container

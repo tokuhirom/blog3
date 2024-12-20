@@ -29,6 +29,9 @@
 					'.cm-editor': { height: '600px' },
 					'.cm-content': { overflowY: 'auto' }
 				}),
+                EditorView.domEventHandlers({
+                    paste: handlePaste,
+                }),
 				EditorView.updateListener.of((update) => {
 					if (update.changes) {
 						// ユーザーの入力変更を反映
@@ -52,6 +55,52 @@
 			editor.destroy(); // コンポーネントが破棄されたときにエディタをクリーンアップ
 		};
 	});
+
+
+    async function handlePaste(event: ClipboardEvent) {
+        const items = event.clipboardData?.items;
+        if (!items) return;
+
+        for (const item of items) {
+            if (item.type.startsWith('image/')) {
+                const file = item.getAsFile();
+                if (file) {
+                    const url = await uploadImage(file);
+                    insertMarkdownImage(url);
+                    event.preventDefault();
+                }
+            }
+        }
+    }
+
+
+    async function uploadImage(file: File): Promise<string> {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to upload image');
+        }
+
+        const data = await response.json();
+        return data.url;
+    }
+
+    function insertMarkdownImage(url: string) {
+        const markdownImage = `![Image](${url})`;
+        const transaction = editor.state.update({
+            changes: {
+                from: editor.state.selection.main.from,
+                insert: markdownImage,
+            },
+        });
+        editor.dispatch(transaction);
+    }
 </script>
 
 <div class="wrapper">
