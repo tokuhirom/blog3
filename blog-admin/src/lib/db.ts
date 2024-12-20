@@ -99,4 +99,21 @@ export class EntryModel {
 
 		return path;
 	}
+
+
+	/**
+	 * Get entries older than the given path.
+	 */
+	static async getEntriesOlderThan(lastPath: string, limit = 100): Promise<Entry[]> {
+		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
+			`
+			SELECT * FROM entry
+			WHERE path < ?
+			ORDER BY path DESC
+			LIMIT ?
+			`,
+			[lastPath, limit]
+		);
+		return rows;
+	}
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { EditorView, keymap } from '@codemirror/view';
-	import { EditorState, type Extension, Transaction } from '@codemirror/state';
+	import { EditorState, Transaction } from '@codemirror/state';
 	import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 	import { languages } from '@codemirror/language-data';
 	import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
