@@ -4,7 +4,7 @@
 	import type { Entry } from '$lib/db';
 	import type { PageData } from './$types';
 	import { error } from '@sveltejs/kit';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	let searchKeyword = '';
 	let { data }: { data: PageData } = $props();
@@ -19,6 +19,7 @@
 	// ロード状態を管理
 	let isLoading = false;
 	let hasMore = true; // まだエントリが残っているかどうか
+	let loadInterval: number | null = null;
 
 	// 検索時の処理
 	function handleSearch(keyword: string) {
@@ -30,58 +31,66 @@
 		);
 	}
 
-	// スクロール時の処理
-	async function handleScroll() {
+	// 新しいエントリを取得する関数
+	async function loadMoreEntries() {
 		if (isLoading || !hasMore) return;
 
-		const scrollPosition = window.scrollY + window.innerHeight;
-		const documentHeight = document.body.scrollHeight;
+		isLoading = true;
 
-		// スクロール位置が70%を超えた場合
-		if (scrollPosition / documentHeight > 0.7) {
-			isLoading = true;
+		// 最後のエントリのパスを取得
+		const lastPath = allEntries[allEntries.length - 1]?.path;
+		if (!lastPath) {
+			isLoading = false;
+			hasMore = false;
+			return;
+		}
 
-			// 最後のエントリのパスを取得
-			const lastPath = allEntries[allEntries.length - 1]?.path;
-			if (!lastPath) {
-				isLoading = false;
-				return;
+		try {
+			const response = await fetch(`/api/entry?last_path=${encodeURIComponent(lastPath)}`);
+			if (!response.ok) {
+				throw new Error('Failed to load more entries');
 			}
 
-			// 新しいエントリを取得
-			try {
-				const response = await fetch(`/api/entry?last_path=${encodeURIComponent(lastPath)}`);
-				if (!response.ok) {
-					throw new Error('Failed to load more entries');
-				}
-
-				const newEntries: Entry[] = await response.json();
-				if (newEntries.length === 0) {
-					hasMore = false; // 追加エントリなし
-				} else {
-					allEntries = [...allEntries, ...newEntries];
-					handleSearch(searchKeyword); // フィルタリングを再適用
-				}
-			} catch (err) {
-				console.error(err);
-			} finally {
-				isLoading = false;
+			const newEntries: Entry[] = await response.json();
+			if (newEntries.length === 0) {
+				hasMore = false; // 追加エントリなし
+			} else {
+				allEntries = [...allEntries, ...newEntries];
+				handleSearch(searchKeyword); // フィルタリングを再適用
 			}
+		} catch (err) {
+			console.error(err);
+		} finally {
+			isLoading = false;
 		}
 	}
 
+	// 一定間隔でエントリをロード
 	onMount(() => {
-		window.addEventListener('scroll', handleScroll);
+		loadInterval = setInterval(() => {
+			if (!isLoading && hasMore) {
+				loadMoreEntries();
+			}
+		}, 10); // 10ms 間隔でロード
+
 		return () => {
-			window.removeEventListener('scroll', handleScroll);
+			if (loadInterval) {
+				clearInterval(loadInterval);
+			}
 		};
+	});
+
+	onDestroy(() => {
+		if (loadInterval) {
+			clearInterval(loadInterval);
+		}
 	});
 </script>
 
 <div class="p-4">
 	<SearchBox onSearch={handleSearch} />
 	<EntryList entries={filteredEntries} />
-	{#if isLoading}
+	{#if isLoading || hasMore}
 		<p class="text-center text-gray-500 mt-4">Loading more entries...</p>
 	{/if}
 	{#if !hasMore && allEntries.length > 0}
