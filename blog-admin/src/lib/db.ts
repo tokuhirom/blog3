@@ -1,4 +1,4 @@
-import mysql, { type Pool } from 'mysql2/promise';
+import mysql, { type Pool, type RowDataPacket } from 'mysql2/promise';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -19,3 +19,47 @@ export type Entry = {
 	created_at: Date;
 	updated_at: Date | null;
 };
+
+export class EntryModel {
+	static async getEntry(path: string): Promise<Entry | null> {
+		const [rows] = await db.query<Entry[] & RowDataPacket[]>('SELECT * FROM entry WHERE path = ?', [
+			path
+		]);
+
+		return rows.length > 0 ? rows[0] : null;
+	}
+
+	/**
+	 * Update an entry by path
+	 */
+	static async updateEntry(
+		path: string,
+		data: { title: string; body: string; status: 'draft' | 'published' }
+	): Promise<void> {
+		// クエリを実行
+		const [result] = await db.query(
+			`
+      UPDATE entry
+      SET title = ?, body = ?, status = ?
+      WHERE path = ?
+      `,
+			[data.title, data.body, data.status, path]
+		);
+
+		// 更新が成功したかをチェック
+		if (result.affectedRows === 0) {
+			throw new Error('Entry not found or no changes applied');
+		}
+	}
+
+	/**
+	 * Delete an entry by path
+	 */
+	static async deleteEntry(path: string): Promise<void> {
+		const [result] = await db.query('DELETE FROM entry WHERE path = ?', [path]);
+
+		if (result.affectedRows === 0) {
+			throw new Error('Entry not found');
+		}
+	}
+}
