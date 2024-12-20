@@ -1,6 +1,27 @@
 import { db } from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 
+export const GET: RequestHandler = async ({ params }) => {
+	const { path } = params;
+
+	const [rows] = await db.query(
+		`
+	  SELECT path, title, body, status, format, created_at, updated_at
+	  FROM entry
+	  WHERE path = ?
+	  `,
+		[path]
+	);
+
+	if (rows.length === 0) {
+		return new Response(JSON.stringify({ error: 'Entry not found' }), { status: 404 });
+	}
+
+	return new Response(JSON.stringify(rows[0]), {
+		headers: { 'Content-Type': 'application/json' }
+	});
+};
+
 export const PATCH: RequestHandler = async ({ params, request }) => {
 	const path = params.path;
 
