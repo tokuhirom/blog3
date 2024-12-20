@@ -57,10 +57,13 @@
 	<div class="editor">
 		<label for="body" class="block text-sm font-medium text-gray-700">Body</label>
 		<input type="hidden" name="body" bind:value={body} />
-        <MarkdownEditor
-        initialContent={body}
-        onUpdateText={(content) => {body = content; console.log(body);}}
-        ></MarkdownEditor>
+		<MarkdownEditor
+			initialContent={body}
+			onUpdateText={(content) => {
+				body = content;
+				console.log(body);
+			}}
+		></MarkdownEditor>
 	</div>
 
 	<div>
@@ -96,9 +99,9 @@
 {/if}
 
 <style>
-    .editor {
-        border: 1px solid #d1d5db;
-        border-radius: 0.25rem;
-        height: 400px;
-    }
+	.editor {
+		border: 1px solid #d1d5db;
+		border-radius: 0.25rem;
+		height: 400px;
+	}
 </style>

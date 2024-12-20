@@ -3,7 +3,6 @@ import * as dotenv from 'dotenv';
 import { EntryCache } from './cache';
 import { format } from 'date-fns';
 
-
 dotenv.config();
 
 export const db: Pool = mysql.createPool({
@@ -79,7 +78,11 @@ export class EntryModel {
 		EntryCache.clear();
 	}
 
-	static async createEntry(data: { title: string; body: string; status: 'draft' | 'published' }): Promise<string> {
+	static async createEntry(data: {
+		title: string;
+		body: string;
+		status: 'draft' | 'published';
+	}): Promise<string> {
 		const pathFormatter = 'yyyy/MM/dd/HHmmss';
 		const path = format(new Date(), pathFormatter);
 
