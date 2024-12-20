@@ -5,7 +5,7 @@
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
-        error(500, "Missing entry data");
+		error(500, 'Missing entry data');
 	}
 	let entry: Entry = data.entry;
 	console.log(entry);

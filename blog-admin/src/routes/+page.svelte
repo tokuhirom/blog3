@@ -2,16 +2,16 @@
 	import EntryList from './EntryList.svelte';
 	import SearchBox from './SearchBox.svelte';
 	import type { Entry } from '$lib/db';
-    import type { PageData } from './$types';
+	import type { PageData } from './$types';
 	import { error } from '@sveltejs/kit';
 
 	let searchKeyword = '';
 
 	let { data }: { data: PageData } = $props();
-    if (!data.entries) {
-        error(500, 'Missing entries data');
-    }
-    let allEntries : Entry[] = data.entries;
+	if (!data.entries) {
+		error(500, 'Missing entries data');
+	}
+	let allEntries: Entry[] = data.entries;
 	let filteredEntries: Entry[] = $state(allEntries);
 
 	// 検索時の処理
