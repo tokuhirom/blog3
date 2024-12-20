@@ -30,7 +30,7 @@
 
 <div class="p-4">
 	<!-- 検索ボックス -->
-	<SearchBox on:search={handleSearch} />
+	<SearchBox onSearch={handleSearch} />
 
 	<!-- エントリ一覧 -->
 	<EntryList entries={filteredEntries} />
