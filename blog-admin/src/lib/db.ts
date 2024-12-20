@@ -26,7 +26,7 @@ export type Entry = {
 export class EntryModel {
 	static async getAllEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
-			'SELECT * FROM entry ORDER BY path DESC LIMIT 1000',
+			'SELECT * FROM entry ORDER BY path DESC LIMIT 100',
 			[]
 		);
 		return rows;
