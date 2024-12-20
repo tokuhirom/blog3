@@ -14,6 +14,21 @@
 
 	let successMessage = $state('');
 	let errorMessage = $state('');
+
+	function handleDelete(event: Event) {
+		event.preventDefault(); // フォーム送信を一時停止
+
+		const confirmed = confirm(`Are you sure you want to delete the entry "${title}"?`);
+		if (confirmed) {
+			const form = (event.target as HTMLElement).closest('form');
+			if (form) {
+				form.action = '?/delete'; // フォームの送信先を変更
+				form.submit(); // フォームを送信
+			} else {
+				console.error('Form not found');
+			}
+		}
+	}
 </script>
 
 <form
@@ -66,6 +81,7 @@
 			type="submit"
 			formaction="?/delete"
 			class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+			on:click|preventDefault={handleDelete}
 		>
 			Delete Entry
 		</button>
