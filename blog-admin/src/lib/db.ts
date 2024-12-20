@@ -1,6 +1,9 @@
 import mysql, { type Pool, type RowDataPacket } from 'mysql2/promise';
 import * as dotenv from 'dotenv';
 import { EntryCache } from './cache';
+import { format } from 'date-fns';
+
+
 dotenv.config();
 
 export const db: Pool = mysql.createPool({
@@ -74,5 +77,23 @@ export class EntryModel {
 		}
 
 		EntryCache.clear();
+	}
+
+	static async createEntry(data: { title: string; body: string; status: 'draft' | 'published' }): Promise<string> {
+		const pathFormatter = 'yyyy/MM/dd/HHmmss';
+		const path = format(new Date(), pathFormatter);
+
+		// エントリ作成クエリ
+		await db.query(
+			`
+	  INSERT INTO entry (path, title, body, status)
+	  VALUES (?, ?, ?, ?)
+	  `,
+			[path, data.title, data.body, data.status]
+		);
+
+		EntryCache.clear();
+
+		return path;
 	}
 }
