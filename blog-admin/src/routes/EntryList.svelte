@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let entries = [];
+	import type { Entry } from "$lib/db";
+
+	export let entries: Entry[] = [];
 </script>
 
 <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">

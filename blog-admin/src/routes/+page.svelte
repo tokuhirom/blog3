@@ -2,9 +2,10 @@
 	import { onMount } from 'svelte';
 	import EntryList from './EntryList.svelte';
 	import SearchBox from './SearchBox.svelte';
+	import type { Entry } from '$lib/db';
 
-	let allEntries = [];
-	let filteredEntries = [];
+	let allEntries: Entry[] = [];
+	let filteredEntries: Entry[] = [];
 	let searchKeyword = '';
 
 	async function fetchEntries() {
