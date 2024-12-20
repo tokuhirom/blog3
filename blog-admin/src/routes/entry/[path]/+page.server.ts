@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { EntryModel } from '$lib/db';
+import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
 	console.log('Loading entry page content!');
@@ -11,4 +12,28 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		entry: entry
 	};
+};
+
+export const actions: Actions = {
+	update: async ({ request, params }) => {
+		const formData = await request.formData();
+		const title = formData.get('title') as string;
+		const body = formData.get('body') as string;
+		const status = formData.get('status') as 'draft' | 'published';
+		const path = params.path;
+
+		// 必須フィールドチェック
+		if (!title || !body || !status) {
+			return { error: 'Missing required fields' };
+		}
+		await EntryModel.updateEntry(path, { title, body, status });
+		return { success: true };
+	},
+	delete: async ({ params }) => {
+		const path = params.path;
+
+		await EntryModel.deleteEntry(path);
+
+		redirect(302, '/');
+	}
 };

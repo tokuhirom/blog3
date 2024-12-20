@@ -9,5 +9,5 @@
 	<Header />
 	<div class="pt-16">
 		{@render children()}
-		</div>
+	</div>
 </div>
