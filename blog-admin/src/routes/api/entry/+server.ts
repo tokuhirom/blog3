@@ -1,4 +1,4 @@
-import { db, EntryModel } from '$lib/db';
+import { db, AdminEntryRepository } from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	const limit = 100;
 	try {
-		const rows = await EntryModel.getEntriesOlderThan(lastPath, limit);
+		const rows = await AdminEntryRepository.getEntriesOlderThan(lastPath, limit);
 		return new Response(JSON.stringify(rows), { status: 200 });
 	} catch (error) {
 		console.error(error);

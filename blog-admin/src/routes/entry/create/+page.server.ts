@@ -1,4 +1,4 @@
-import { EntryModel } from '$lib/db';
+import { AdminEntryRepository } from '$lib/db';
 import { redirect, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
@@ -12,7 +12,7 @@ export const actions: Actions = {
 		if (!title || !body || !status) {
 			return { error: 'Missing required fields' };
 		}
-		await EntryModel.createEntry({ title, body, status });
+		await AdminEntryRepository.createEntry({ title, body, status });
 
 		redirect(302, '/');
 	}

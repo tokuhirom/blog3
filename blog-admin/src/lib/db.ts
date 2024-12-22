@@ -23,7 +23,7 @@ export type Entry = {
 	updated_at: Date | null;
 };
 
-export class EntryModel {
+export class AdminEntryRepository {
 	static async getAllEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			'SELECT * FROM entry ORDER BY path DESC LIMIT 100',

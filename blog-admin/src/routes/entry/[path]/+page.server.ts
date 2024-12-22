@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { EntryModel } from '$lib/db';
+import { AdminEntryRepository } from '$lib/db';
 import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const path = params.path;
 
-	const entry = await EntryModel.getEntry(path);
+	const entry = await AdminEntryRepository.getEntry(path);
 	console.log('Entry loaded: ', entry);
 	return {
 		entry: entry
@@ -37,13 +37,13 @@ export const actions: Actions = {
 			' status=',
 			status
 		);
-		await EntryModel.updateEntry(path, { title, body, status });
+		await AdminEntryRepository.updateEntry(path, { title, body, status });
 		return { success: true };
 	},
 	delete: async ({ params }) => {
 		const path = params.path;
 
-		await EntryModel.deleteEntry(path);
+		await AdminEntryRepository.deleteEntry(path);
 
 		redirect(302, '/');
 	}

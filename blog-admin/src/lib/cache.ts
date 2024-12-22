@@ -1,4 +1,4 @@
-import { EntryModel, type Entry } from './db';
+import { AdminEntryRepository, type Entry } from './db';
 
 let cache: Entry[] | null = null;
 
@@ -6,7 +6,7 @@ export class EntryCache {
 	static async get(): Promise<Entry[]> {
 		if (cache == null) {
 			console.log('Cache miss');
-			const got = await EntryModel.getAllEntries();
+			const got = await AdminEntryRepository.getAllEntries();
 			cache = got;
 			return got;
 		} else {
