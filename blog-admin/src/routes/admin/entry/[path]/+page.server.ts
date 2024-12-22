@@ -28,14 +28,7 @@ export const actions: Actions = {
 		}
 
 		console.log(
-			'Updating entry with path: ',
-			path,
-			' body=',
-			body,
-			' title=',
-			title,
-			' status=',
-			status
+			`Updating entry with path: ${path}, title: ${title}, body: ${body}, status: ${status}`,
 		);
 		await AdminEntryRepository.updateEntry(path, { title, body, status });
 		return { success: true };
@@ -45,6 +38,6 @@ export const actions: Actions = {
 
 		await AdminEntryRepository.deleteEntry(path);
 
-		redirect(302, '/');
+		redirect(302, '/admin/');
 	}
 };

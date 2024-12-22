@@ -8,7 +8,7 @@
 	{#each entries as entry}
 		<a
 			class="item break-all shadow-md"
-			href={`/entry/${encodeURIComponent(entry.path)}`}
+			href={`/admin/entry/${encodeURIComponent(entry.path)}`}
 			class:bg-gray-200={entry.status === 'draft'}
 		>
 			<h2 class="mb-2 text-sm font-bold">{entry.title}</h2>

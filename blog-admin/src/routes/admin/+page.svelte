@@ -46,7 +46,7 @@
 		}
 
 		try {
-			const response = await fetch(`/api/entry?last_path=${encodeURIComponent(lastPath)}`);
+			const response = await fetch(`/admin/api/entry?last_path=${encodeURIComponent(lastPath)}`);
 			if (!response.ok) {
 				throw new Error('Failed to load more entries');
 			}

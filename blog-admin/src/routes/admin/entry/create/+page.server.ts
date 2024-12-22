@@ -14,6 +14,6 @@ export const actions: Actions = {
 		}
 		await AdminEntryRepository.createEntry({ title, body, status });
 
-		redirect(302, '/');
+		redirect(302, '/admin/');
 	}
 };
