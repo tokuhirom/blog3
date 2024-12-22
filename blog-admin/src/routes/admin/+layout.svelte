@@ -1,12 +1,12 @@
 <script lang="ts">
 	import '../../app.css';
-	import Header from '$lib/components/Header.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 
 	let { children } = $props();
 </script>
 
 <div>
-	<Header />
+	<AdminHeader />
 	<div class="pt-16">
 		{@render children()}
 	</div>
