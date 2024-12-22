@@ -91,9 +91,9 @@
 	<SearchBox onSearch={handleSearch} />
 	<EntryList entries={filteredEntries} />
 	{#if isLoading || hasMore}
-		<p class="text-center text-gray-500 mt-4">Loading more entries...</p>
+		<p class="mt-4 text-center text-gray-500">Loading more entries...</p>
 	{/if}
 	{#if !hasMore && allEntries.length > 0}
-		<p class="text-center text-gray-500 mt-4">No more entries to load</p>
+		<p class="mt-4 text-center text-gray-500">No more entries to load</p>
 	{/if}
 </div>
