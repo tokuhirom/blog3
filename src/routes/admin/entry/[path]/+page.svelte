@@ -4,8 +4,6 @@
 	import type { PageData } from './$types';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
-	import { updateTask } from '@vitest/runner';
-	import { preventDefault } from 'svelte/legacy';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
