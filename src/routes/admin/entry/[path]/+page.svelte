@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Entry } from '$lib/db';
-	import { error, redirect } from '@sveltejs/kit';
+	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
