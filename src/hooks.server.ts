@@ -14,6 +14,23 @@ const BASIC_AUTH_PASSWORD = process.env.BASIC_AUTH_PASSWORD;
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
+	const request = event.request;
+
+	const forbidden =
+		(request.method === 'POST' ||
+			request.method === 'PUT' ||
+			request.method === 'PATCH' ||
+			request.method === 'DELETE') &&
+		request.headers.get('origin') !== event.url.origin;
+
+	if (forbidden) {
+		return new Response('Forbidden', {
+			status: 403,
+			headers: {
+				'X-CSRF-Detected': 'true'
+			}
+		});
+	}
 
 	// `/admin` 以下のパスにのみ認証を適用
 	if (path.startsWith('/admin')) {
