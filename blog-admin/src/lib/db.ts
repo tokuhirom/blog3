@@ -120,6 +120,23 @@ export class AdminEntryRepository {
 }
 
 export class PublicEntryRepository {
+    static async getEntry(path: string): Promise<Entry> {
+        try {
+            const [rows] = await db.query(
+				`SELECT * FROM entry
+				WHERE path = ?
+				    AND status='published'`,
+				[path]);
+            if (rows.length === 0) {
+                throw new Error('Entry not found');
+            }
+            return rows[0];
+        } catch (error) {
+            console.error('Error fetching entry:', error, path);
+            throw error;
+        }
+    }
+
 	/**
 	 * Get paginated entries.
 	 *
