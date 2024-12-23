@@ -41,7 +41,7 @@
 	method="post"
 	action="?/update"
 	class="space-y-4 p-4"
-	on:submit={() => {
+	onsubmit={() => {
 		successMessage = '';
 		errorMessage = '';
 	}}
@@ -91,7 +91,7 @@
 			type="submit"
 			formaction="?/delete"
 			class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-			on:click|preventDefault={handleDelete}
+			onclick={handleDelete}
 		>
 			Delete Entry
 		</button>
