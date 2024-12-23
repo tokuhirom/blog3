@@ -4,6 +4,8 @@
 	import type { PageData } from './$types';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
+	import { updateTask } from '@vitest/runner';
+	import { preventDefault } from 'svelte/legacy';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -34,6 +36,34 @@
 			}
 		}
 	}
+
+	async function handleUpdate() {
+		successMessage = '';
+		errorMessage = '';
+
+		try {
+			const request = {
+				title,
+				body,
+				status,
+			}
+			const response = await fetch("/admin/api/entry/" + entry.path, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(request),
+			})
+			if (response.ok) {
+				successMessage = 'Entry updated successfully';
+			} else {
+				errorMessage = 'Failed to update entry';
+			}
+		} catch (e) {
+			errorMessage = 'Failed to update entry';
+			console.error('Failed to update entry:', e);
+		}
+	}
 </script>
 
 <form
@@ -41,9 +71,9 @@
 	method="post"
 	action="?/update"
 	class="space-y-4 p-4"
-	onsubmit={() => {
-		successMessage = '';
-		errorMessage = '';
+	onsubmit={async (event) => {
+		event.preventDefault();
+		await handleUpdate();
 	}}
 >
 	<div>
@@ -69,7 +99,7 @@
 			onSave={(content) => {
 				body = content;
 				console.log('Save the content by shortcut');
-				form.submit();
+				handleUpdate();
 			}}
 		></MarkdownEditor>
 	</div>
