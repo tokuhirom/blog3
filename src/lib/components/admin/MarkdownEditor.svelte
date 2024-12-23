@@ -59,7 +59,7 @@
 		};
 	});
 
-	async function handlePaste(event: ClipboardEvent) {
+	function handlePaste(event: ClipboardEvent) : void {
 		const items = event.clipboardData?.items;
 		if (!items) return;
 
