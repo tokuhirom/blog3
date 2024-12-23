@@ -9,7 +9,7 @@ const md: MarkdownIt = new MarkdownIt({
 			// 指定されたシンタックスでハイライト
 			try {
 				return `<pre class="hljs"><code>${hljs.highlight(code, { language: lang }).value}</code></pre>`;
-			} catch (_) {
+			} catch {
 				// 無視
 			}
 		}
