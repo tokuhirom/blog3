@@ -13,8 +13,8 @@
 		error(500, 'Missing entries data');
 	}
 
-	let allEntries: Entry[] = data.entries;
-	let filteredEntries: Entry[] = $state(allEntries);
+	let allEntries: Entry[] = $state(data.entries);
+	let filteredEntries: Entry[] = $state(data.entries);
 
 	// ロード状態を管理
 	let isLoading = $state(false);
