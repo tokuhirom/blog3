@@ -3,7 +3,7 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 
-	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
+	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
