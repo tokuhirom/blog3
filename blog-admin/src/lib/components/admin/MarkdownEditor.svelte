@@ -12,6 +12,7 @@
 	let container; // エディタの親要素
 	export let initialContent: string = ''; // 初期コンテンツ
 	export let onUpdateText: (content: string) => void; // 更新時のコールバック
+	export let onSave: (content: string) => void;
 	let editor: EditorView;
 
 	onMount(() => {
@@ -116,7 +117,16 @@
         });
         editor.dispatch(transaction);
     }
+
+	const handleKeyDown = (event) => {
+		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+			event.preventDefault();
+			onSave(editor.state.doc.toString());
+		}
+	};
 </script>
+
+<svelte:window on:keydown={handleKeyDown} />
 
 <div class="wrapper">
 	<div bind:this={container}></div>

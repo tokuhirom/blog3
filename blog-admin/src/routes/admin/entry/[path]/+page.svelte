@@ -9,6 +9,9 @@
 	if (!data.entry) {
 		error(500, 'Missing entry data');
 	}
+
+	let form: HTMLFormElement;
+
 	let entry: Entry = data.entry;
 	let title: string = $state(entry.title);
 	let body: string = $state(entry.body); // 初期値として本文を保持
@@ -34,6 +37,7 @@
 </script>
 
 <form
+	bind:this={form}
 	method="post"
 	action="?/update"
 	class="space-y-4 p-4"
@@ -61,7 +65,11 @@
 			initialContent={body}
 			onUpdateText={(content) => {
 				body = content;
-				console.log(body);
+			}}
+			onSave={(content) => {
+				body = content;
+				console.log("Save the content by shortcut");
+				form.submit();
 			}}
 		></MarkdownEditor>
 	</div>
