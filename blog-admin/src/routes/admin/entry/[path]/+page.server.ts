@@ -3,12 +3,9 @@ import { AdminEntryRepository } from '$lib/db';
 import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
-	console.log('Loading entry page content!');
-
 	const path = params.path;
 
 	const entry = await AdminEntryRepository.getEntry(path);
-	console.log('Entry loaded: ', entry);
 	return {
 		entry: entry
 	};
