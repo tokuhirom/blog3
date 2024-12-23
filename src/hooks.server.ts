@@ -16,16 +16,19 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
 	const request = event.request;
 
+	// event.url.origin が `http://blog.64p.org` のように http**s** にならないので
+	// ORIGIN 環境変数を使えるようにする
+	const origin = process.env.ORIGIN || event.url.origin;
 	const forbidden =
 		(request.method === 'POST' ||
 			request.method === 'PUT' ||
 			request.method === 'PATCH' ||
 			request.method === 'DELETE') &&
-		request.headers.get('origin') !== event.url.origin;
+		request.headers.get('origin') !== origin;
 
 	if (forbidden) {
 		console.error(
-			`CSRF detected: method=${request.method} path=${path} event.url.origin=${event.url.origin} request.headers.origin=${request.headers.get('origin')}`
+			`CSRF detected: method=${request.method} path=${path} origin=${origin} event.url.origin=${event.url.origin} request.headers.origin=${request.headers.get('origin')}`
 		);
 		return new Response('Forbidden', {
 			status: 403,
