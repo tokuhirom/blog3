@@ -25,8 +25,9 @@ export function renderHTML(markdown: string): string {
 export function renderHTMLByEntry(entry: Entry): string {
 	if (entry.format === 'mkdn') {
 		return renderHTML(entry.body);
-	} else {
-		console.log('Unsupported format: ', entry.format);
+	} else if (entry.format === 'html') {
 		return entry.body;
+	} else {
+		throw new Error(`Unknown format: ${entry.format}`);
 	}
 }
