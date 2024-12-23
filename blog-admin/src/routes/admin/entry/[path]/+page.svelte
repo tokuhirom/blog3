@@ -88,6 +88,11 @@
 			Delete Entry
 		</button>
 	</div>
+
+	<!-- link to the user side page -->
+	<div class="flex justify-between p-3">
+		<a href="/entry/{entry.path}" class="rounded bg-green-500 px-4 py-2 text-white hover:underline">Go to User Side Page</a>
+	</div>
 </form>
 
 {#if successMessage}
