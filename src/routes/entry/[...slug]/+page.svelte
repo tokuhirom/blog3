@@ -12,6 +12,7 @@
 <div class="container mx-auto max-w-3xl rounded-lg bg-white p-4 shadow-lg">
 	<h2 class="text-2xl font-bold text-gray-800">{data.entry.title}</h2>
 	<p class="prose mt-4 whitespace-pre-line text-gray-700">
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		{@html data.body}
 	</p>
 	<div class="mt-6 text-sm text-gray-500">
