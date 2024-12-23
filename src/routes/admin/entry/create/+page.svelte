@@ -13,15 +13,15 @@
 		const data = {
 			title,
 			body,
-			status,
+			status
 		};
 
 		fetch('/admin/api/entry', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(data),
+			body: JSON.stringify(data)
 		})
 			.then((response) => {
 				if (response.ok) {
@@ -35,7 +35,6 @@
 				console.error(error);
 				alert('Failed to create entry');
 			});
-
 	}
 </script>
 
