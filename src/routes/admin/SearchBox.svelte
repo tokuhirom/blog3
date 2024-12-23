@@ -20,5 +20,5 @@
 	type="text"
 	placeholder="Search entries..."
 	class="mb-4 w-full rounded border p-2"
-	on:input={onInput}
+	oninput={onInput}
 />
