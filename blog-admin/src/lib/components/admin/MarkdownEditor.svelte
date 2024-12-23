@@ -69,10 +69,20 @@
                     insertMarkdownImage(url);
                     event.preventDefault();
                 }
+            } else if (item.type === 'text/plain') {
+                const text = event.clipboardData.getData('text/plain');
+                insertTextAtCursor(text);
+                event.preventDefault();
             }
         }
     }
 
+    function insertTextAtCursor(text: string) {
+        const transaction = editor.state.update({
+            changes: { from: editor.state.selection.main.from, insert: text }
+        });
+        editor.dispatch(transaction);
+    }
 
     async function uploadImage(file: File): Promise<string> {
         const formData = new FormData();
