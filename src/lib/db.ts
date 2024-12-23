@@ -1,4 +1,4 @@
-import mysql, { type Pool, type RowDataPacket } from 'mysql2/promise';
+import mysql, { type ResultSetHeader, type Pool, type RowDataPacket } from 'mysql2/promise';
 import * as dotenv from 'dotenv';
 import { format } from 'date-fns';
 
@@ -65,7 +65,7 @@ export class AdminEntryRepository {
 		data: { title: string; body: string; status: 'draft' | 'published' }
 	): Promise<void> {
 		// クエリを実行
-		const [result] = await db.query(
+		const [result] = await db.query<ResultSetHeader>(
 			`
       UPDATE entry
       SET title = ?, body = ?, status = ?
@@ -84,7 +84,7 @@ export class AdminEntryRepository {
 	 * Delete an entry by path
 	 */
 	async deleteEntry(path: string): Promise<void> {
-		const [result] = await db.query('DELETE FROM entry WHERE path = ?', [path]);
+		const [result] = await db.query<ResultSetHeader>('DELETE FROM entry WHERE path = ?', [path]);
 
 		if (result.affectedRows === 0) {
 			throw new Error('Entry not found');
@@ -131,7 +131,7 @@ export class AdminEntryRepository {
 export class PublicEntryRepository {
 	static async getEntry(path: string): Promise<Entry> {
 		try {
-			const [rows] = await db.query(
+			const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 				`SELECT * FROM entry
 				WHERE path = ?
 				    AND status='published'`,
