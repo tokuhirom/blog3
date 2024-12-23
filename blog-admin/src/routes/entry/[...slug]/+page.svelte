@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+    import 'highlight.js/styles/github.css';
 
 	export let data: PageData;
 </script>
