@@ -25,7 +25,7 @@ export const actions: Actions = {
 		}
 
 		console.log(
-			`Updating entry with path: ${path}, title: ${title}, body: ${body}, status: ${status}`,
+			`Updating entry with path: ${path}, title: ${title}, body: ${body}, status: ${status}`
 		);
 		await AdminEntryRepository.updateEntry(path, { title, body, status });
 		return { success: true };

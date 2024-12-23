@@ -5,9 +5,13 @@
 	let { children } = $props();
 </script>
 
-
 <svelte:head>
-    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://blog.64p.org/feed" />
+	<link
+		rel="alternate"
+		type="application/rss+xml"
+		title="RSS Feed"
+		href="https://blog.64p.org/feed"
+	/>
 </svelte:head>
 
 <div>

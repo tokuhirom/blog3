@@ -3,7 +3,7 @@
 	import { EditorView, keymap } from '@codemirror/view';
 	import { EditorState, Transaction } from '@codemirror/state';
 	import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
-    import { history, historyKeymap } from '@codemirror/commands';
+	import { history, historyKeymap } from '@codemirror/commands';
 	import { languages } from '@codemirror/language-data';
 	import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 	import { syntaxHighlighting } from '@codemirror/language';
@@ -26,18 +26,15 @@
 				history(),
 				syntaxHighlighting(oneDarkHighlightStyle), // ダークテーマのシンタックスハイライト
 				EditorView.lineWrapping, // 行の折り返し
-				keymap.of([
-					...historyKeymap,
-					...defaultKeymap,
-				]),
+				keymap.of([...historyKeymap, ...defaultKeymap]),
 				EditorView.theme({
 					// 高さ固定のテーマ
 					'.cm-editor': { height: '600px' },
 					'.cm-content': { overflowY: 'auto' }
 				}),
-                EditorView.domEventHandlers({
-                    paste: handlePaste,
-                }),
+				EditorView.domEventHandlers({
+					paste: handlePaste
+				}),
 				EditorView.updateListener.of((update) => {
 					if (update.changes) {
 						// ユーザーの入力変更を反映
@@ -62,61 +59,60 @@
 		};
 	});
 
+	async function handlePaste(event: ClipboardEvent) {
+		const items = event.clipboardData?.items;
+		if (!items) return;
 
-    async function handlePaste(event: ClipboardEvent) {
-        const items = event.clipboardData?.items;
-        if (!items) return;
+		for (const item of items) {
+			if (item.type.startsWith('image/')) {
+				const file = item.getAsFile();
+				if (file) {
+					const url = await uploadImage(file);
+					insertMarkdownImage(url);
+					event.preventDefault();
+				}
+			} else if (item.type === 'text/plain') {
+				const text = event.clipboardData.getData('text/plain');
+				insertTextAtCursor(text);
+				event.preventDefault();
+			}
+		}
+	}
 
-        for (const item of items) {
-            if (item.type.startsWith('image/')) {
-                const file = item.getAsFile();
-                if (file) {
-                    const url = await uploadImage(file);
-                    insertMarkdownImage(url);
-                    event.preventDefault();
-                }
-            } else if (item.type === 'text/plain') {
-                const text = event.clipboardData.getData('text/plain');
-                insertTextAtCursor(text);
-                event.preventDefault();
-            }
-        }
-    }
+	function insertTextAtCursor(text: string) {
+		const transaction = editor.state.update({
+			changes: { from: editor.state.selection.main.from, insert: text }
+		});
+		editor.dispatch(transaction);
+	}
 
-    function insertTextAtCursor(text: string) {
-        const transaction = editor.state.update({
-            changes: { from: editor.state.selection.main.from, insert: text }
-        });
-        editor.dispatch(transaction);
-    }
+	async function uploadImage(file: File): Promise<string> {
+		const formData = new FormData();
+		formData.append('file', file);
 
-    async function uploadImage(file: File): Promise<string> {
-        const formData = new FormData();
-        formData.append('file', file);
+		const response = await fetch('/api/upload', {
+			method: 'POST',
+			body: formData
+		});
 
-        const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-        });
+		if (!response.ok) {
+			throw new Error('Failed to upload image');
+		}
 
-        if (!response.ok) {
-            throw new Error('Failed to upload image');
-        }
+		const data = await response.json();
+		return data.url;
+	}
 
-        const data = await response.json();
-        return data.url;
-    }
-
-    function insertMarkdownImage(url: string) {
-        const markdownImage = `![Image](${url})`;
-        const transaction = editor.state.update({
-            changes: {
-                from: editor.state.selection.main.from,
-                insert: markdownImage,
-            },
-        });
-        editor.dispatch(transaction);
-    }
+	function insertMarkdownImage(url: string) {
+		const markdownImage = `![Image](${url})`;
+		const transaction = editor.state.update({
+			changes: {
+				from: editor.state.selection.main.from,
+				insert: markdownImage
+			}
+		});
+		editor.dispatch(transaction);
+	}
 
 	const handleKeyDown = (event) => {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {

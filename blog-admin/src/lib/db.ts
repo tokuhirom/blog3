@@ -101,7 +101,6 @@ export class AdminEntryRepository {
 		return path;
 	}
 
-
 	/**
 	 * Get entries older than the given path.
 	 */
@@ -120,22 +119,23 @@ export class AdminEntryRepository {
 }
 
 export class PublicEntryRepository {
-    static async getEntry(path: string): Promise<Entry> {
-        try {
-            const [rows] = await db.query(
+	static async getEntry(path: string): Promise<Entry> {
+		try {
+			const [rows] = await db.query(
 				`SELECT * FROM entry
 				WHERE path = ?
 				    AND status='published'`,
-				[path]);
-            if (rows.length === 0) {
-                throw new Error('Entry not found');
-            }
-            return rows[0];
-        } catch (error) {
-            console.error('Error fetching entry:', error, path);
-            throw error;
-        }
-    }
+				[path]
+			);
+			if (rows.length === 0) {
+				throw new Error('Entry not found');
+			}
+			return rows[0];
+		} catch (error) {
+			console.error('Error fetching entry:', error, path);
+			throw error;
+		}
+	}
 
 	/**
 	 * Get paginated entries.
@@ -144,9 +144,12 @@ export class PublicEntryRepository {
 	 * @param entriesPerPage - Number of entries per page.
 	 * @returns A list of entries for the specified page.
 	 */
-	static async getPaginatedEntry(page: number = 1, entriesPerPage: number = 100): Promise<{
-		entries: Entry[],
-		hasNext: boolean
+	static async getPaginatedEntry(
+		page: number = 1,
+		entriesPerPage: number = 100
+	): Promise<{
+		entries: Entry[];
+		hasNext: boolean;
 	}> {
 		if (page < 1) {
 			throw new Error('Page number must be greater than or equal to 1.');
@@ -162,7 +165,7 @@ export class PublicEntryRepository {
 			ORDER BY path DESC
 			LIMIT ? OFFSET ?
 			`,
-			[entriesPerPage+1, offset]
+			[entriesPerPage + 1, offset]
 		);
 
 		// 次ページがあるかどうか

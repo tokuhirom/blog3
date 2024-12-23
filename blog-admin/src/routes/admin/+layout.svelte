@@ -5,9 +5,8 @@
 	let { children } = $props();
 </script>
 
-
 <svelte:head>
-    <title>tokuhirom's blog admin site</title>
+	<title>tokuhirom's blog admin site</title>
 </svelte:head>
 
 <div>

@@ -1,19 +1,19 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-    import 'highlight.js/styles/github.css';
+	import 'highlight.js/styles/github.css';
 
 	export let data: PageData;
 </script>
 
 <svelte:head>
-    <title>{data.entry.title} - tokuhirom's blog</title>
+	<title>{data.entry.title} - tokuhirom's blog</title>
 </svelte:head>
 
-<div class="container mx-auto p-4 max-w-3xl bg-white rounded-lg shadow-lg">
+<div class="container mx-auto max-w-3xl rounded-lg bg-white p-4 shadow-lg">
 	<h2 class="text-2xl font-bold text-gray-800">{data.entry.title}</h2>
-	<p class="mt-4 text-gray-700 whitespace-pre-line prose">
-        {@html data.body}
-    </p>
+	<p class="prose mt-4 whitespace-pre-line text-gray-700">
+		{@html data.body}
+	</p>
 	<div class="mt-6 text-sm text-gray-500">
 		<div>Created: <span class="font-medium">{data.entry.created_at}</span></div>
 		{#if data.entry.updated_at !== null}

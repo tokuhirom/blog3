@@ -1,12 +1,14 @@
 <script lang="ts">
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 
+	let form: HTMLFormElement;
+
 	let title: string = '';
 	let body: string = '';
 	let status: 'draft' | 'published' = 'draft';
 </script>
 
-<form method="post" action="?/create" class="space-y-4 p-4">
+<form bind:this={form} method="post" action="?/create" class="space-y-4 p-4">
 	<div>
 		<label for="title" class="block text-sm font-medium text-gray-700">Title</label>
 		<input
@@ -27,6 +29,11 @@
 			onUpdateText={(content) => {
 				body = content;
 				console.log(body);
+			}}
+			onSave={(content) => {
+				body = content;
+				console.log('Save the content by shortcut');
+				form.submit();
 			}}
 		></MarkdownEditor>
 	</div>
