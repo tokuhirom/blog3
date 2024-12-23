@@ -7,7 +7,7 @@
 
 <div>
 	<AdminHeader />
-	<div class="pt-16">
+	<div class="pt-2">
 		{@render children()}
 	</div>
 </div>
