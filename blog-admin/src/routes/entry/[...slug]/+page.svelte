@@ -5,6 +5,10 @@
 	export let data: PageData;
 </script>
 
+<svelte:head>
+    <title>{data.entry.title} - tokuhirom's blog</title>
+</svelte:head>
+
 <div class="container mx-auto p-4 max-w-3xl bg-white rounded-lg shadow-lg">
 	<h2 class="text-2xl font-bold text-gray-800">{data.entry.title}</h2>
 	<p class="mt-4 text-gray-700 whitespace-pre-line prose">

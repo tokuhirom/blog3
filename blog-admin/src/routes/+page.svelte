@@ -4,6 +4,10 @@
 	export let data: PageData;
 </script>
 
+<svelte:head>
+    <title>tokuhirom's blog</title>
+</svelte:head>
+
 <div class="container mx-auto p-4">
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 		{#each data.entries as entry}
