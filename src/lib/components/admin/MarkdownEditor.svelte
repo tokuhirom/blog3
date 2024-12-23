@@ -9,7 +9,7 @@
 	import { syntaxHighlighting } from '@codemirror/language';
 	import { defaultKeymap } from '@codemirror/commands';
 
-	let container; // エディタの親要素
+	let container: HTMLDivElement; // エディタの親要素
 	export let initialContent: string = ''; // 初期コンテンツ
 	export let onUpdateText: (content: string) => void; // 更新時のコールバック
 	export let onSave: (content: string) => void;
@@ -67,9 +67,13 @@
 			if (item.type.startsWith('image/')) {
 				const file = item.getAsFile();
 				if (file) {
-					const url = await uploadImage(file);
-					insertMarkdownImage(url);
-					event.preventDefault();
+					uploadImage(file).then((url) => {
+						insertMarkdownImage(url);
+						insertMarkdownImage(url);
+						event.preventDefault();
+					}).catch((error) => {
+						console.error('Image upload failed:', error);
+					});
 				}
 			} else if (item.type === 'text/plain') {
 				const text = event.clipboardData.getData('text/plain');
