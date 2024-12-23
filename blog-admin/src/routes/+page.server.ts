@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { PublicEntryRepository } from '$lib/db';
 
 export const load: PageServerLoad = async (params) => {
-	console.log('Loading entry page content!');
+	console.log('Loading top page content!');
 
 	const page = getPage(params.url.searchParams.get('page'));
 
