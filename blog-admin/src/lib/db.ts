@@ -24,6 +24,7 @@ export type Entry = {
 };
 
 export class AdminEntryRepository {
+	// XXX Bad naming
 	static async getAllEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			'SELECT * FROM entry ORDER BY path DESC LIMIT 100',
@@ -115,5 +116,47 @@ export class AdminEntryRepository {
 			[lastPath, limit]
 		);
 		return rows;
+	}
+}
+
+export class PublicEntryRepository {
+	/**
+	 * Get paginated entries.
+	 *
+	 * @param page - The page number (1-based).
+	 * @param entriesPerPage - Number of entries per page.
+	 * @returns A list of entries for the specified page.
+	 */
+	static async getPaginatedEntry(page: number = 1, entriesPerPage: number = 100): Promise<{
+		entries: Entry[],
+		hasNext: boolean
+	}> {
+		if (page < 1) {
+			throw new Error('Page number must be greater than or equal to 1.');
+		}
+
+		const offset = (page - 1) * entriesPerPage; // OFFSET の計算
+
+		// クエリ実行
+		const [entries] = await db.query<Entry[] & RowDataPacket[]>(
+			`
+			SELECT * FROM entry
+			WHERE status = 'published'
+			ORDER BY path DESC
+			LIMIT ? OFFSET ?
+			`,
+			[entriesPerPage+1, offset]
+		);
+
+		// 次ページがあるかどうか
+		const hasNext = entries.length > entriesPerPage;
+		if (hasNext) {
+			entries.pop();
+		}
+
+		return {
+			entries,
+			hasNext
+		};
 	}
 }
