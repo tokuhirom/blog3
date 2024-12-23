@@ -10,8 +10,6 @@
 		error(500, 'Missing entry data');
 	}
 
-	let form: HTMLFormElement;
-
 	let entry: Entry = data.entry;
 	let title: string = $state(entry.title);
 	let body: string = $state(entry.body); // 初期値として本文を保持
@@ -20,17 +18,22 @@
 	let successMessage = $state('');
 	let errorMessage = $state('');
 
-	function handleDelete(event: Event) {
+	async function handleDelete(event: Event) {
 		event.preventDefault();
 
 		const confirmed = confirm(`Are you sure you want to delete the entry "${title}"?`);
 		if (confirmed) {
-			const form = (event.target as HTMLElement).closest('form');
-			if (form) {
-				form.action = '?/delete';
-				form.submit();
+			successMessage = '';
+			errorMessage = '';
+
+			const response = await fetch('/admin/api/entry/' + entry.path, {
+				method: 'DELETE'
+			});
+			if (response.ok) {
+				successMessage = 'Entry deleted successfully';
+				location.href = '/admin';
 			} else {
-				console.error('Form not found');
+				errorMessage = 'Failed to delete entry';
 			}
 		}
 	}
@@ -65,7 +68,6 @@
 </script>
 
 <form
-	bind:this={form}
 	method="post"
 	action="?/update"
 	class="space-y-4 p-4"
@@ -117,7 +119,6 @@
 
 		<button
 			type="submit"
-			formaction="?/delete"
 			class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
 			onclick={handleDelete}
 		>

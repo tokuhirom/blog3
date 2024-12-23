@@ -1,5 +1,4 @@
-import type { PageServerLoad, Actions } from './$types';
-import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const path = params.path;
@@ -8,14 +7,4 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	return {
 		entry: entry
 	};
-};
-
-export const actions: Actions = {
-	delete: async ({ params, locals }) => {
-		const path = params.path;
-
-		await locals.adminEntryRepository.deleteEntry(path);
-
-		redirect(302, '/admin/');
-	}
 };
