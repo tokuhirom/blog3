@@ -3,6 +3,7 @@
 	import { EditorView, keymap } from '@codemirror/view';
 	import { EditorState, Transaction } from '@codemirror/state';
 	import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+    import { history, historyKeymap } from '@codemirror/commands';
 	import { languages } from '@codemirror/language-data';
 	import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 	import { syntaxHighlighting } from '@codemirror/language';
@@ -21,9 +22,10 @@
 					base: markdownLanguage, // Markdown サポート
 					codeLanguages: languages // コードブロックの言語
 				}),
+				history(),
 				syntaxHighlighting(oneDarkHighlightStyle), // ダークテーマのシンタックスハイライト
 				EditorView.lineWrapping, // 行の折り返し
-				keymap.of(defaultKeymap), // デフォルトのキーバインド
+				keymap.of([...historyKeymap, ...defaultKeymap]), // デフォルトのキーバインド
 				EditorView.theme({
 					// 高さ固定のテーマ
 					'.cm-editor': { height: '600px' },
