@@ -59,7 +59,7 @@
 		};
 	});
 
-	function handlePaste(event: ClipboardEvent) : void {
+	function handlePaste(event: ClipboardEvent): void {
 		const items = event.clipboardData?.items;
 		if (!items) return;
 
@@ -67,13 +67,15 @@
 			if (item.type.startsWith('image/')) {
 				const file = item.getAsFile();
 				if (file) {
-					uploadImage(file).then((url) => {
-						insertMarkdownImage(url);
-						insertMarkdownImage(url);
-						event.preventDefault();
-					}).catch((error) => {
-						console.error('Image upload failed:', error);
-					});
+					uploadImage(file)
+						.then((url) => {
+							insertMarkdownImage(url);
+							insertMarkdownImage(url);
+							event.preventDefault();
+						})
+						.catch((error) => {
+							console.error('Image upload failed:', error);
+						});
 				}
 			} else if (item.type === 'text/plain') {
 				const text = event.clipboardData.getData('text/plain');
