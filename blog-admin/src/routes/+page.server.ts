@@ -1,6 +1,5 @@
 import type { PageServerLoad } from './$types';
 import { PublicEntryRepository } from '$lib/db';
-import { parse } from 'path';
 
 export const load: PageServerLoad = async (params) => {
 	console.log('Loading entry page content!');
@@ -10,7 +9,7 @@ export const load: PageServerLoad = async (params) => {
         page = '1';
     }
 
-	const { entries, hasNext } = await PublicEntryRepository.getPaginatedEntry(parseInt(page, 10), 30);
+	const { entries, hasNext } = await PublicEntryRepository.getPaginatedEntry(parseInt(page, 10), 28);
 	return {
 		entries,
         page: parseInt(page, 10),
