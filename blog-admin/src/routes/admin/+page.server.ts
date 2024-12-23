@@ -1,10 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { EntryCache } from '$lib/cache';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({locals}) => {
 	console.log('Loading entry page content!');
 
-	const entries = await EntryCache.get();
+	const entries = await locals.adminEntryRepository.getAllEntries();
 	return {
 		entries
 	};

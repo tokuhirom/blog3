@@ -1,6 +1,5 @@
 import mysql, { type Pool, type RowDataPacket } from 'mysql2/promise';
 import * as dotenv from 'dotenv';
-import { EntryCache } from './cache';
 import { format } from 'date-fns';
 
 dotenv.config();
@@ -25,7 +24,7 @@ export type Entry = {
 
 export class AdminEntryRepository {
 	// XXX Bad naming
-	static async getAllEntries(): Promise<Entry[]> {
+	async getAllEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			'SELECT * FROM entry ORDER BY path DESC LIMIT 100',
 			[]
@@ -33,7 +32,7 @@ export class AdminEntryRepository {
 		return rows;
 	}
 
-	static async getEntry(path: string): Promise<Entry | null> {
+	async getEntry(path: string): Promise<Entry | null> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>('SELECT * FROM entry WHERE path = ?', [
 			path
 		]);
@@ -44,7 +43,7 @@ export class AdminEntryRepository {
 	/**
 	 * Update an entry by path
 	 */
-	static async updateEntry(
+	async updateEntry(
 		path: string,
 		data: { title: string; body: string; status: 'draft' | 'published' }
 	): Promise<void> {
@@ -62,24 +61,20 @@ export class AdminEntryRepository {
 		if (result.affectedRows === 0) {
 			throw new Error('Entry not found or no changes applied');
 		}
-
-		EntryCache.clear();
 	}
 
 	/**
 	 * Delete an entry by path
 	 */
-	static async deleteEntry(path: string): Promise<void> {
+	async deleteEntry(path: string): Promise<void> {
 		const [result] = await db.query('DELETE FROM entry WHERE path = ?', [path]);
 
 		if (result.affectedRows === 0) {
 			throw new Error('Entry not found');
 		}
-
-		EntryCache.clear();
 	}
 
-	static async createEntry(data: {
+	async createEntry(data: {
 		title: string;
 		body: string;
 		status: 'draft' | 'published';
@@ -96,15 +91,13 @@ export class AdminEntryRepository {
 			[path, data.title, data.body, data.status]
 		);
 
-		EntryCache.clear();
-
 		return path;
 	}
 
 	/**
 	 * Get entries older than the given path.
 	 */
-	static async getEntriesOlderThan(lastPath: string, limit = 100): Promise<Entry[]> {
+	async getEntriesOlderThan(lastPath: string, limit = 100): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT * FROM entry

@@ -1,18 +1,17 @@
 import type { PageServerLoad } from './$types';
-import { AdminEntryRepository } from '$lib/db';
 import { redirect } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, locals }) => {
 	const path = params.path;
 
-	const entry = await AdminEntryRepository.getEntry(path);
+	const entry = await locals.adminEntryRepository.getEntry(path);
 	return {
 		entry: entry
 	};
 };
 
 export const actions: Actions = {
-	update: async ({ request, params }) => {
+	update: async ({ request, params, locals }) => {
 		const formData = await request.formData();
 		const title = formData.get('title') as string;
 		const body = formData.get('body') as string;
@@ -27,13 +26,13 @@ export const actions: Actions = {
 		console.log(
 			`Updating entry with path: ${path}, title: ${title}, body: ${body}, status: ${status}`
 		);
-		await AdminEntryRepository.updateEntry(path, { title, body, status });
+		await locals.adminEntryRepository.updateEntry(path, { title, body, status });
 		return { success: true };
 	},
-	delete: async ({ params }) => {
+	delete: async ({ params, locals }) => {
 		const path = params.path;
 
-		await AdminEntryRepository.deleteEntry(path);
+		await locals.adminEntryRepository.deleteEntry(path);
 
 		redirect(302, '/admin/');
 	}
