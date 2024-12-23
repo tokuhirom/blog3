@@ -103,5 +103,6 @@
 		border: 1px solid #d1d5db;
 		border-radius: 0.25rem;
 		height: 400px;
+		overflow-y: scroll;
 	}
 </style>
