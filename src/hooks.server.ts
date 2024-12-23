@@ -24,6 +24,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		request.headers.get('origin') !== event.url.origin;
 
 	if (forbidden) {
+		console.error(
+			`CSRF detected: method=${request.method} path=${path} event.url.origin=${event.url.origin} request.headers.origin=${request.headers.get('origin')}`
+		);
 		return new Response('Forbidden', {
 			status: 403,
 			headers: {
