@@ -19,7 +19,7 @@
 	// ロード状態を管理
 	let isLoading = false;
 	let hasMore = true; // まだエントリが残っているかどうか
-	let loadInterval: Timeout | null = null;
+	let loadInterval: NodeJS.Timeout | null = null;
 
 	// 検索時の処理
 	function handleSearch(keyword: string) {
