@@ -7,20 +7,23 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 	}
 
 	try {
-        // get title, body, status from request.
-        // request is a application/json format.
-        // request.json() returns a promise.
-        // await waits for the promise to resolve.
-        const req = await request.json();
+		// get title, body, status from request.
+		// request is a application/json format.
+		// request.json() returns a promise.
+		// await waits for the promise to resolve.
+		const req = await request.json();
 
-        const title = req.title;
-        const body = req.body;
-        const status = req.status;
+		const title = req.title;
+		const body = req.body;
+		const status = req.status;
 
 		await locals.adminEntryRepository.updateEntry(path, { title, body, status });
-		return new Response(JSON.stringify({
-            success: true
-        }), { status: 200 });
+		return new Response(
+			JSON.stringify({
+				success: true
+			}),
+			{ status: 200 }
+		);
 	} catch (error) {
 		console.error(error);
 		return new Response(JSON.stringify({ error: 'Database error' }), { status: 500 });

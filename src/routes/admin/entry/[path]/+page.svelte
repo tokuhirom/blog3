@@ -45,15 +45,15 @@
 			const request = {
 				title,
 				body,
-				status,
-			}
-			const response = await fetch("/admin/api/entry/" + entry.path, {
-				method: "POST",
+				status
+			};
+			const response = await fetch('/admin/api/entry/' + entry.path, {
+				method: 'POST',
 				headers: {
-					"Content-Type": "application/json",
+					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(request),
-			})
+				body: JSON.stringify(request)
+			});
 			if (response.ok) {
 				successMessage = 'Entry updated successfully';
 			} else {
