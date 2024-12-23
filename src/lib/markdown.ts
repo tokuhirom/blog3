@@ -2,7 +2,7 @@ import MarkdownIt from 'markdown-it';
 import type { Entry } from './db';
 import hljs from 'highlight.js'; // highlight.js をインポート
 
-const md = new MarkdownIt({
+const md: MarkdownIt = new MarkdownIt({
 	linkify: true, // URL を自動リンク化
 	highlight: (code, lang) => {
 		if (lang && hljs.getLanguage(lang)) {
