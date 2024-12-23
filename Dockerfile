@@ -10,6 +10,7 @@ RUN bun install --frozen-lockfile
 
 # アプリケーションコードをコピー
 COPY . .
+COPY .env.example .env
 
 # ビルドを実行
 RUN bun run build
