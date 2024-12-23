@@ -2,11 +2,10 @@ name: Docker push(Sacloud)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   publish:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,7 +24,7 @@ jobs:
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
-      - name: Log into registry docker hub
+      - name: Log into registry
         if: github.event_name != 'pull_request'
         uses: docker/login-action@7ca345011ac4304463197fac0e56eab1bc7e6af0
         with:
@@ -34,7 +33,7 @@ jobs:
           password: ${{ secrets.SACLOUD_CONTAINER_REGISTRY_PASSWORD }}
 
       - name: Build docker image
-        run: ./gradlew bootBuildImage --imageName=tokuhirom-priv.sakuracr.jp/tokuhirom/blog3
+        run: docker build -t tokuhirom-priv.sakuracr.jp/tokuhirom/blog3 .
 
       # Push the image
       - name: Build and push Docker image

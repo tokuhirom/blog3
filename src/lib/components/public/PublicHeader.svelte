@@ -1,0 +1,5 @@
+<header class="fixed left-0 top-0 z-10 w-full bg-gray-800 p-4 text-white">
+	<div class="container mx-auto flex items-center justify-between">
+		<a href="/" class="text-xl font-bold hover:underline">tokuhirom's Blog</a>
+	</div>
+</header>
