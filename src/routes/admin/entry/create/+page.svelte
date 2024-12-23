@@ -6,9 +6,39 @@
 	let title: string = '';
 	let body: string = '';
 	let status: 'draft' | 'published' = 'draft';
+
+	function handleSubmit(event: Event) {
+		event.preventDefault();
+
+		const data = {
+			title,
+			body,
+			status
+		};
+
+		fetch('/admin/api/entry', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then((response) => {
+				if (response.ok) {
+					location.href = '/admin';
+				} else {
+					console.log(response);
+					alert('Failed to create entry');
+				}
+			})
+			.catch((error) => {
+				console.error(error);
+				alert('Failed to create entry');
+			});
+	}
 </script>
 
-<form bind:this={form} method="post" action="?/create" class="space-y-4 p-4">
+<form bind:this={form} method="post" class="space-y-4 p-4" onsubmit={handleSubmit}>
 	<div>
 		<label for="title" class="block text-sm font-medium text-gray-700">Title</label>
 		<input
@@ -23,7 +53,6 @@
 
 	<div class="editor">
 		<label for="body" class="block text-sm font-medium text-gray-700">Body</label>
-		<input type="hidden" name="body" bind:value={body} />
 		<MarkdownEditor
 			initialContent={body}
 			onUpdateText={(content) => {
@@ -58,5 +87,6 @@
 		border: 1px solid #d1d5db;
 		border-radius: 0.25rem;
 		height: 400px;
+		overflow-y: scroll;
 	}
 </style>
