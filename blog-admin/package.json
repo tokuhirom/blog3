@@ -48,6 +48,7 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"date-fns": "^4.1.0",
 		"dotenv": "^16.4.7",
+		"markdown-it": "^14.1.0",
 		"mysql2": "^3.11.5"
 	}
 }
