@@ -1,33 +1,35 @@
-import mysql, { type ResultSetHeader, type Pool, type RowDataPacket } from 'mysql2/promise';
+import mysql, { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import * as dotenv from 'dotenv';
 import { format } from 'date-fns';
 
 dotenv.config();
 
-// Check the environment variables
-const requiredEnvVars = [
-	'DATABASE_HOST',
-	'DATABASE_PORT',
-	'DATABASE_USER',
-	'DATABASE_PASSWORD',
-	'DATABASE_NAME'
-];
-requiredEnvVars.forEach((varName) => {
-	if (!process.env[varName]) {
-		console.error(`Required environment variable '${varName}' is missing`);
-		// Exit the application
-		process.exit(1);
-	}
-});
-console.log(`Connecting to database at ${process.env.DATABASE_HOST}`);
+function getConnection(): Promise<Connection> {
+	// Check the environment variables
+	const requiredEnvVars = [
+		'DATABASE_HOST',
+		'DATABASE_PORT',
+		'DATABASE_USER',
+		'DATABASE_PASSWORD',
+		'DATABASE_NAME'
+	];
+	requiredEnvVars.forEach((varName) => {
+		if (!process.env[varName]) {
+			console.error(`Required environment variable '${varName}' is missing`);
+			// Exit the application
+			process.exit(1);
+		}
+	});
+	console.log(`Connecting to database at ${process.env.DATABASE_HOST}`);
 
-export const db: Pool = mysql.createPool({
-	host: process.env.DATABASE_HOST!,
-	port: Number(process.env.DATABASE_PORT),
-	user: process.env.DATABASE_USER!,
-	password: process.env.DATABASE_PASSWORD!,
-	database: process.env.DATABASE_NAME!
-});
+	return mysql.createConnection({
+		host: process.env.DATABASE_HOST!,
+		port: Number(process.env.DATABASE_PORT),
+		user: process.env.DATABASE_USER!,
+		password: process.env.DATABASE_PASSWORD!,
+		database: process.env.DATABASE_NAME!
+	});
+}
 
 export type Entry = {
 	path: string;
@@ -42,6 +44,7 @@ export type Entry = {
 export class AdminEntryRepository {
 	// XXX Bad naming
 	async getAllEntries(): Promise<Entry[]> {
+		const db = await getConnection();
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			'SELECT * FROM entry ORDER BY path DESC LIMIT 100',
 			[]
@@ -50,6 +53,7 @@ export class AdminEntryRepository {
 	}
 
 	async getEntry(path: string): Promise<Entry | null> {
+		const db = await getConnection();
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>('SELECT * FROM entry WHERE path = ?', [
 			path
 		]);
@@ -64,6 +68,8 @@ export class AdminEntryRepository {
 		path: string,
 		data: { title: string; body: string; status: 'draft' | 'published' }
 	): Promise<void> {
+		const db = await getConnection();
+
 		// クエリを実行
 		const [result] = await db.query<ResultSetHeader>(
 			`
@@ -84,6 +90,8 @@ export class AdminEntryRepository {
 	 * Delete an entry by path
 	 */
 	async deleteEntry(path: string): Promise<void> {
+		const db = await getConnection();
+
 		const [result] = await db.query<ResultSetHeader>('DELETE FROM entry WHERE path = ?', [path]);
 
 		if (result.affectedRows === 0) {
@@ -96,6 +104,8 @@ export class AdminEntryRepository {
 		body: string;
 		status: 'draft' | 'published';
 	}): Promise<string> {
+		const db = await getConnection();
+
 		const pathFormatter = 'yyyy/MM/dd/HHmmss';
 		const path = format(new Date(), pathFormatter);
 
@@ -115,6 +125,8 @@ export class AdminEntryRepository {
 	 * Get entries older than the given path.
 	 */
 	async getEntriesOlderThan(lastPath: string, limit = 100): Promise<Entry[]> {
+		const db = await getConnection();
+
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT * FROM entry
@@ -131,6 +143,8 @@ export class AdminEntryRepository {
 export class PublicEntryRepository {
 	static async getEntry(path: string): Promise<Entry> {
 		try {
+			const db = await getConnection();
+
 			const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 				`SELECT * FROM entry
 				WHERE path = ?
@@ -168,6 +182,7 @@ export class PublicEntryRepository {
 		const offset = (page - 1) * entriesPerPage; // OFFSET の計算
 
 		// クエリ実行
+		const db = await getConnection();
 		const [entries] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT * FROM entry
