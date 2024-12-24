@@ -9,15 +9,19 @@ function entryLinkPlugin(md: MarkdownIt) {
 		const max = state.posMax;
 
 		// [[ の検出
-		if (state.src.charCodeAt(start) !== 0x5B /* [ */ ||
-			state.src.charCodeAt(start + 1) !== 0x5B /* [ */) {
+		if (
+			state.src.charCodeAt(start) !== 0x5b /* [ */ ||
+			state.src.charCodeAt(start + 1) !== 0x5b /* [ */
+		) {
 			return false;
 		}
 
 		let end = start + 2;
 		while (end < max) {
-			if (state.src.charCodeAt(end) === 0x5D /* ] */ &&
-				state.src.charCodeAt(end + 1) === 0x5D /* ] */) {
+			if (
+				state.src.charCodeAt(end) === 0x5d /* ] */ &&
+				state.src.charCodeAt(end + 1) === 0x5d /* ] */
+			) {
 				break;
 			}
 			end++;
@@ -32,7 +36,10 @@ function entryLinkPlugin(md: MarkdownIt) {
 		if (!silent) {
 			const content = state.src.slice(start + 2, end);
 			const token = state.push('entry_link', 'a', 0);
-			token.attrs = [['class', 'entry-link'], ['data-title', content]];
+			token.attrs = [
+				['class', 'entry-link'],
+				['data-title', content]
+			];
 			token.content = content;
 			token.markup = '[[';
 			token.info = '';

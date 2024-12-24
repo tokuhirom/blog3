@@ -5,21 +5,19 @@
 
 	export let data: PageData;
 
-	onMount(
-		() => {
-			const links = document.querySelectorAll('.entry-link');
-			links.forEach(link => {
-				link.addEventListener('click', handleEntryLinkClick);
-			});
+	onMount(() => {
+		const links = document.querySelectorAll('.entry-link');
+		links.forEach((link) => {
+			link.addEventListener('click', handleEntryLinkClick);
+		});
 
-			// クリーンアップ処理
-			return () => {
-				links.forEach(link => {
-					link.removeEventListener('click', handleEntryLinkClick);
-				});
-			};
-		}
-	)
+		// クリーンアップ処理
+		return () => {
+			links.forEach((link) => {
+				link.removeEventListener('click', handleEntryLinkClick);
+			});
+		};
+	});
 
 	function handleEntryLinkClick(event: MouseEvent) {
 		event.preventDefault();
@@ -39,7 +37,7 @@
 
 				// API 呼び出しなどの処理をここで実行
 				fetch(`/api/entry/by-title/${encodeURIComponent(title)}`)
-					.then(async response => {
+					.then(async (response) => {
 						if (response.status === 404) {
 							link.classList.add('entry-not-found');
 						} else {
@@ -52,7 +50,7 @@
 							}
 						}
 					})
-					.catch(err => {
+					.catch((err) => {
 						console.error('Error fetching entry data:', err);
 					});
 			} else {
@@ -61,7 +59,6 @@
 		} else {
 			console.warn('Event target is not an HTML element');
 		}
-
 	}
 </script>
 
