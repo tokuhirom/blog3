@@ -27,17 +27,30 @@
 		const target = event.target as HTMLElement | null;
 		if (target && target instanceof HTMLElement) {
 			const link = target.closest('.entry-link') as HTMLAnchorElement | null;
-			console.log(`Entry link clicked: ${link}`);
 
 			if (link) {
 				const title = link.dataset.title; // data-title 属性から取得
-				console.log(`Entry link clicked: ${title}`);
+				if (!title) {
+					console.warn('No data-title attribute found');
+					return;
+				}
+
+				console.log(`Entry link clicked: '${title}'`);
 
 				// API 呼び出しなどの処理をここで実行
 				fetch(`/api/entry/by-title/${encodeURIComponent(title)}`)
-					.then(response => response.json())
-					.then(data => {
-						console.log('Fetched entry data:', data);
+					.then(async response => {
+						if (response.status === 404) {
+							link.classList.add('entry-not-found');
+						} else {
+							const data = await response.json();
+							const path = data.path;
+							if (path) {
+								window.location.href = `/entry/${path}`;
+							} else {
+								console.error('No path found in response data');
+							}
+						}
 					})
 					.catch(err => {
 						console.error('Error fetching entry data:', err);
