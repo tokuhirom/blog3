@@ -7,14 +7,14 @@
 
 	onMount(() => {
 		const links = document.querySelectorAll('.entry-link');
-		links.forEach((link) => {
-			link.addEventListener('click', handleEntryLinkClick);
+		links.forEach((link: Element) => {
+			(link as HTMLElement).addEventListener('click', handleEntryLinkClick);
 		});
 
 		// クリーンアップ処理
 		return () => {
 			links.forEach((link) => {
-				link.removeEventListener('click', handleEntryLinkClick);
+				(link as HTMLElement).removeEventListener('click', handleEntryLinkClick);
 			});
 		};
 	});
