@@ -129,7 +129,25 @@ export class AdminEntryRepository {
 }
 
 export class PublicEntryRepository {
-	static async getEntry(path: string): Promise<Entry> {
+	static async getEntryByTitle(title: string): Promise<Entry | null> {
+		try {
+			const [rows] = await db.query<Entry[] & RowDataPacket[]>(
+				`SELECT * FROM entry
+				WHERE title = ?
+				    AND status='published'`,
+				[title]
+			);
+			if (rows.length === 0) {
+				return null;
+			}
+			return rows[0];
+		} catch (error) {
+			console.error(`Error fetching entry: ${error} title=${title}`);
+			throw error;
+		}
+	}
+
+	static async getEntry(path: string): Promise<Entry | null> {
 		try {
 			const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 				`SELECT * FROM entry
@@ -138,7 +156,7 @@ export class PublicEntryRepository {
 				[path]
 			);
 			if (rows.length === 0) {
-				throw new Error('Entry not found');
+				return null;
 			}
 			return rows[0];
 		} catch (error) {

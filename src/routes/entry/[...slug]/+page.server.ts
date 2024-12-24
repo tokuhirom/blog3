@@ -1,3 +1,4 @@
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { PublicEntryRepository } from '$lib/db';
 import { renderHTMLByEntry } from '$lib/markdown';
@@ -7,6 +8,12 @@ export const load: PageServerLoad = async (params) => {
 	const path = params.params.slug;
 
 	const entry = await PublicEntryRepository.getEntry(path);
+
+	if (entry === null) {
+		error(404, {
+			message: 'Not found'
+		});
+	}
 
 	return {
 		entry,
