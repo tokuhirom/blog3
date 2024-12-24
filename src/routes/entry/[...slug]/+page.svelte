@@ -1,8 +1,55 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import 'highlight.js/styles/github.css';
 
 	export let data: PageData;
+
+	onMount(
+		() => {
+			const links = document.querySelectorAll('.entry-link');
+			links.forEach(link => {
+				link.addEventListener('click', handleEntryLinkClick);
+			});
+
+			// クリーンアップ処理
+			return () => {
+				links.forEach(link => {
+					link.removeEventListener('click', handleEntryLinkClick);
+				});
+			};
+		}
+	)
+
+	function handleEntryLinkClick(event: MouseEvent) {
+		event.preventDefault();
+
+		const target = event.target as HTMLElement | null;
+		if (target && target instanceof HTMLElement) {
+			const link = target.closest('.entry-link') as HTMLAnchorElement | null;
+			console.log(`Entry link clicked: ${link}`);
+
+			if (link) {
+				const title = link.dataset.title; // data-title 属性から取得
+				console.log(`Entry link clicked: ${title}`);
+
+				// API 呼び出しなどの処理をここで実行
+				fetch(`/api/entry/by-title/${encodeURIComponent(title)}`)
+					.then(response => response.json())
+					.then(data => {
+						console.log('Fetched entry data:', data);
+					})
+					.catch(err => {
+						console.error('Error fetching entry data:', err);
+					});
+			} else {
+				console.warn('No .entry-link element found');
+			}
+		} else {
+			console.warn('Event target is not an HTML element');
+		}
+
+	}
 </script>
 
 <svelte:head>

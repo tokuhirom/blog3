@@ -2,6 +2,53 @@ import MarkdownIt from 'markdown-it';
 import type { Entry } from './db';
 import hljs from 'highlight.js'; // highlight.js をインポート
 
+// カスタム記法用のプラグインを定義
+function entryLinkPlugin(md: MarkdownIt) {
+	md.inline.ruler.after('link', 'entry_link', (state, silent) => {
+		const start = state.pos;
+		const max = state.posMax;
+
+		// [[ の検出
+		if (state.src.charCodeAt(start) !== 0x5B /* [ */ ||
+			state.src.charCodeAt(start + 1) !== 0x5B /* [ */) {
+			return false;
+		}
+
+		let end = start + 2;
+		while (end < max) {
+			if (state.src.charCodeAt(end) === 0x5D /* ] */ &&
+				state.src.charCodeAt(end + 1) === 0x5D /* ] */) {
+				break;
+			}
+			end++;
+		}
+
+		// ]] が見つからない場合は無視
+		if (end >= max) {
+			return false;
+		}
+
+		// パースする場合
+		if (!silent) {
+			const content = state.src.slice(start + 2, end);
+			const token = state.push('entry_link', 'a', 0);
+			token.attrs = [['class', 'entry-link'], ['data-title', content]];
+			token.content = content;
+			token.markup = '[[';
+			token.info = '';
+		}
+
+		state.pos = end + 2; // 次の位置に進める
+		return true;
+	});
+
+	md.renderer.rules.entry_link = (tokens, idx) => {
+		const token = tokens[idx];
+		const title = token.content;
+		return `<a class="entry-link" data-title="${md.utils.escapeHtml(title)}">${md.utils.escapeHtml(title)}</a>`;
+	};
+}
+
 const md: MarkdownIt = new MarkdownIt({
 	linkify: true, // URL を自動リンク化
 	highlight: (code, lang) => {
@@ -17,6 +64,7 @@ const md: MarkdownIt = new MarkdownIt({
 		return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`;
 	}
 });
+md.use(entryLinkPlugin);
 
 export function renderHTML(markdown: string): string {
 	return md.render(markdown);
