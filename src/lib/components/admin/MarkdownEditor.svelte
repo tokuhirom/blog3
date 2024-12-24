@@ -26,11 +26,7 @@
 				history(),
 				syntaxHighlighting(oneDarkHighlightStyle), // ダークテーマのシンタックスハイライト
 				EditorView.lineWrapping, // 行の折り返し
-				keymap.of([
-					...historyKeymap,
-					...defaultKeymap,
-					indentWithTab,
-				]),
+				keymap.of([...historyKeymap, ...defaultKeymap, indentWithTab]),
 				EditorView.theme({
 					// 高さ固定のテーマ
 					'.cm-editor': { height: '600px' },
