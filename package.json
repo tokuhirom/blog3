@@ -17,7 +17,7 @@
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.4",
-		"@sveltejs/kit": "^2.15.0",
+		"@sveltejs/kit": "^0.0.30",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@types/node": "^22.10.2",
 		"autoprefixer": "^10.4.20",
@@ -30,7 +30,6 @@
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
 		"svelte": "^5.15.0",
-		"svelte-adapter-bun": "^0.5.2",
 		"svelte-check": "^4.1.1",
 		"typescript": "^5.7.2",
 		"typescript-eslint": "^8.18.1",
