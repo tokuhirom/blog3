@@ -58,6 +58,6 @@
 		"xmlbuilder2": "^3.1.1"
 	},
 	"lint-staged": {
-		"*.{js,ts,jsx,tsx,json,css,md}": "prettier --write"
+		"*.{svelte,js,ts,jsx,tsx,json,css,md}": "prettier --write"
 	}
 }
