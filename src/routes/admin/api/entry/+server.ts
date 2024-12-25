@@ -17,26 +17,11 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 };
 
 // Create new entry
-export const POST: RequestHandler = async ({ locals, request }) => {
+export const POST: RequestHandler = async ({ locals }) => {
 	try {
-		const req = await request.json();
-
-		const title = req.title;
-		const body = req.body;
-		const visibility = req.visibility;
-
-		if (!title || !body || !visibility) {
-			return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
-		}
-
-		const path = await locals.adminEntryRepository.createEntry({
-			title,
-			body,
-			visibility
-		});
+		const path = await locals.adminEntryRepository.createEmptyEntry();
 		return new Response(
 			JSON.stringify({
-				success: true,
 				path
 			}),
 			{ status: 200 }
