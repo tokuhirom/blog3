@@ -1,4 +1,22 @@
-<script>
+<script lang="ts">
+	async function handleNewEntry() {
+		fetch('/admin/api/entry', {
+			method: 'POST'
+		})
+			.then(async (response) => {
+				if (response.ok) {
+					const data = await response.json();
+					location.href = `/admin/entry/${encodeURIComponent(data.path)}`;
+				} else {
+					console.error('Failed to create new entry');
+					alert('Failed to create new entry. Cannot get new entry path');
+				}
+			})
+			.catch((err) => {
+				console.error('Error creating new entry:', err);
+				alert('Failed to create new entry');
+			});
+	}
 </script>
 
 <header>
@@ -8,7 +26,7 @@
 
 		<!-- ナビゲーションリンク -->
 		<nav>
-			<a href="/admin/entry/create">New Entry</a>
+			<a onclick={handleNewEntry}>New Entry</a>
 		</nav>
 	</div>
 </header>
