@@ -77,21 +77,17 @@ export class AdminEntryRepository {
 		}
 	}
 
-	async createEntry(data: {
-		title: string;
-		body: string;
-		visibility: 'private' | 'public';
-	}): Promise<string> {
-		const pathFormatter = 'yyyy/MM/dd/HHmmss';
-		const path = format(new Date(), pathFormatter);
+	async createEmptyEntry(): Promise<string> {
+		const date = new Date();
+		const path = format(date, 'yyyy/MM/dd/HHmmss');
+		const title = format(date, 'yyyyMMddHHmmss');
 
-		// エントリ作成クエリ
 		await db.query(
 			`
-	  INSERT INTO entry (path, title, body, visibility)
-	  VALUES (?, ?, ?, ?)
-	  `,
-			[path, data.title, data.body, data.visibility]
+            INSERT INTO entry (path, title, body, visibility)
+            VALUES (?, ?, ?, ?)
+            `,
+			[path, title, '', 'private']
 		);
 
 		return path;
