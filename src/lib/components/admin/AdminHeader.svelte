@@ -26,7 +26,7 @@
 
 		<!-- ナビゲーションリンク -->
 		<nav>
-			<a onclick={handleNewEntry}>New Entry</a>
+			<button onclick={handleNewEntry}>New Entry</button>
 		</nav>
 	</div>
 </header>
@@ -69,5 +69,18 @@
 	nav {
 		display: flex;
 		gap: 1rem;
+	}
+
+	button {
+		background: none;
+		border: none;
+		color: white;
+		text-decoration: none;
+		cursor: pointer;
+		font: inherit;
+	}
+
+	button:hover {
+		text-decoration: underline;
 	}
 </style>
