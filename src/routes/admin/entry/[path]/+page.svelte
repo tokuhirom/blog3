@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Entry } from '$lib/db';
-	import { formatDateForMySQL } from '$lib/mysqlutils';
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
@@ -53,7 +52,7 @@
 				title,
 				body,
 				status,
-				updated_at: formatDateForMySQL(entry.updated_at)
+				updated_at: entry.updated_at
 			};
 			const response = await fetch('/admin/api/entry/' + entry.path, {
 				method: 'POST',

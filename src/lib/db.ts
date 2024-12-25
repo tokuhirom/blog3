@@ -26,7 +26,8 @@ export const db: Pool = mysql.createPool({
 	port: Number(process.env.DATABASE_PORT),
 	user: process.env.DATABASE_USER!,
 	password: process.env.DATABASE_PASSWORD!,
-	database: process.env.DATABASE_NAME!
+	database: process.env.DATABASE_NAME!,
+	dateStrings: true
 });
 
 export type Entry = {
@@ -35,8 +36,8 @@ export type Entry = {
 	body: string;
 	status: 'draft' | 'published';
 	format: 'html' | 'mkdn';
-	created_at: Date;
-	updated_at: Date | null;
+	created_at: string;
+	updated_at: string | null;
 };
 
 export class AdminEntryRepository {
