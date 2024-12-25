@@ -16,7 +16,13 @@
 
 <div>
 	<PublicHeader />
-	<div class="pt-16">
+	<div class="content">
 		{@render children()}
 	</div>
 </div>
+
+<style>
+	.content {
+		padding-top: 4rem;
+	}
+</style>

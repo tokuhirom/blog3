@@ -16,9 +16,14 @@
 	}
 </script>
 
-<input
-	type="text"
-	placeholder="Search entries..."
-	class="mb-4 w-full rounded border p-2"
-	oninput={onInput}
-/>
+<input type="text" placeholder="Search entries..." class="search-input" oninput={onInput} />
+
+<style>
+	.search-input {
+		margin-bottom: 1rem;
+		width: 100%;
+		border-radius: 0.375rem;
+		border: 1px solid #d1d5db;
+		padding: 0.5rem;
+	}
+</style>

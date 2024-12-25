@@ -7,25 +7,42 @@
 <div class="list">
 	{#each entries as entry}
 		<a
-			class="item break-all shadow-md"
+			class="item {entry.status === 'draft' ? 'draft' : ''}"
 			href={`/admin/entry/${encodeURIComponent(entry.path)}`}
-			class:bg-gray-200={entry.status === 'draft'}
 		>
-			<h2 class="mb-2 text-sm font-bold">{entry.title}</h2>
-			<p class="text-xs text-gray-600">{entry.body.slice(0, 100)}...</p>
+			<h2 class="title">{entry.title}</h2>
+			<p class="body">{entry.body.slice(0, 100)}...</p>
 		</a>
 	{/each}
 </div>
 
 <style>
 	.list {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		display: flex;
+		flex-wrap: wrap;
 		gap: 1rem;
 	}
 
 	.item {
-		width: 100%;
+		flex: 1 1 150px;
+		max-width: 150px;
 		padding: 1rem;
+		word-break: break-all;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
+
+	.item.draft {
+		background-color: #e5e7eb;
+	}
+
+	.title {
+		margin-bottom: 0.5rem;
+		font-size: 0.875rem;
+		font-weight: bold;
+	}
+
+	.body {
+		font-size: 0.75rem;
+		color: #4b5563;
 	}
 </style>
