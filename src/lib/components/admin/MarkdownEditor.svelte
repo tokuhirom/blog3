@@ -12,7 +12,7 @@
 	let container: HTMLDivElement;
 	export let initialContent: string = '';
 	export let onUpdateText: (content: string) => void;
-	export let onSave: (content: string) => void;
+	export let onSave: (content: string) => void = () => {};
 	let editor: EditorView;
 
 	let isUploading: boolean = false; // アップロード中の状態
