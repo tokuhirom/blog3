@@ -36,3 +36,12 @@ h5,
 h6 {
 	margin: 0;
 }
+
+pre {
+	font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+	font-size: 0.9em;
+	border-left: #2b6cb0 3px solid;
+	margin-left: 10px;
+	padding-left: 10px;
+	background-color: bisque;
+}
