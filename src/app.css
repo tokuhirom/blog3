@@ -45,3 +45,10 @@ pre {
 	padding-left: 10px;
 	background-color: bisque;
 }
+
+.entry-body img {
+	max-width: 640px;
+	max-height: 640px;
+	width: auto;
+	height: auto;
+}
