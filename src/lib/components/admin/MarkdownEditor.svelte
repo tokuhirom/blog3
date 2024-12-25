@@ -12,7 +12,7 @@
 	let container: HTMLDivElement; // エディタの親要素
 	export let initialContent: string = ''; // 初期コンテンツ
 	export let onUpdateText: (content: string) => void; // 更新時のコールバック
-	export let onSave: (content: string) => void;
+	export let onSave: (content: string) => void = () => { };
 	let editor: EditorView;
 
 	onMount(() => {
