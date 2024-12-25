@@ -6,7 +6,6 @@
 	import { beforeNavigate } from '$app/navigation';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
-	import { parseISO } from 'date-fns';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
