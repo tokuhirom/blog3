@@ -8,7 +8,7 @@
 	{#each entries as entry}
 		<a
 			class="item {entry.visibility === 'private' ? 'private' : ''}"
-			href={`/admin/entry/${encodeURIComponent(entry.path)}`}
+			href={`/admin/entry/${entry.path}`}
 		>
 			<h2 class="title">{entry.title}</h2>
 			<p class="body">{entry.body.slice(0, 100)}...</p>
