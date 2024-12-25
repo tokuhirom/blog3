@@ -25,7 +25,12 @@ export class AdminEntryRepository {
 	 */
 	async updateEntry(
 		path: string,
-		data: { title: string; body: string; status: 'draft' | 'published'; updated_at: string | null }
+		data: {
+			title: string;
+			body: string;
+			visibility: 'private' | 'public';
+			updated_at: string | null;
+		}
 	): Promise<Entry> {
 		// updated_at is only for optimistic concurrency control
 
@@ -33,10 +38,10 @@ export class AdminEntryRepository {
 		const [result] = await db.query<ResultSetHeader>(
 			`
 			UPDATE entry
-			SET title = ?, body = ?, status = ?
+			SET title = ?, body = ?, visibility = ?
 			WHERE path = ? AND (updated_at = ? OR (updated_at IS NULL AND ? IS NULL))
 			`,
-			[data.title, data.body, data.status, path, data.updated_at, data.updated_at]
+			[data.title, data.body, data.visibility, path, data.updated_at, data.updated_at]
 		);
 
 		// 更新が成功したかをチェック
@@ -75,7 +80,7 @@ export class AdminEntryRepository {
 	async createEntry(data: {
 		title: string;
 		body: string;
-		status: 'draft' | 'published';
+		visibility: 'private' | 'public';
 	}): Promise<string> {
 		const pathFormatter = 'yyyy/MM/dd/HHmmss';
 		const path = format(new Date(), pathFormatter);
@@ -83,10 +88,10 @@ export class AdminEntryRepository {
 		// エントリ作成クエリ
 		await db.query(
 			`
-	  INSERT INTO entry (path, title, body, status)
+	  INSERT INTO entry (path, title, body, visibility)
 	  VALUES (?, ?, ?, ?)
 	  `,
-			[path, data.title, data.body, data.status]
+			[path, data.title, data.body, data.visibility]
 		);
 
 		return path;

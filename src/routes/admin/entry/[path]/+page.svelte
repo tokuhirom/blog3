@@ -15,7 +15,7 @@
 	let entry: Entry = data.entry;
 	let title: string = $state(entry.title);
 	let body: string = $state(entry.body); // 初期値として本文を保持
-	let status: 'draft' | 'published' = $state(entry.status);
+	let visibility: 'private' | 'public' = $state(entry.visibility);
 
 	let successMessage = $state('');
 	let errorMessage = $state('');
@@ -50,7 +50,7 @@
 			const request = {
 				title,
 				body,
-				status,
+				visibility: visibility,
 				updated_at: entry.updated_at
 			};
 			const response = await fetch('/admin/api/entry/' + entry.path, {
@@ -128,10 +128,16 @@
 	</div>
 
 	<div>
-		<label for="status" class="label">Status</label>
-		<select id="status" name="status" class="select" bind:value={status} onchange={handleInput}>
-			<option value="draft">Draft</option>
-			<option value="published">Published</option>
+		<label for="visibility" class="label">Visibility</label>
+		<select
+			id="visibility"
+			name="visibility"
+			class="select"
+			bind:value={visibility}
+			onchange={handleInput}
+		>
+			<option value="private">Private</option>
+			<option value="public">Public</option>
 		</select>
 	</div>
 
@@ -140,7 +146,7 @@
 	</div>
 
 	<!-- link to the user side page -->
-	{#if status === 'published'}
+	{#if visibility === 'public'}
 		<div class="link-container">
 			<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
 		</div>
