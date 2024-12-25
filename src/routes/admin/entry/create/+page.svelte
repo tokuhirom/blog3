@@ -38,21 +38,14 @@
 	}
 </script>
 
-<form bind:this={form} method="post" class="space-y-4 p-4" onsubmit={handleSubmit}>
+<form bind:this={form} method="post" class="form" onsubmit={handleSubmit}>
 	<div>
-		<label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-		<input
-			id="title"
-			name="title"
-			type="text"
-			class="w-full rounded border p-2"
-			bind:value={title}
-			required
-		/>
+		<label for="title" class="label">Title</label>
+		<input id="title" name="title" type="text" class="input" bind:value={title} required />
 	</div>
 
 	<div class="editor">
-		<label for="body" class="block text-sm font-medium text-gray-700">Body</label>
+		<label for="body" class="label">Body</label>
 		<MarkdownEditor
 			initialContent={body}
 			onUpdateText={(content) => {
@@ -68,25 +61,67 @@
 	</div>
 
 	<div>
-		<label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-		<select id="status" name="status" class="w-full rounded border p-2" bind:value={status}>
+		<label for="status" class="label">Status</label>
+		<select id="status" name="status" class="select" bind:value={status}>
 			<option value="draft">Draft</option>
 			<option value="published">Published</option>
 		</select>
 	</div>
 
-	<div class="flex justify-between">
-		<button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-			Create Entry
-		</button>
+	<div class="button-container">
+		<button type="submit" class="create-button">Create Entry</button>
 	</div>
 </form>
 
 <style>
+	.form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1rem;
+	}
+
+	.label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #4a5568;
+	}
+
+	.input {
+		width: 100%;
+		border-radius: 0.375rem;
+		border: 1px solid #d1d5db;
+		padding: 0.5rem;
+	}
+
 	.editor {
 		border: 1px solid #d1d5db;
 		border-radius: 0.25rem;
 		height: 400px;
 		overflow-y: scroll;
+	}
+
+	.select {
+		width: 100%;
+		border-radius: 0.375rem;
+		border: 1px solid #d1d5db;
+		padding: 0.5rem;
+	}
+
+	.button-container {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.create-button {
+		border-radius: 0.375rem;
+		background-color: #3b82f6;
+		padding: 0.5rem 1rem;
+		color: white;
+	}
+
+	.create-button:hover {
+		background-color: #2563eb;
 	}
 </style>
