@@ -8,11 +8,12 @@ tokuhirom の blog のソースコードです。
 
 ## ビルド方法
 
-    bun run dev
+    npm install
+    npm run dev
 
 で実行できます。
 
-    bun run build
+    npm run build
 
 で本番用ビルドができます。
 
