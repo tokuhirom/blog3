@@ -70,11 +70,11 @@
 				if (file) {
 					isUploading = true; // アップロード中フラグを立てる
 					uploadImage(file)
-						.then(url => {
+						.then((url) => {
 							insertMarkdownImage(url);
 							event.preventDefault();
 						})
-						.catch(error => {
+						.catch((error) => {
 							console.error('Image upload failed:', error);
 							showError('Image upload failed. Please try again.');
 						})
