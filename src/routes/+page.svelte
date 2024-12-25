@@ -9,7 +9,7 @@
 </svelte:head>
 
 <div class="container">
-	<div class="grid">
+	<div class="flex-container">
 		{#each data.entries as entry}
 			<a href="/entry/{entry.path}" class="entry-link">
 				<h2 class="entry-title">{entry.title}</h2>
@@ -33,27 +33,15 @@
 		margin: 0 auto;
 		padding: 1rem;
 	}
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(1, 1fr);
+	.flex-container {
+		display: flex;
+		flex-wrap: wrap;
 		gap: 1rem;
-	}
-	@media (min-width: 640px) {
-		.grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-	@media (min-width: 768px) {
-		.grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-	@media (min-width: 1024px) {
-		.grid {
-			grid-template-columns: repeat(4, 1fr);
-		}
+		justify-content: flex-start;
 	}
 	.entry-link {
+		flex: 1 1 200px;
+		max-width: 200px;
 		display: block;
 		border-radius: 0.5rem;
 		border: 1px solid #e2e8f0;
@@ -73,7 +61,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		font-size: 1.125rem;
+		font-size: 1rem;
 		font-weight: 600;
 		color: #2d3748;
 	}
