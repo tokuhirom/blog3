@@ -4,6 +4,7 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
+	import { beforeNavigate } from '$app/navigation';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 	import { parseISO } from 'date-fns';
@@ -20,6 +21,8 @@
 
 	let successMessage = $state('');
 	let errorMessage = $state('');
+
+	let isDirty = false;
 
 	async function handleDelete(event: Event) {
 		event.preventDefault();
@@ -61,6 +64,7 @@
 			});
 			if (response.ok) {
 				successMessage = 'Entry updated successfully';
+				isDirty = false; // Reset dirty flag on successful update
 
 				response.json().then((data) => {
 					entry.updated_at = parseISO(data.updated_at);
@@ -90,8 +94,15 @@
 
 	// 入力イベントや変更イベントにデバウンスされた関数をバインド
 	function handleInput() {
+		isDirty = true;
 		debouncedUpdate();
 	}
+
+	beforeNavigate(({ cancel }) => {
+		if (isDirty && !confirm('You have unsaved changes. Are you sure you want to leave?')) {
+			cancel();
+		}
+	});
 </script>
 
 <form class="form">
@@ -115,7 +126,7 @@
 			initialContent={body}
 			onUpdateText={(content) => {
 				body = content;
-				handleInput(); // エディタ更新時��デバウンスされた更新をトリガー
+				handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
 			}}
 		></MarkdownEditor>
 	</div>
