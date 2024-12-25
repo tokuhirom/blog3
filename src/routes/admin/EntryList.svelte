@@ -18,13 +18,14 @@
 
 <style>
 	.list {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		display: flex;
+		flex-wrap: wrap;
 		gap: 1rem;
 	}
 
 	.item {
-		width: 100%;
+		flex: 1 1 150px;
+		max-width: 150px;
 		padding: 1rem;
 		word-break: break-all;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
