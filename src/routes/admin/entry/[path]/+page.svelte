@@ -3,6 +3,7 @@
 	import { formatDateForMySQL } from '$lib/mysqlutils';
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
+	import { debounce } from '$lib/utils';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 	import { parseISO } from 'date-fns';
@@ -81,17 +82,19 @@
 			console.error('Failed to update entry:', e);
 		}
 	}
+
+	// デバウンスした自動保存関数
+	const debouncedUpdate = debounce(() => {
+		handleUpdate();
+	}, 3000);
+
+	// 入力イベントや変更イベントにデバウンスされた関数をバインド
+	function handleInput() {
+		debouncedUpdate();
+	}
 </script>
 
-<form
-	method="post"
-	action="?/update"
-	class="space-y-4 p-4"
-	onsubmit={async (event) => {
-		event.preventDefault();
-		await handleUpdate();
-	}}
->
+<form class="space-y-4 p-4">
 	<div>
 		<label for="title" class="block text-sm font-medium text-gray-700">Title</label>
 		<input
@@ -100,6 +103,7 @@
 			type="text"
 			class="w-full rounded border p-2"
 			bind:value={title}
+			oninput={handleInput}
 			required
 		/>
 	</div>
@@ -111,28 +115,26 @@
 			initialContent={body}
 			onUpdateText={(content) => {
 				body = content;
-			}}
-			onSave={(content) => {
-				body = content;
-				console.log('Save the content by shortcut');
-				handleUpdate();
+				handleInput(); // エディタ更新時もデバウンスされた更新をトリガー
 			}}
 		></MarkdownEditor>
 	</div>
 
 	<div>
 		<label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-		<select id="status" name="status" class="w-full rounded border p-2" bind:value={status}>
+		<select
+			id="status"
+			name="status"
+			class="w-full rounded border p-2"
+			bind:value={status}
+			onchange={handleInput}
+		>
 			<option value="draft">Draft</option>
 			<option value="published">Published</option>
 		</select>
 	</div>
 
 	<div class="flex justify-between">
-		<button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-			Update Entry
-		</button>
-
 		<button
 			type="submit"
 			class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
@@ -143,11 +145,13 @@
 	</div>
 
 	<!-- link to the user side page -->
-	<div class="flex justify-between p-3">
-		<a href="/entry/{entry.path}" class="rounded bg-green-500 px-4 py-2 text-white hover:underline"
-			>Go to User Side Page</a
-		>
-	</div>
+	 {#if status === 'published'}
+		<div class="flex justify-between p-3">
+			<a href="/entry/{entry.path}" class="rounded bg-green-500 px-4 py-2 text-white hover:underline"
+				>Go to User Side Page</a
+			>
+		</div>
+	{/if}
 </form>
 
 {#if successMessage}
