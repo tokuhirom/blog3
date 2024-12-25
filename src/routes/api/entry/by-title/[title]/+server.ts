@@ -1,5 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { PublicEntryRepository } from '$lib/db';
+import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const title = params.title;
