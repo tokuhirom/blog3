@@ -60,7 +60,7 @@
 		};
 	});
 
-	async function handlePaste(event: ClipboardEvent): Promise<void> {
+	function handlePaste(event: ClipboardEvent): void {
 		const items = event.clipboardData?.items;
 		if (!items) return;
 
@@ -69,16 +69,18 @@
 				const file = item.getAsFile();
 				if (file) {
 					isUploading = true; // アップロード中フラグを立てる
-					try {
-						const url = await uploadImage(file);
-						insertMarkdownImage(url);
-						event.preventDefault();
-					} catch (error) {
-						console.error('Image upload failed:', error);
-						showError('Image upload failed. Please try again.');
-					} finally {
-						isUploading = false; // アップロード完了でフラグを下ろす
-					}
+					uploadImage(file)
+						.then(url => {
+							insertMarkdownImage(url);
+							event.preventDefault();
+						})
+						.catch(error => {
+							console.error('Image upload failed:', error);
+							showError('Image upload failed. Please try again.');
+						})
+						.finally(() => {
+							isUploading = false; // アップロード完了でフラグを下ろす
+						});
 				}
 			} else if (item.type === 'text/plain') {
 				const text = event.clipboardData.getData('text/plain');
