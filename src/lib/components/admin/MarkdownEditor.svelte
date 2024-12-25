@@ -9,26 +9,28 @@
 	import { syntaxHighlighting } from '@codemirror/language';
 	import { defaultKeymap } from '@codemirror/commands';
 
-	let container: HTMLDivElement; // エディタの親要素
-	export let initialContent: string = ''; // 初期コンテンツ
-	export let onUpdateText: (content: string) => void; // 更新時のコールバック
+	let container: HTMLDivElement;
+	export let initialContent: string = '';
+	export let onUpdateText: (content: string) => void;
 	export let onSave: (content: string) => void;
 	let editor: EditorView;
+
+	let isUploading: boolean = false; // アップロード中の状態
+	let errorMessage: string = ''; // エラー通知メッセージ
 
 	onMount(() => {
 		const startState = EditorState.create({
 			doc: initialContent,
 			extensions: [
 				markdown({
-					base: markdownLanguage, // Markdown サポート
-					codeLanguages: languages // コードブロックの言語
+					base: markdownLanguage,
+					codeLanguages: languages
 				}),
 				history(),
-				syntaxHighlighting(oneDarkHighlightStyle), // ダークテーマのシンタックスハイライト
-				EditorView.lineWrapping, // 行の折り返し
+				syntaxHighlighting(oneDarkHighlightStyle),
+				EditorView.lineWrapping,
 				keymap.of([...historyKeymap, ...defaultKeymap, indentWithTab]),
 				EditorView.theme({
-					// 高さ固定のテーマ
 					'.cm-editor': { height: '600px' },
 					'.cm-content': { overflowY: 'auto' }
 				}),
@@ -37,7 +39,6 @@
 				}),
 				EditorView.updateListener.of((update) => {
 					if (update.changes) {
-						// ユーザーの入力変更を反映
 						const isUserInput = update.transactions.some(
 							(tr) => tr.annotation(Transaction.userEvent) !== 'program' && tr.docChanged
 						);
@@ -55,11 +56,11 @@
 		});
 
 		return () => {
-			editor.destroy(); // コンポーネントが破棄されたときにエディタをクリーンアップ
+			editor.destroy();
 		};
 	});
 
-	function handlePaste(event: ClipboardEvent): void {
+	async function handlePaste(event: ClipboardEvent): Promise<void> {
 		const items = event.clipboardData?.items;
 		if (!items) return;
 
@@ -67,15 +68,17 @@
 			if (item.type.startsWith('image/')) {
 				const file = item.getAsFile();
 				if (file) {
-					uploadImage(file)
-						.then((url) => {
-							insertMarkdownImage(url);
-							insertMarkdownImage(url);
-							event.preventDefault();
-						})
-						.catch((error) => {
-							console.error('Image upload failed:', error);
-						});
+					isUploading = true; // アップロード中フラグを立てる
+					try {
+						const url = await uploadImage(file);
+						insertMarkdownImage(url);
+						event.preventDefault();
+					} catch (error) {
+						console.error('Image upload failed:', error);
+						showError('Image upload failed. Please try again.');
+					} finally {
+						isUploading = false; // アップロード完了でフラグを下ろす
+					}
 				}
 			} else if (item.type === 'text/plain') {
 				const text = event.clipboardData.getData('text/plain');
@@ -120,6 +123,13 @@
 		editor.dispatch(transaction);
 	}
 
+	function showError(message: string) {
+		errorMessage = message;
+		setTimeout(() => {
+			errorMessage = ''; // 7秒後にエラーメッセージを非表示
+		}, 7000);
+	}
+
 	const handleKeyDown = (event: KeyboardEvent) => {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
 			event.preventDefault();
@@ -132,11 +142,39 @@
 
 <div class="wrapper">
 	<div bind:this={container}></div>
+	{#if isUploading}
+		<div class="upload-indicator">Uploading image...</div>
+	{/if}
+	{#if errorMessage}
+		<div class="error-indicator">{errorMessage}</div>
+	{/if}
 </div>
 
 <style>
 	.wrapper {
 		width: 100%;
 		height: 100%;
+	}
+
+	.upload-indicator {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		background: rgba(0, 0, 0, 0.7);
+		color: white;
+		padding: 10px 15px;
+		border-radius: 5px;
+		font-size: 14px;
+	}
+
+	.error-indicator {
+		position: fixed;
+		bottom: 60px;
+		right: 20px;
+		background: rgba(255, 0, 0, 0.8);
+		color: white;
+		padding: 10px 15px;
+		border-radius: 5px;
+		font-size: 14px;
 	}
 </style>
