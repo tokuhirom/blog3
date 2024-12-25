@@ -6,7 +6,7 @@
 			.then(async (response) => {
 				if (response.ok) {
 					const data = await response.json();
-					location.href = `/admin/entry/${encodeURIComponent(data.path)}`;
+					location.href = `/admin/entry/${data.path}`;
 				} else {
 					console.error('Failed to create new entry');
 					alert('Failed to create new entry. Cannot get new entry path');
