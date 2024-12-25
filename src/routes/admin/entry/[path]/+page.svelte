@@ -94,14 +94,14 @@
 	}
 </script>
 
-<form class="space-y-4 p-4">
+<form class="form">
 	<div>
-		<label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+		<label for="title" class="label">Title</label>
 		<input
 			id="title"
 			name="title"
 			type="text"
-			class="w-full rounded border p-2"
+			class="input"
 			bind:value={title}
 			oninput={handleInput}
 			required
@@ -109,65 +109,120 @@
 	</div>
 
 	<div class="editor">
-		<label for="body" class="block text-sm font-medium text-gray-700">Body</label>
+		<label for="body" class="label">Body</label>
 		<input type="hidden" name="body" bind:value={body} />
 		<MarkdownEditor
 			initialContent={body}
 			onUpdateText={(content) => {
 				body = content;
-				handleInput(); // エディタ更新時もデバウンスされた更新をトリガー
+				handleInput(); // エディタ更新時��デバウンスされた更新をトリガー
 			}}
 		></MarkdownEditor>
 	</div>
 
 	<div>
-		<label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-		<select
-			id="status"
-			name="status"
-			class="w-full rounded border p-2"
-			bind:value={status}
-			onchange={handleInput}
-		>
+		<label for="status" class="label">Status</label>
+		<select id="status" name="status" class="select" bind:value={status} onchange={handleInput}>
 			<option value="draft">Draft</option>
 			<option value="published">Published</option>
 		</select>
 	</div>
 
-	<div class="flex justify-between">
-		<button
-			type="submit"
-			class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-			onclick={handleDelete}
-		>
-			Delete Entry
-		</button>
+	<div class="button-container">
+		<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
 	</div>
 
 	<!-- link to the user side page -->
 	{#if status === 'published'}
-		<div class="flex justify-between p-3">
-			<a
-				href="/entry/{entry.path}"
-				class="rounded bg-green-500 px-4 py-2 text-white hover:underline">Go to User Side Page</a
-			>
+		<div class="link-container">
+			<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
 		</div>
 	{/if}
 </form>
 
 {#if successMessage}
-	<p class="text-green-500">{successMessage}</p>
+	<p class="success-message">{successMessage}</p>
 {/if}
 
 {#if errorMessage}
-	<p class="text-red-500">{errorMessage}</p>
+	<p class="error-message">{errorMessage}</p>
 {/if}
 
 <style>
+	.form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1rem;
+	}
+
+	.label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #4a5568;
+	}
+
+	.input {
+		width: 100%;
+		border-radius: 0.375rem;
+		border: 1px solid #d1d5db;
+		padding: 0.5rem;
+	}
+
 	.editor {
 		border: 1px solid #d1d5db;
 		border-radius: 0.25rem;
 		height: 400px;
 		overflow-y: scroll;
+	}
+
+	.select {
+		width: 100%;
+		border-radius: 0.375rem;
+		border: 1px solid #d1d5db;
+		padding: 0.5rem;
+	}
+
+	.button-container {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.delete-button {
+		border-radius: 0.375rem;
+		background-color: #ef4444;
+		padding: 0.5rem 1rem;
+		color: white;
+	}
+
+	.delete-button:hover {
+		background-color: #dc2626;
+	}
+
+	.link-container {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.75rem;
+	}
+
+	.link {
+		border-radius: 0.375rem;
+		background-color: #10b981;
+		padding: 0.5rem 1rem;
+		color: white;
+		text-decoration: none;
+	}
+
+	.link:hover {
+		text-decoration: underline;
+	}
+
+	.success-message {
+		color: #10b981;
+	}
+
+	.error-message {
+		color: #ef4444;
 	}
 </style>
