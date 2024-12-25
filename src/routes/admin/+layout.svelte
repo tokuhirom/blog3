@@ -11,7 +11,13 @@
 
 <div>
 	<AdminHeader />
-	<div class="pt-2">
+	<div class="content">
 		{@render children()}
 	</div>
 </div>
+
+<style>
+	.content {
+		padding-top: 0.5rem;
+	}
+</style>
