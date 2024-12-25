@@ -145,10 +145,11 @@
 	</div>
 
 	<!-- link to the user side page -->
-	 {#if status === 'published'}
+	{#if status === 'published'}
 		<div class="flex justify-between p-3">
-			<a href="/entry/{entry.path}" class="rounded bg-green-500 px-4 py-2 text-white hover:underline"
-				>Go to User Side Page</a
+			<a
+				href="/entry/{entry.path}"
+				class="rounded bg-green-500 px-4 py-2 text-white hover:underline">Go to User Side Page</a
 			>
 		</div>
 	{/if}
