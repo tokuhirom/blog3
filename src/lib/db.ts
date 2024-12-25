@@ -62,22 +62,40 @@ export class AdminEntryRepository {
 	 */
 	async updateEntry(
 		path: string,
-		data: { title: string; body: string; status: 'draft' | 'published' }
-	): Promise<void> {
+		data: { title: string; body: string; status: 'draft' | 'published'; updated_at: string | null }
+	): Promise<Entry> {
+		// updated_at is only for optimistic concurrency control
+
 		// クエリを実行
 		const [result] = await db.query<ResultSetHeader>(
 			`
-      UPDATE entry
-      SET title = ?, body = ?, status = ?
-      WHERE path = ?
-      `,
-			[data.title, data.body, data.status, path]
+			UPDATE entry
+			SET title = ?, body = ?, status = ?
+			WHERE path = ? AND (updated_at = ? OR (updated_at IS NULL AND ? IS NULL))
+			`,
+			[data.title, data.body, data.status, path, data.updated_at, data.updated_at]
 		);
 
 		// 更新が成功したかをチェック
 		if (result.affectedRows === 0) {
-			throw new Error('Entry not found or no changes applied');
+			const [existingEntry] = await db.query<ResultSetHeader[]>(
+				`SELECT 1 FROM entry WHERE path = ?`,
+				[path]
+			);
+
+			if (existingEntry.length === 0) {
+				throw new Error('Entry not found');
+			} else {
+				throw new Error('Update conflict: Reload the entry and try again');
+			}
 		}
+
+		const entry = await this.getEntry(path);
+		if (!entry) {
+			// very rare case
+			throw new Error('Cannot get entry after update');
+		}
+		return entry;
 	}
 
 	/**

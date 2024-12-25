@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { Entry } from '$lib/db';
+	import { formatDateForMySQL } from '$lib/mysqlutils';
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
+	import { parseISO } from 'date-fns';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -46,7 +48,8 @@
 			const request = {
 				title,
 				body,
-				status
+				status,
+				updated_at: formatDateForMySQL(entry.updated_at)
 			};
 			const response = await fetch('/admin/api/entry/' + entry.path, {
 				method: 'POST',
@@ -57,8 +60,21 @@
 			});
 			if (response.ok) {
 				successMessage = 'Entry updated successfully';
+
+				response.json().then((data) => {
+					entry.updated_at = parseISO(data.updated_at);
+				});
 			} else {
-				errorMessage = 'Failed to update entry';
+				let errorDetails = 'Unknown error';
+				try {
+					const errorData = await response.json();
+					if (errorData && errorData.error) {
+						errorDetails = errorData.error;
+					}
+				} catch (e) {
+					console.error('Failed to parse error response', e);
+				}
+				errorMessage = `Failed to update entry: ${response.statusText} (${response.status}) - ${errorDetails}`;
 			}
 		} catch (e) {
 			errorMessage = 'Failed to update entry';

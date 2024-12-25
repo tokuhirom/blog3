@@ -16,17 +16,20 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 		const title = req.title;
 		const body = req.body;
 		const status = req.status;
+		const updated_at = req.updated_at;
 
-		await locals.adminEntryRepository.updateEntry(path, { title, body, status });
-		return new Response(
-			JSON.stringify({
-				success: true
-			}),
-			{ status: 200 }
-		);
+		const entry = await locals.adminEntryRepository.updateEntry(path, {
+			title,
+			body,
+			status,
+			updated_at
+		});
+		return new Response(JSON.stringify(entry), { status: 200 });
 	} catch (error) {
 		console.error(error);
-		return new Response(JSON.stringify({ error: 'Database error' }), { status: 500 });
+
+		const errorMessage = error instanceof Error ? error.message : 'Unknown database error';
+		return new Response(JSON.stringify({ error: errorMessage }), { status: 500 });
 	}
 };
 
