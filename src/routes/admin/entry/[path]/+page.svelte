@@ -1,13 +1,11 @@
 <script lang="ts">
 	import type { Entry } from '$lib/db';
-	import { formatDateForMySQL } from '$lib/mysqlutils';
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
 	import { beforeNavigate } from '$app/navigation';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
-	import { parseISO } from 'date-fns';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -53,7 +51,7 @@
 				title,
 				body,
 				status,
-				updated_at: formatDateForMySQL(entry.updated_at)
+				updated_at: entry.updated_at
 			};
 			const response = await fetch('/admin/api/entry/' + entry.path, {
 				method: 'POST',
@@ -67,7 +65,7 @@
 				isDirty = false; // Reset dirty flag on successful update
 
 				response.json().then((data) => {
-					entry.updated_at = parseISO(data.updated_at);
+					entry.updated_at = data.updated_at;
 				});
 			} else {
 				let errorDetails = 'Unknown error';
