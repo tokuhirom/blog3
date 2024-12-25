@@ -6,7 +6,7 @@ if (!process.env.BASIC_AUTH_USERNAME || !process.env.BASIC_AUTH_PASSWORD) {
 	console.error(
 		'FATAL: Missing required BASIC_AUTH_USERNAME or BASIC_AUTH_PASSWORD environment variables.'
 	);
-	process.exit(1); // アプリケーションを終了
+	process.exit(1);
 }
 
 const BASIC_AUTH_USERNAME = process.env.BASIC_AUTH_USERNAME;
