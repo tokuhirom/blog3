@@ -7,7 +7,7 @@
 <div class="list">
 	{#each entries as entry}
 		<a
-			class="item {entry.status === 'draft' ? 'draft' : ''}"
+			class="item {entry.visibility === 'private' ? 'private' : ''}"
 			href={`/admin/entry/${encodeURIComponent(entry.path)}`}
 		>
 			<h2 class="title">{entry.title}</h2>
@@ -31,7 +31,7 @@
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 	}
 
-	.item.draft {
+	.item.private {
 		background-color: #e5e7eb;
 	}
 

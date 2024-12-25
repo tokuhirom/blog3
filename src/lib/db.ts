@@ -33,7 +33,7 @@ export type Entry = {
 	path: string;
 	title: string;
 	body: string;
-	status: 'draft' | 'published';
+	visibility: 'private' | 'public';
 	format: 'html' | 'mkdn';
 	created_at: string;
 	updated_at: string | null;

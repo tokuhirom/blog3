@@ -5,7 +5,7 @@
 
 	let title: string = '';
 	let body: string = '';
-	let status: 'draft' | 'published' = 'draft';
+	let visibility: 'private' | 'public' = 'private';
 
 	function handleSubmit(event: Event) {
 		event.preventDefault();
@@ -13,7 +13,7 @@
 		const data = {
 			title,
 			body,
-			status
+			visibility
 		};
 
 		fetch('/admin/api/entry', {
@@ -61,10 +61,10 @@
 	</div>
 
 	<div>
-		<label for="status" class="label">Status</label>
-		<select id="status" name="status" class="select" bind:value={status}>
-			<option value="draft">Draft</option>
-			<option value="published">Published</option>
+		<label for="visibility" class="label">Visibility</label>
+		<select id="visibility" name="visibility" class="select" bind:value={visibility}>
+			<option value="private">Private</option>
+			<option value="public">Public</option>
 		</select>
 	</div>
 

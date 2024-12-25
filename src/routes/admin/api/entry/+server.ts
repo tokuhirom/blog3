@@ -23,16 +23,16 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 		const title = req.title;
 		const body = req.body;
-		const status = req.status;
+		const visibility = req.visibility;
 
-		if (!title || !body || !status) {
+		if (!title || !body || !visibility) {
 			return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
 		}
 
 		const path = await locals.adminEntryRepository.createEntry({
 			title,
 			body,
-			status
+			visibility
 		});
 		return new Response(
 			JSON.stringify({

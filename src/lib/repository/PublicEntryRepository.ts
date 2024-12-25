@@ -7,7 +7,7 @@ export class PublicEntryRepository {
 			const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 				`SELECT * FROM entry
 				WHERE title = ?
-				    AND status='published'`,
+				    AND visibility='public'`,
 				[title]
 			);
 			if (rows.length === 0) {
@@ -25,7 +25,7 @@ export class PublicEntryRepository {
 			const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 				`SELECT * FROM entry
 				WHERE path = ?
-				    AND status='published'`,
+				    AND visibility='public'`,
 				[path]
 			);
 			if (rows.length === 0) {
@@ -62,7 +62,7 @@ export class PublicEntryRepository {
 		const [entries] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT * FROM entry
-			WHERE status = 'published'
+			WHERE visibility = 'public'
 			ORDER BY path DESC
 			LIMIT ? OFFSET ?
 			`,
