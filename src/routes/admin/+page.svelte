@@ -16,14 +16,12 @@
 	let allEntries: Entry[] = $state(data.entries);
 	let filteredEntries: Entry[] = $state(data.entries);
 
-	// ロード状態を管理
 	let isLoading = $state(false);
-	let hasMore = $state(true); // まだエントリが残っているかどうか
+	let hasMore = $state(true);
 	let loadInterval: ReturnType<typeof setInterval> | null = null;
 
-	// 検索時の処理
 	function handleSearch(keyword: string) {
-		searchKeyword = keyword.toLowerCase(); // case insensitive のため小文字化
+		searchKeyword = keyword.toLowerCase();
 		filteredEntries = allEntries.filter(
 			(entry) =>
 				entry.title.toLowerCase().includes(searchKeyword) ||
@@ -31,13 +29,11 @@
 		);
 	}
 
-	// 新しいエントリを取得する関数
 	async function loadMoreEntries() {
 		if (isLoading || !hasMore) return;
 
 		isLoading = true;
 
-		// 最後のエントリのパスを取得
 		const lastPath = allEntries[allEntries.length - 1]?.path;
 		if (!lastPath) {
 			isLoading = false;
@@ -53,10 +49,10 @@
 
 			const newEntries: Entry[] = await response.json();
 			if (newEntries.length === 0) {
-				hasMore = false; // 追加エントリなし
+				hasMore = false;
 			} else {
 				allEntries = [...allEntries, ...newEntries];
-				handleSearch(searchKeyword); // フィルタリングを再適用
+				handleSearch(searchKeyword);
 			}
 		} catch (err) {
 			console.error(err);
@@ -65,13 +61,12 @@
 		}
 	}
 
-	// 一定間隔でエントリをロード
 	onMount(() => {
 		loadInterval = setInterval(() => {
 			if (!isLoading && hasMore) {
 				loadMoreEntries();
 			}
-		}, 10); // 10ms 間隔でロード
+		}, 10);
 
 		return () => {
 			if (loadInterval) {
@@ -87,13 +82,25 @@
 	});
 </script>
 
-<div class="p-4">
+<div class="container">
 	<SearchBox onSearch={handleSearch} />
 	<EntryList entries={filteredEntries} />
 	{#if isLoading || hasMore}
-		<p class="mt-4 text-center text-gray-500">Loading more entries...</p>
+		<p class="loading-message">Loading more entries...</p>
 	{/if}
 	{#if !hasMore && allEntries.length > 0}
-		<p class="mt-4 text-center text-gray-500">No more entries to load</p>
+		<p class="loading-message">No more entries to load</p>
 	{/if}
 </div>
+
+<style>
+	.container {
+		padding: 1rem;
+	}
+
+	.loading-message {
+		margin-top: 1rem;
+		text-align: center;
+		color: #6b7280;
+	}
+</style>
