@@ -96,7 +96,6 @@
 
 <form class="form">
 	<div>
-		<label for="title" class="label">Title</label>
 		<input
 			id="title"
 			name="title"
@@ -109,7 +108,6 @@
 	</div>
 
 	<div class="editor">
-		<label for="body" class="label">Body</label>
 		<input type="hidden" name="body" bind:value={body} />
 		<MarkdownEditor
 			initialContent={body}
