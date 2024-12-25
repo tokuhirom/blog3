@@ -1,5 +1,5 @@
 import type { Handle } from '@sveltejs/kit';
-import { AdminEntryRepository } from '$lib/db';
+import { AdminEntryRepository } from '$lib/repository/AdminEntryRepository';
 
 // 必須環境変数をチェック
 if (!process.env.BASIC_AUTH_USERNAME || !process.env.BASIC_AUTH_PASSWORD) {

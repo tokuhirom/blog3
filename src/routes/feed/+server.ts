@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { create } from 'xmlbuilder2';
-import { PublicEntryRepository } from '$lib/db';
+import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
 
 export const GET: RequestHandler = async () => {
 	const { entries } = await PublicEntryRepository.getPaginatedEntry(1, 30);

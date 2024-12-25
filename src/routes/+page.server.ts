@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { PublicEntryRepository } from '$lib/db';
+import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
 
 export const load: PageServerLoad = async (params) => {
 	console.log('Loading top page content!');
