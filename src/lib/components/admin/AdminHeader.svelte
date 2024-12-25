@@ -58,6 +58,7 @@
 
 	a:hover {
 		text-decoration: underline;
+		cursor: pointer;
 	}
 
 	.text-xl {
