@@ -103,55 +103,61 @@
 	});
 </script>
 
-<form class="form">
-	<div>
-		<input
-			id="title"
-			name="title"
-			type="text"
-			class="input"
-			bind:value={title}
-			oninput={handleInput}
-			required
-		/>
+<div class="container">
+	<div class="left-pane">
+		<form class="form">
+			<div>
+				<input
+					id="title"
+					name="title"
+					type="text"
+					class="input"
+					bind:value={title}
+					oninput={handleInput}
+					required
+				/>
+			</div>
+
+			<div class="editor">
+				<input type="hidden" name="body" bind:value={body} />
+				<MarkdownEditor
+					initialContent={body}
+					onUpdateText={(content) => {
+						body = content;
+						handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
+					}}
+				></MarkdownEditor>
+			</div>
+
+			<div>
+				<label for="visibility" class="label">Visibility</label>
+				<select
+					id="visibility"
+					name="visibility"
+					class="select"
+					bind:value={visibility}
+					onchange={handleInput}
+				>
+					<option value="private">Private</option>
+					<option value="public">Public</option>
+				</select>
+			</div>
+		</form>
 	</div>
 
-	<div class="editor">
-		<input type="hidden" name="body" bind:value={body} />
-		<MarkdownEditor
-			initialContent={body}
-			onUpdateText={(content) => {
-				body = content;
-				handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
-			}}
-		></MarkdownEditor>
-	</div>
-
-	<div>
-		<label for="visibility" class="label">Visibility</label>
-		<select
-			id="visibility"
-			name="visibility"
-			class="select"
-			bind:value={visibility}
-			onchange={handleInput}
-		>
-			<option value="private">Private</option>
-			<option value="public">Public</option>
-		</select>
-	</div>
-
-	<div class="button-container">
-		<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
-	</div>
-
-	<!-- link to the user side page -->
-	{#if visibility === 'public'}
-		<div class="link-container">
-			<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+	<div class="right-pane">
+		<div class="button-container">
+			<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
 		</div>
-	{/if}
-</form>
+
+		<!-- link to the user side page -->
+		{#if visibility === 'public'}
+			<div class="link-container">
+				<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+			</div>
+		{/if}
+	</div>
+</div>
 
 {#if successMessage}
 	<p class="success-message">{successMessage}</p>
@@ -162,11 +168,28 @@
 {/if}
 
 <style>
+	.container {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.left-pane {
+		flex: 1;
+		min-width: 300px;
+		max-width: 800px;
+	}
+
+	.right-pane {
+		margin-left: 1rem; /* Add some space between the panes */
+		max-width: 300px;
+	}
+
 	.form {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
 		padding: 1rem;
+		max-width: 800px;
 	}
 
 	.label {
@@ -195,11 +218,6 @@
 		border-radius: 0.375rem;
 		border: 1px solid #d1d5db;
 		padding: 0.5rem;
-	}
-
-	.button-container {
-		display: flex;
-		justify-content: space-between;
 	}
 
 	.delete-button {
@@ -237,5 +255,16 @@
 
 	.error-message {
 		color: #ef4444;
+	}
+
+	@media (max-width: 600px) {
+		.container {
+			flex-direction: column;
+		}
+
+		.right-pane {
+			margin-left: 0;
+			margin-top: 1rem; /* Add some space between the panes */
+		}
 	}
 </style>
