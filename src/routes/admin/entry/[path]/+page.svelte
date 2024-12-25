@@ -66,7 +66,7 @@
 				isDirty = false; // Reset dirty flag on successful update
 
 				response.json().then((data) => {
-					entry.updated_at = parseISO(data.updated_at);
+					entry.updated_at = data.updated_at;
 				});
 			} else {
 				let errorDetails = 'Unknown error';
