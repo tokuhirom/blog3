@@ -164,7 +164,6 @@
 			</div>
 
 			<div>
-				{JSON.stringify(data.links)}
 				<label for="visibility" class="label">Visibility</label>
 				<select
 					id="visibility"
