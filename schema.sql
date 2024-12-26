@@ -7,7 +7,7 @@ CREATE TABLE "entry" (
   "created_at" datetime DEFAULT CURRENT_TIMESTAMP,
   "updated_at" datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY ("path"),
-  KEY "title" ("title"),
+  UNIQUE title ("title"),
   KEY "created_at" ("created_at"),
   KEY "updated_at" ("updated_at"),
   FULLTEXT KEY "idx_bigram" ("title","body") /*!50100 WITH PARSER "ngram" */
