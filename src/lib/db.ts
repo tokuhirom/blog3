@@ -38,3 +38,14 @@ export type Entry = {
 	created_at: string;
 	updated_at: string | null;
 };
+
+export type EntryLink = {
+	src_path: string;
+	dst_title: string;
+};
+
+export type EntryLinkWithPath = {
+	src_path: string;
+	dst_title: string;
+	dst_path: string;
+};

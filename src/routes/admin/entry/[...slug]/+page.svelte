@@ -88,7 +88,7 @@
 	// デバウンスした自動保存関数
 	const debouncedUpdate = debounce(() => {
 		handleUpdate();
-	}, 3000);
+	}, 1000);
 
 	// 入力イベントや変更イベントにデバウンスされた関数をバインド
 	function handleInput() {
@@ -125,6 +125,19 @@
 					onUpdateText={(content) => {
 						body = content;
 						handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
+					}}
+					existsEntryByTitle={(title) => {
+						return !!data.links[title];
+					}}
+					onClickEntry={(title) => {
+						if (data.links[title]) {
+							location.href = '/admin/entry/' + data.links[title];
+						} else {
+							// TODO create new entry by title
+						}
+					}}
+					onSave={() => {
+						handleUpdate();
 					}}
 				></MarkdownEditor>
 			</div>
