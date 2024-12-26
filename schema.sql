@@ -1,7 +1,7 @@
 CREATE TABLE "entry" (
   "path" varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-  "title" varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  "body" text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  "title" varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  "body" text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   "visibility" enum('private','public') DEFAULT 'private' NOT NULL,
   "format" enum('html','mkdn') NOT NULL DEFAULT 'mkdn',
   "created_at" datetime DEFAULT CURRENT_TIMESTAMP,
@@ -15,7 +15,7 @@ CREATE TABLE "entry" (
 
 create table entry_link (
   src_path varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-  dst_title varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  dst_title varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (src_path, dst_title),
   FOREIGN KEY (src_path) REFERENCES entry(path) ON DELETE CASCADE,
   INDEX (dst_title)
