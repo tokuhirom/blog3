@@ -103,7 +103,7 @@
 	});
 </script>
 
-<div class="container">
+<div class="container {entry.visibility === 'private' ? 'private' : ''}">
 	<div class="left-pane">
 		<form class="form">
 			<div>
@@ -205,6 +205,10 @@
 	.container {
 		display: flex;
 		flex-wrap: wrap;
+	}
+
+	.container.private {
+		background-color: #e5e7eb;
 	}
 
 	.left-pane {
