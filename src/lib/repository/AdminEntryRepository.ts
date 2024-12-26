@@ -67,7 +67,9 @@ export class AdminEntryRepository {
 			// リンクを記録する
 			// entry.body からリンクを抽出する
 			// [[Foobar]] のような記法が対象となる。まず、正規表現ですべて抽出する。
-			const links = data.body.match(/\[\[(.+?)\]\]/g) || [];
+			let links: string[] = data.body.match(/\[\[(.+?)\]\]/g) || [];
+			// 小文字に変換して重複を削除する
+			links = Array.from(new Set(links.map((link) => link.toLowerCase())));
 			// 一旦現在のものを削除する
 			await conn.query(
 				`
