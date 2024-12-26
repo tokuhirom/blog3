@@ -1,10 +1,10 @@
 <script lang="ts">
-	import EntryList from './EntryList.svelte';
 	import SearchBox from './SearchBox.svelte';
 	import type { Entry } from '$lib/db';
 	import type { PageData } from './$types';
 	import { error } from '@sveltejs/kit';
 	import { onMount, onDestroy } from 'svelte';
+	import EntryCardItem from './EntryCardItem.svelte';
 
 	let searchKeyword = '';
 	let { data }: { data: PageData } = $props();
@@ -84,7 +84,11 @@
 
 <div class="container">
 	<SearchBox onSearch={handleSearch} />
-	<EntryList entries={filteredEntries} />
+	<div class="entry-list">
+		{#each filteredEntries as entry}
+			<EntryCardItem {entry} />
+		{/each}
+	</div>
 	{#if isLoading || hasMore}
 		<p class="loading-message">Loading more entries...</p>
 	{/if}
@@ -102,5 +106,11 @@
 		margin-top: 1rem;
 		text-align: center;
 		color: #6b7280;
+	}
+
+	.entry-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
 	}
 </style>

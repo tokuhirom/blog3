@@ -6,6 +6,8 @@
 	import { beforeNavigate } from '$app/navigation';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
+	import CardItem from '../../CardItem.svelte';
+	import EntryCardItem from '../../EntryCardItem.svelte';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -127,80 +129,126 @@
 	});
 </script>
 
-<div class="container {entry.visibility === 'private' ? 'private' : ''}">
-	<div class="left-pane">
-		<form class="form">
-			<div class="title-container">
-				<input
-					id="title"
-					name="title"
-					type="text"
-					class="input"
-					bind:value={title}
-					oninput={handleInput}
-					required
-				/>
-				<span class="visibility-icon" onclick={toggleVisibility}
-					>{visibility === 'private' ? '🔒️' : '🌍'}</span
-				>
-			</div>
+<div>
+	<div class="container {entry.visibility === 'private' ? 'private' : ''}">
+		<div class="left-pane">
+			<form class="form">
+				<div class="title-container">
+					<input
+						id="title"
+						name="title"
+						type="text"
+						class="input"
+						bind:value={title}
+						oninput={handleInput}
+						required
+					/>
+					<button class="visibility-icon" onclick={toggleVisibility}
+						>{visibility === 'private' ? '🔒️' : '🌍'}</button
+					>
+				</div>
 
-			<div class="editor">
-				<input type="hidden" name="body" bind:value={body} />
-				<MarkdownEditor
-					initialContent={body}
-					onUpdateText={(content) => {
-						body = content;
-						handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
-					}}
-					existsEntryByTitle={(title) => {
-						return !!data.links[title.toLowerCase()];
-					}}
-					onClickEntry={(title) => {
-						if (data.links[title.toLowerCase()]) {
-							location.href = '/admin/entry/' + data.links[title.toLowerCase()];
-						} else {
-							// create new entry by title
-							fetch('/admin/api/entry', {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json'
-								},
-								body: JSON.stringify({ title })
-							})
-								.then((response) => {
-									if (response.ok) {
-										return response.json();
-									} else {
-										throw new Error('Failed to create new entry');
-									}
+				<div class="editor">
+					<input type="hidden" name="body" bind:value={body} />
+					<MarkdownEditor
+						initialContent={body}
+						onUpdateText={(content) => {
+							body = content;
+							handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
+						}}
+						existsEntryByTitle={(title) => {
+							return !!data.links[title.toLowerCase()];
+						}}
+						onClickEntry={(title) => {
+							if (data.links[title.toLowerCase()]) {
+								location.href = '/admin/entry/' + data.links[title.toLowerCase()];
+							} else {
+								// create new entry by title
+								fetch('/admin/api/entry', {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json'
+									},
+									body: JSON.stringify({ title })
 								})
-								.then((data) => {
-									location.href = '/admin/entry/' + data.path;
-								})
-								.catch((error) => {
-									console.error('Failed to create new entry:', error);
-									errorMessage = `Failed to create new entry: ${error.message}`;
-								});
-						}
-					}}
-					onSave={() => {
-						handleUpdate();
-					}}
-				></MarkdownEditor>
-			</div>
-		</form>
-	</div>
-
-	<div class="right-pane">
-		<div class="button-container">
-			<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
+									.then((response) => {
+										if (response.ok) {
+											return response.json();
+										} else {
+											throw new Error('Failed to create new entry');
+										}
+									})
+									.then((data) => {
+										location.href = '/admin/entry/' + data.path;
+									})
+									.catch((error) => {
+										console.error('Failed to create new entry:', error);
+										errorMessage = `Failed to create new entry: ${error.message}`;
+									});
+							}
+						}}
+						onSave={() => {
+							handleUpdate();
+						}}
+					></MarkdownEditor>
+				</div>
+			</form>
 		</div>
 
-		<!-- link to the user side page -->
-		{#if visibility === 'public'}
-			<div class="link-container">
-				<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+		<div class="right-pane">
+			<div class="button-container">
+				<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
+			</div>
+
+			<!-- link to the user side page -->
+			{#if visibility === 'public'}
+				<div class="link-container">
+					<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+				</div>
+			{/if}
+		</div>
+	</div>
+
+	<div class="link-container">
+		<div class="one-hop-link">
+			{#each data.twohops.links as link}
+				<EntryCardItem entry={link} />
+			{/each}
+		</div>
+		{#each data.twohops.twohops as twohops}
+			<div class="two-hop-link">
+				{#if twohops.src.title}
+					<EntryCardItem entry={twohops.src} backgroundColor={'yellowgreen'} />
+				{:else}
+					<CardItem
+						onClick={() => alert('TODO: create new entry. Not implemented yet.')}
+						title={twohops.src.dst_title}
+						content=""
+						backgroundColor="#c0f6f6"
+						color="gray"
+					/>
+				{/if}
+				{#each twohops.links as link}
+					<EntryCardItem entry={link} />
+				{/each}
+			</div>
+		{/each}
+		{#if data.twohops.newLinks.length > 0}
+			<div class="one-hop-link">
+				<CardItem
+					onClick={() => false}
+					title="New Item"
+					content=""
+					backgroundColor="darkgoldenrod"
+				/>
+				{#each data.twohops.newLinks as title}
+					<CardItem
+						onClick={() => alert('TODO: create new entry. Not implemented yet.')}
+						{title}
+						content=""
+						color="gray"
+					/>
+				{/each}
 			</div>
 		{/if}
 	</div>
@@ -243,13 +291,6 @@
 		max-width: 800px;
 	}
 
-	.label {
-		display: block;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: #4a5568;
-	}
-
 	.input {
 		width: calc(100% - 2rem); /* Adjust width to make space for the icon */
 		border-radius: 0.375rem;
@@ -263,6 +304,8 @@
 	}
 
 	.visibility-icon {
+		border: 0;
+		background-color: transparent;
 		margin-left: 0.5rem;
 		font-size: 1.5rem;
 		cursor: pointer;
@@ -275,13 +318,6 @@
 		overflow-y: scroll;
 	}
 
-	.select {
-		width: 100%;
-		border-radius: 0.375rem;
-		border: 1px solid #d1d5db;
-		padding: 0.5rem;
-	}
-
 	.delete-button {
 		border-radius: 0.375rem;
 		background-color: #ef4444;
@@ -291,12 +327,6 @@
 
 	.delete-button:hover {
 		background-color: #dc2626;
-	}
-
-	.link-container {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.75rem;
 	}
 
 	.link {
@@ -328,5 +358,19 @@
 			margin-left: 0;
 			margin-top: 1rem; /* Add some space between the panes */
 		}
+	}
+
+	.one-hop-link {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		clear: both;
+	}
+	.two-hop-link {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		clear: both;
+		margin-top: 1rem;
 	}
 </style>
