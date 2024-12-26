@@ -3,11 +3,26 @@ import { db, type Entry } from '$lib/db';
 import { format } from 'date-fns';
 
 export class AdminEntryRepository {
-	// XXX Bad naming
-	async getAllEntries(): Promise<Entry[]> {
+	async getLatestEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
-			'SELECT * FROM entry ORDER BY path DESC LIMIT 100',
+			'SELECT * FROM entry ORDER BY updated_at DESC, path DESC LIMIT 100',
 			[]
+		);
+		return rows;
+	}
+
+	/**
+	 * Get entries older than the given path.
+	 */
+	async getEntriesOlderThan(lastPath: string, limit = 100): Promise<Entry[]> {
+		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
+			`
+			SELECT * FROM entry
+			WHERE path < ?
+			ORDER BY updated_at DESC, path DESC
+			LIMIT ?
+			`,
+			[lastPath, limit]
 		);
 		return rows;
 	}
@@ -177,22 +192,6 @@ export class AdminEntryRepository {
 		);
 
 		return path;
-	}
-
-	/**
-	 * Get entries older than the given path.
-	 */
-	async getEntriesOlderThan(lastPath: string, limit = 100): Promise<Entry[]> {
-		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
-			`
-			SELECT * FROM entry
-			WHERE path < ?
-			ORDER BY path DESC
-			LIMIT ?
-			`,
-			[lastPath, limit]
-		);
-		return rows;
 	}
 
 	/**
