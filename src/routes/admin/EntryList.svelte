@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { Entry } from '$lib/db';
-	import EntryCard from './EntryCard.svelte';
+	import EntryCardItem from './EntryCardItem.svelte';
 
 	export let entries: Entry[] = [];
 </script>
 
 <div class="list">
 	{#each entries as entry}
-		<EntryCard {entry} />
+		<EntryCardItem {entry} />
 	{/each}
 </div>
 

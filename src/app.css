@@ -1,3 +1,13 @@
+/*
+soft rset
+*/
+button {
+	border: none;
+}
+
+/*
+ * global
+ */
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
 		'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
@@ -24,6 +34,10 @@ a:hover {
 	color: #666666;
 }
 
+/*
+ * markdown
+ */
+
 p {
 	margin: 0;
 }
@@ -46,9 +60,6 @@ pre {
 	background-color: bisque;
 }
 
-/*
- * markdown
- */
 .internal-link {
 	cursor: pointer;
 	text-decoration: none;

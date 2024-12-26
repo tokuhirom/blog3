@@ -2,11 +2,13 @@
 	import type { Entry } from '$lib/db';
 
 	export let entry: Entry;
+	export let borderColor: string | undefined = undefined;
 </script>
 
 <a
 	class="item {entry.visibility === 'private' ? 'private' : ''} {entry.body ? '' : 'no-body'}"
 	href={`/admin/entry/${entry.path}`}
+	style={borderColor ? `border: 1px solid ${borderColor}` : ''}
 >
 	<h2 class="title">{entry.title}</h2>
 	{#if entry.body}
@@ -32,7 +34,9 @@
 		max-width: 150px;
 		padding: 1rem;
 		word-break: break-all;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		/* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
 	}
 
 	.item.private {

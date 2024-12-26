@@ -209,10 +209,10 @@ export class AdminEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	private async getLinksBySrcPath2(srcPath: string): Promise<Entry[]> {
-		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
+	private async getLinksBySrcPath2(srcPath: string): Promise<(HasDestTitle & Entry)[]> {
+		const [rows] = await db.query<(HasDestTitle & Entry)[] & RowDataPacket[]>(
 			`
-			SELECT DISTINCT entry_link.dst_title AS title, dest_entry.path path, dest_entry.body, dest_entry.visibility, dest_entry.format, dest_entry.created_at, dest_entry.updated_at
+			SELECT DISTINCT entry_link.dst_title AS dst_title, dest_entry.title title, dest_entry.path path, dest_entry.body, dest_entry.visibility, dest_entry.format, dest_entry.created_at, dest_entry.updated_at
 			FROM entry_link
 				LEFT JOIN entry dest_entry ON (dest_entry.title = entry_link.dst_title)
 			WHERE entry_link.src_path = ?
@@ -231,7 +231,7 @@ export class AdminEntryRepository {
 	async getLinksBySrcPath(srcPath: string): Promise<{ [key: string]: string | null }> {
 		const links: { [key: string]: string | null } = {};
 		(await this.getLinksBySrcPath2(srcPath)).forEach((row) => {
-			links[row.title.toLowerCase()] = row.path;
+			links[row.dst_title.toLowerCase()] = row.path;
 		});
 		return links;
 	}
@@ -242,12 +242,12 @@ export class AdminEntryRepository {
 	async getTwoHopLinksBySrcPath(
 		targetPath: string,
 		targetTitle: string
-	): Promise<{ notFoundTitles: string[]; links: Entry[]; twohops: TwoHopLink[] }> {
+	): Promise<{ newLinks: string[]; links: Entry[]; twohops: TwoHopLink[] }> {
 		// このエントリがリンクしているページのリストを取得
 		const links = await this.getLinksBySrcPath2(targetPath);
 		console.log(
 			'links:',
-			links.map((link) => link.title)
+			links.map((link) => link.dst_title)
 		);
 		// このエントリにリンクしているページのリストを取得
 		const reverseLinks = await this.getEntriesByLinkedTitle(targetTitle);
@@ -258,7 +258,7 @@ export class AdminEntryRepository {
 		// links の指す先のタイトルにリンクしているエントリのリストを取得
 		const twohopEntries = await this.getEntriesByLinkedTitles(
 			targetPath,
-			links.map((link) => link.title.toLowerCase())
+			links.map((link) => link.dst_title.toLowerCase())
 		);
 		console.log(
 			'twohopEntries:',
@@ -275,20 +275,20 @@ export class AdminEntryRepository {
 
 		const resultLinks: Entry[] = [];
 		const resultTwoHops: TwoHopLink[] = [];
-		const notFoundTitles: string[] = [];
+		const newLinks: string[] = [];
 
 		// twohopEntries に入っているエントリのリストを作成
 		for (const link of links) {
-			if (twohopEntriesByTitle[link.title.toLowerCase()]) {
+			if (twohopEntriesByTitle[link.dst_title.toLowerCase()]) {
 				resultTwoHops.push({
 					src: link,
-					links: twohopEntriesByTitle[link.title.toLowerCase()]
+					links: twohopEntriesByTitle[link.dst_title.toLowerCase()]
 				});
 			} else {
 				if (link.body) {
 					resultLinks.push(link);
 				} else {
-					notFoundTitles.push(link.title);
+					newLinks.push(link.dst_title);
 				}
 			}
 		}
@@ -297,7 +297,7 @@ export class AdminEntryRepository {
 		}
 
 		return {
-			notFoundTitles: Array.from(new Set(notFoundTitles)),
+			newLinks: Array.from(new Set(newLinks)),
 			links: Array.from(new Set(resultLinks)),
 			twohops: resultTwoHops
 		};
@@ -325,17 +325,18 @@ export class AdminEntryRepository {
 	private async getEntriesByLinkedTitles(
 		origPath: string,
 		targetTitles: string[]
-	): Promise<HasDestTitle[] & Entry[]> {
+	): Promise<(HasDestTitle & Entry)[]> {
 		if (targetTitles.length === 0) {
 			return [];
 		}
 		const placeholders = targetTitles.map(() => 'LOWER(?)').join(', ');
-		const [rows] = await db.query<HasDestTitle[] & Entry[] & RowDataPacket[]>(
+		const [rows] = await db.query<(HasDestTitle & Entry)[] & RowDataPacket[]>(
 			`
 			SELECT DISTINCT dst_title, entry.*
 			FROM entry_link
 				INNER JOIN entry ON (entry.path = entry_link.src_path)
 			WHERE entry.path != ? AND LOWER(entry_link.dst_title) IN (${placeholders})
+				AND dst_title != LOWER(entry.title)
 			`,
 			[origPath, ...targetTitles]
 		);

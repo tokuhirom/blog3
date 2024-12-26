@@ -8,6 +8,8 @@
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 	import EntryList from '../../EntryList.svelte';
 	import EntryCard from '../../EntryCard.svelte';
+	import CardItem from '../../CardItem.svelte';
+	import EntryCardItem from '../../EntryCardItem.svelte';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -211,25 +213,46 @@
 
 	<div class="link-container">
 		<div class="one-hop-link">
-			Not found:
-			{#each data.twohops.notFoundTitles as title}
-				<div>{title}</div>
-			{/each}
-		</div>
-		<div class="one-hop-link">
-			Straight:
 			{#each data.twohops.links as link}
-				<EntryCard entry={link} />
+				<EntryCardItem entry={link} />
 			{/each}
 		</div>
 		{#each data.twohops.twohops as twohops}
-			<div class="one-hop-link" style="border: 1px solid red; padding: 1rem; display: flex">
-				<EntryCard entry={twohops.src} />
+			<div class="two-hop-link">
+				{#if twohops.src.title}
+					<EntryCardItem entry={twohops.src} backgroundColor={'yellowgreen'} />
+				{:else}
+					<CardItem
+						onClick={() => alert('TODO: create new entry. Not implemented yet.')}
+						title={twohops.src.dst_title}
+						content=""
+						backgroundColor="#c0f6f6"
+						color="gray"
+					/>
+				{/if}
 				{#each twohops.links as link}
-					<EntryCard entry={link} />
+					<EntryCardItem entry={link} />
 				{/each}
 			</div>
 		{/each}
+		{#if data.twohops.newLinks.length > 0}
+			<div class="one-hop-link">
+				<CardItem
+					onClick={() => false}
+					title="New Item"
+					content=""
+					backgroundColor="darkgoldenrod"
+				/>
+				{#each data.twohops.newLinks as title}
+					<CardItem
+						onClick={() => alert('TODO: create new entry. Not implemented yet.')}
+						{title}
+						content=""
+						color="gray"
+					/>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -344,5 +367,12 @@
 		flex-wrap: wrap;
 		gap: 1rem;
 		clear: both;
+	}
+	.two-hop-link {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		clear: both;
+		margin-top: 1rem;
 	}
 </style>
