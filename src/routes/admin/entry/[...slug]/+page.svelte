@@ -50,7 +50,6 @@
 			const request = {
 				title,
 				body,
-				visibility: visibility,
 				updated_at: entry.updated_at
 			};
 			const response = await fetch('/admin/api/entry/' + entry.path, {
@@ -96,6 +95,31 @@
 		debouncedUpdate();
 	}
 
+	function toggleVisibility() {
+		const newVisibility = visibility === 'private' ? 'public' : 'private';
+		fetch(`/admin/api/entry/${entry.path}/visibility`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ visibility: newVisibility })
+		})
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Failed to update visibility');
+				}
+			})
+			.then((data) => {
+				visibility = data.visibility;
+			})
+			.catch((error) => {
+				console.error('Failed to update visibility:', error);
+				errorMessage = `Failed to update visibility: ${error.message}`;
+			});
+	}
+
 	beforeNavigate(({ cancel }) => {
 		if (isDirty && !confirm('You have unsaved changes. Are you sure you want to leave?')) {
 			cancel();
@@ -106,7 +130,7 @@
 <div class="container {entry.visibility === 'private' ? 'private' : ''}">
 	<div class="left-pane">
 		<form class="form">
-			<div>
+			<div class="title-container">
 				<input
 					id="title"
 					name="title"
@@ -116,6 +140,9 @@
 					oninput={handleInput}
 					required
 				/>
+				<span class="visibility-icon" onclick={toggleVisibility}
+					>{visibility === 'private' ? '🔒️' : '🌍'}</span
+				>
 			</div>
 
 			<div class="editor">
@@ -161,20 +188,6 @@
 						handleUpdate();
 					}}
 				></MarkdownEditor>
-			</div>
-
-			<div>
-				<label for="visibility" class="label">Visibility</label>
-				<select
-					id="visibility"
-					name="visibility"
-					class="select"
-					bind:value={visibility}
-					onchange={handleInput}
-				>
-					<option value="private">Private</option>
-					<option value="public">Public</option>
-				</select>
 			</div>
 		</form>
 	</div>
@@ -238,10 +251,21 @@
 	}
 
 	.input {
-		width: 100%;
+		width: calc(100% - 2rem); /* Adjust width to make space for the icon */
 		border-radius: 0.375rem;
 		border: 1px solid #d1d5db;
 		padding: 0.5rem;
+	}
+
+	.title-container {
+		display: flex;
+		align-items: center;
+	}
+
+	.visibility-icon {
+		margin-left: 0.5rem;
+		font-size: 1.5rem;
+		cursor: pointer;
 	}
 
 	.editor {

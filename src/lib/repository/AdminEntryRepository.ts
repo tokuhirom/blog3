@@ -35,6 +35,10 @@ export class AdminEntryRepository {
 		return rows.length > 0 ? rows[0] : null;
 	}
 
+	async updateEntryVisibility(path: string, visibility: 'private' | 'public'): Promise<void> {
+		await db.query('UPDATE entry SET visibility = ? WHERE path = ?', [visibility, path]);
+	}
+
 	/**
 	 * Update an entry by path
 	 */
@@ -43,7 +47,6 @@ export class AdminEntryRepository {
 		data: {
 			title: string;
 			body: string;
-			visibility: 'private' | 'public';
 			updated_at: string | null;
 		}
 	): Promise<Entry> {
@@ -59,10 +62,10 @@ export class AdminEntryRepository {
 			const [result] = await conn.query<ResultSetHeader>(
 				`
 				UPDATE entry
-				SET title = ?, body = ?, visibility = ?
+				SET title = ?, body = ?
 				WHERE path = ? AND (updated_at = ? OR (updated_at IS NULL AND ? IS NULL))
 				`,
-				[data.title, data.body, data.visibility, path, data.updated_at, data.updated_at]
+				[data.title, data.body, path, data.updated_at, data.updated_at]
 			);
 
 			// 更新が成功したかをチェック

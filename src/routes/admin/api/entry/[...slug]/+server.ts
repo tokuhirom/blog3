@@ -15,13 +15,11 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 
 		const title = req.title;
 		const body = req.body;
-		const visibility = req.visibility;
 		const updated_at = req.updated_at;
 
 		const entry = await locals.adminEntryRepository.updateEntry(path, {
 			title,
 			body,
-			visibility,
 			updated_at
 		});
 		return new Response(JSON.stringify(entry), { status: 200 });
