@@ -118,7 +118,7 @@ export class AdminEntryRepository {
 		}
 	}
 
-	static genDefaultTitle(): string {
+	private static genDefaultTitle(): string {
 		const date = new Date();
 		const title = format(date, 'yyyyMMddHHmmss');
 		return title;
