@@ -1,5 +1,11 @@
-import { Decoration, type EditorView, ViewPlugin, type ViewUpdate } from '@codemirror/view';
-import { type Extension, type RangeSet, RangeSetBuilder, type RangeValue } from '@codemirror/state';
+import {
+	Decoration,
+	type DecorationSet,
+	EditorView,
+	ViewPlugin,
+	ViewUpdate
+} from '@codemirror/view';
+import { type Extension, RangeSetBuilder } from '@codemirror/state';
 
 export function internalLinkPlugin(
 	existsEntryByTitle: (pageName: string) => boolean,
@@ -7,7 +13,7 @@ export function internalLinkPlugin(
 ): Extension {
 	return ViewPlugin.fromClass(
 		class {
-			decorations: RangeSet<RangeValue>;
+			decorations: DecorationSet;
 
 			constructor(view: EditorView) {
 				this.decorations = this.buildDecorations(view);
@@ -19,8 +25,8 @@ export function internalLinkPlugin(
 				}
 			}
 
-			buildDecorations(view: EditorView): RangeSet<RangeValue> {
-				const builder = new RangeSetBuilder();
+			buildDecorations(view: EditorView): DecorationSet {
+				const builder = new RangeSetBuilder<Decoration>();
 				const re = /\[\[([^|`]+?)]]/g; // 内部リンクの正規表現
 				for (const { from, to } of view.visibleRanges) {
 					const text = view.state.doc.sliceString(from, to);
