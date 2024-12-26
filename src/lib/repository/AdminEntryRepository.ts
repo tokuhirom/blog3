@@ -1,4 +1,4 @@
-import { type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
+import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import { db, type Entry } from '$lib/db';
 import { format } from 'date-fns';
 
@@ -64,31 +64,7 @@ export class AdminEntryRepository {
 				}
 			}
 
-			// リンクを記録する
-			// entry.body からリンクを抽出する
-			// [[Foobar]] のような記法が対象となる。まず、正規表現ですべて抽出する。
-			let links: string[] = data.body.match(/\[\[(.+?)\]\]/g) || [];
-			// 小文字に変換して重複を削除する
-			links = Array.from(new Set(links.map((link) => link.toLowerCase())));
-			// 一旦現在のものを削除する
-			await conn.query(
-				`
-				DELETE FROM entry_link WHERE src_path = ?
-				`,
-				[path]
-			);
-			// entry_link テーブルに保存する
-			if (links.length > 0) {
-				const values = links.map((link) => [path, link.slice(2, -2)]);
-				const placeholders = values.map(() => '(?, ?)').join(', ');
-				await conn.query(
-					`
-					INSERT INTO entry_link (src_path, dst_title)
-					VALUES ${placeholders}
-					`,
-					values.flat()
-				);
-			}
+			this.updateEntryLink(conn, path, data.body);
 
 			console.log('Entry updated:', path);
 			conn.commit();
@@ -107,6 +83,68 @@ export class AdminEntryRepository {
 			throw new Error('Cannot get entry after update');
 		}
 		return entry;
+	}
+
+	/**
+	 * Update the entry_link table.
+	 * You should call this in the transaction.
+	 */
+	private async updateEntryLink(conn: Connection, path: string, body: string): Promise<void> {
+		// リンクを記録する
+		// entry.body からリンクを抽出する
+		// [[Foobar]] のような記法が対象となる。まず、正規表現ですべて抽出する。
+		let links: string[] = body.match(/\[\[(.+?)\]\]/g) || [];
+		// 小文字に変換して重複を削除する
+		links = Array.from(new Set(links.map((link) => link.toLowerCase())));
+		// 一旦現在のものを削除する
+		await conn.query(
+			`
+			DELETE FROM entry_link WHERE src_path = ?
+			`,
+			[path]
+		);
+
+		// entry_link テーブルに保存する
+		if (links.length > 0) {
+			const values = links.map((link) => [path, link.slice(2, -2)]);
+			const placeholders = values.map(() => '(?, ?)').join(', ');
+			await conn.query(
+				`
+				INSERT INTO entry_link (src_path, dst_title)
+				VALUES ${placeholders}
+				`,
+				values.flat()
+			);
+		}
+	}
+
+	async updateEntryLinkAll(): Promise<void> {
+		// Find the entries that have links
+		const [entries] = await db.query<RowDataPacket[]>(
+			`
+			SELECT path, body
+			FROM entry
+			WHERE body LIKE '%[[%'
+			`
+		);
+
+		// Update the entry_link table for each entry
+		for (const entry of entries) {
+			const path = entry.path;
+			const body = entry.body;
+
+			const conn = await db.getConnection();
+			try {
+				conn.beginTransaction();
+				await this.updateEntryLink(conn, path, body);
+				conn.commit();
+			} catch (error) {
+				console.error('Error while updating entry_link:', path, error);
+				conn.rollback();
+			} finally {
+				conn.release();
+			}
+		}
 	}
 
 	/**
