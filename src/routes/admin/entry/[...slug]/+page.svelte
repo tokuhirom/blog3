@@ -6,8 +6,6 @@
 	import { beforeNavigate } from '$app/navigation';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
-	import EntryList from '../../EntryList.svelte';
-	import EntryCard from '../../EntryCard.svelte';
 	import CardItem from '../../CardItem.svelte';
 	import EntryCardItem from '../../EntryCardItem.svelte';
 
