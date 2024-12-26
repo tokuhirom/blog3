@@ -82,7 +82,7 @@ export class AdminEntryRepository {
 				}
 			}
 
-			this.updateEntryLink(conn, path, data.body);
+			this.updateEntryLink(conn, path, data.title, data.body);
 
 			console.log('Entry updated:', path);
 			conn.commit();
@@ -107,7 +107,12 @@ export class AdminEntryRepository {
 	 * Update the entry_link table.
 	 * You should call this in the transaction.
 	 */
-	private async updateEntryLink(conn: Connection, path: string, body: string): Promise<void> {
+	private async updateEntryLink(
+		conn: Connection,
+		path: string,
+		title: string,
+		body: string
+	): Promise<void> {
 		// リンクを記録する
 		// entry.body からリンクを抽出する
 		// [[Foobar]] のような記法が対象となる。まず、正規表現ですべて抽出する。
@@ -140,7 +145,7 @@ export class AdminEntryRepository {
 		// Find the entries that have links
 		const [entries] = await db.query<RowDataPacket[]>(
 			`
-			SELECT path, body
+			SELECT path, title, body
 			FROM entry
 			WHERE body LIKE '%[[%'
 			`
@@ -149,12 +154,13 @@ export class AdminEntryRepository {
 		// Update the entry_link table for each entry
 		for (const entry of entries) {
 			const path = entry.path;
+			const title = entry.title;
 			const body = entry.body;
 
 			const conn = await db.getConnection();
 			try {
 				conn.beginTransaction();
-				await this.updateEntryLink(conn, path, body);
+				await this.updateEntryLink(conn, path, title, body);
 				conn.commit();
 			} catch (error) {
 				console.error('Error while updating entry_link:', path, error);
@@ -236,34 +242,54 @@ export class AdminEntryRepository {
 	async getTwoHopLinksBySrcPath(
 		targetPath: string,
 		targetTitle: string
-	): Promise<{ links: SimpleEntry[]; twohops: TwoHopLink[] }> {
+	): Promise<{ notFoundTitles: string[]; links: Entry[]; twohops: TwoHopLink[] }> {
 		// このエントリがリンクしているページのリストを取得
 		const links = await this.getLinksBySrcPath2(targetPath);
+		console.log(
+			'links:',
+			links.map((link) => link.title)
+		);
 		// このエントリにリンクしているページのリストを取得
 		const reverseLinks = await this.getEntriesByLinkedTitle(targetTitle);
+		console.log(
+			'reverseLinks:',
+			reverseLinks.map((link) => link.title)
+		);
 		// links の指す先のタイトルにリンクしているエントリのリストを取得
-		const twohopEntries = await this.getEntriesByLinkedTitles(links.map((link) => link.title));
+		const twohopEntries = await this.getEntriesByLinkedTitles(
+			targetPath,
+			links.map((link) => link.title.toLowerCase())
+		);
+		console.log(
+			'twohopEntries:',
+			twohopEntries.map((link) => 'dest=' + link.dst_title + ' ' + link.title)
+		);
 		// twohopEntries を dst_title でグループ化
 		const twohopEntriesByTitle: { [key: string]: Entry[] } = {};
 		for (const entry of twohopEntries) {
-			if (!twohopEntriesByTitle[entry.title]) {
-				twohopEntriesByTitle[entry.title] = [];
+			if (!twohopEntriesByTitle[entry.dst_title]) {
+				twohopEntriesByTitle[entry.dst_title] = [];
 			}
-			twohopEntriesByTitle[entry.title].push(entry);
+			twohopEntriesByTitle[entry.dst_title].push(entry);
 		}
 
 		const resultLinks: Entry[] = [];
 		const resultTwoHops: TwoHopLink[] = [];
+		const notFoundTitles: string[] = [];
 
 		// twohopEntries に入っているエントリのリストを作成
 		for (const link of links) {
-			if (twohopEntriesByTitle[link.title]) {
+			if (twohopEntriesByTitle[link.title.toLowerCase()]) {
 				resultTwoHops.push({
 					src: link,
-					links: twohopEntriesByTitle[link.title]
+					links: twohopEntriesByTitle[link.title.toLowerCase()]
 				});
 			} else {
-				resultLinks.push(link);
+				if (link.body) {
+					resultLinks.push(link);
+				} else {
+					notFoundTitles.push(link.title);
+				}
 			}
 		}
 		for (const reverseLink of reverseLinks) {
@@ -271,6 +297,7 @@ export class AdminEntryRepository {
 		}
 
 		return {
+			notFoundTitles: Array.from(new Set(notFoundTitles)),
 			links: Array.from(new Set(resultLinks)),
 			twohops: resultTwoHops
 		};
@@ -296,20 +323,21 @@ export class AdminEntryRepository {
 	 * このタイトルのエントリにリンクしているエントリのリストを取得する。
 	 */
 	private async getEntriesByLinkedTitles(
+		origPath: string,
 		targetTitles: string[]
 	): Promise<HasDestTitle[] & Entry[]> {
 		if (targetTitles.length === 0) {
 			return [];
 		}
-		const placeholders = targetTitles.map(() => '?').join(', ');
+		const placeholders = targetTitles.map(() => 'LOWER(?)').join(', ');
 		const [rows] = await db.query<HasDestTitle[] & Entry[] & RowDataPacket[]>(
 			`
 			SELECT DISTINCT dst_title, entry.*
 			FROM entry_link
 				INNER JOIN entry ON (entry.path = entry_link.src_path)
-			WHERE entry_link.dst_title IN (${placeholders})
+			WHERE entry.path != ? AND LOWER(entry_link.dst_title) IN (${placeholders})
 			`,
-			targetTitles
+			[origPath, ...targetTitles]
 		);
 		return rows;
 	}

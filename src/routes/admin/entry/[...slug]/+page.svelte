@@ -7,6 +7,7 @@
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 	import EntryList from '../../EntryList.svelte';
+	import EntryCard from '../../EntryCard.svelte';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -128,86 +129,107 @@
 	});
 </script>
 
-<div class="container {entry.visibility === 'private' ? 'private' : ''}">
-	<div class="left-pane">
-		<form class="form">
-			<div class="title-container">
-				<input
-					id="title"
-					name="title"
-					type="text"
-					class="input"
-					bind:value={title}
-					oninput={handleInput}
-					required
-				/>
-				<button class="visibility-icon" onclick={toggleVisibility}
-					>{visibility === 'private' ? '🔒️' : '🌍'}</button
-				>
+<div>
+	<div class="container {entry.visibility === 'private' ? 'private' : ''}">
+		<div class="left-pane">
+			<form class="form">
+				<div class="title-container">
+					<input
+						id="title"
+						name="title"
+						type="text"
+						class="input"
+						bind:value={title}
+						oninput={handleInput}
+						required
+					/>
+					<button class="visibility-icon" onclick={toggleVisibility}
+						>{visibility === 'private' ? '🔒️' : '🌍'}</button
+					>
+				</div>
+
+				<div class="editor">
+					<input type="hidden" name="body" bind:value={body} />
+					<MarkdownEditor
+						initialContent={body}
+						onUpdateText={(content) => {
+							body = content;
+							handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
+						}}
+						existsEntryByTitle={(title) => {
+							return !!data.links[title.toLowerCase()];
+						}}
+						onClickEntry={(title) => {
+							if (data.links[title.toLowerCase()]) {
+								location.href = '/admin/entry/' + data.links[title.toLowerCase()];
+							} else {
+								// create new entry by title
+								fetch('/admin/api/entry', {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json'
+									},
+									body: JSON.stringify({ title })
+								})
+									.then((response) => {
+										if (response.ok) {
+											return response.json();
+										} else {
+											throw new Error('Failed to create new entry');
+										}
+									})
+									.then((data) => {
+										location.href = '/admin/entry/' + data.path;
+									})
+									.catch((error) => {
+										console.error('Failed to create new entry:', error);
+										errorMessage = `Failed to create new entry: ${error.message}`;
+									});
+							}
+						}}
+						onSave={() => {
+							handleUpdate();
+						}}
+					></MarkdownEditor>
+				</div>
+			</form>
+		</div>
+
+		<div class="right-pane">
+			<div class="button-container">
+				<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
 			</div>
 
-			<div class="editor">
-				<input type="hidden" name="body" bind:value={body} />
-				<MarkdownEditor
-					initialContent={body}
-					onUpdateText={(content) => {
-						body = content;
-						handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
-					}}
-					existsEntryByTitle={(title) => {
-						return !!data.links[title.toLowerCase()];
-					}}
-					onClickEntry={(title) => {
-						if (data.links[title.toLowerCase()]) {
-							location.href = '/admin/entry/' + data.links[title.toLowerCase()];
-						} else {
-							// create new entry by title
-							fetch('/admin/api/entry', {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json'
-								},
-								body: JSON.stringify({ title })
-							})
-								.then((response) => {
-									if (response.ok) {
-										return response.json();
-									} else {
-										throw new Error('Failed to create new entry');
-									}
-								})
-								.then((data) => {
-									location.href = '/admin/entry/' + data.path;
-								})
-								.catch((error) => {
-									console.error('Failed to create new entry:', error);
-									errorMessage = `Failed to create new entry: ${error.message}`;
-								});
-						}
-					}}
-					onSave={() => {
-						handleUpdate();
-					}}
-				></MarkdownEditor>
-			</div>
-		</form>
-
-		<div class="link-container">
-			<EntryList entries={data.twohops.links} />
+			<!-- link to the user side page -->
+			{#if visibility === 'public'}
+				<div class="link-container">
+					<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+				</div>
+			{/if}
 		</div>
 	</div>
 
-	<div class="right-pane">
-		<div class="button-container">
-			<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
+	<div class="link-container">
+		<div class="one-hop-link">
+			Not found:
+			{#each data.twohops.notFoundTitles as title}
+				<div>{title}</div>
+			{/each}
 		</div>
-
-		<!-- link to the user side page -->
-		{#if visibility === 'public'}
-			<div class="link-container">
-				<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+		<div class="one-hop-link">
+			Straight:
+			{#each data.twohops.links as link}
+				<EntryCard entry={link} />
+			{/each}
+		</div>
+		{#each data.twohops.twohops as twohops}
+			<div class="one-hop-link" style="border: 1px solid red; padding: 1rem; display: flex">
+				<EntryCard entry={twohops.src} />
+				{#each twohops.links as link}
+					<EntryCard entry={link} />
+				{/each}
 			</div>
-		{/if}
+		{/each}
 	</div>
 </div>
 
@@ -286,12 +308,6 @@
 		background-color: #dc2626;
 	}
 
-	.link-container {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.75rem;
-	}
-
 	.link {
 		border-radius: 0.375rem;
 		background-color: #10b981;
@@ -321,5 +337,12 @@
 			margin-left: 0;
 			margin-top: 1rem; /* Add some space between the panes */
 		}
+	}
+
+	.one-hop-link {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		clear: both;
 	}
 </style>
