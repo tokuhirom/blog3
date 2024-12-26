@@ -1,7 +1,11 @@
 <script lang="ts">
 	async function handleNewEntry() {
 		fetch('/admin/api/entry', {
-			method: 'POST'
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({})
 		})
 			.then(async (response) => {
 				if (response.ok) {
