@@ -8,6 +8,7 @@
 	import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 	import { syntaxHighlighting } from '@codemirror/language';
 	import { defaultKeymap } from '@codemirror/commands';
+	import { internalLinkPlugin } from './markdown/InternalLink';
 
 	let container: HTMLDivElement;
 	export let initialContent: string = '';
@@ -22,6 +23,19 @@
 		const startState = EditorState.create({
 			doc: initialContent,
 			extensions: [
+				internalLinkPlugin(
+					(pageName) => {
+						console.log('findEntryByTitle:', pageName);
+						return 'OK';
+					},
+					(pageName) => {
+						console.log('findOrCreateEntry:', pageName);
+
+						// find the entry by title
+						// if not found, create a new entry
+						// if found, move to the entry
+					}
+				),
 				markdown({
 					base: markdownLanguage,
 					codeLanguages: languages
