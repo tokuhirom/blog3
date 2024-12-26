@@ -127,11 +127,11 @@
 						handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
 					}}
 					existsEntryByTitle={(title) => {
-						return !!data.links[title];
+						return !!data.links[title.toLowerCase()];
 					}}
 					onClickEntry={(title) => {
-						if (data.links[title]) {
-							location.href = '/admin/entry/' + data.links[title];
+						if (data.links[title.toLowerCase()]) {
+							location.href = '/admin/entry/' + data.links[title.toLowerCase()];
 						} else {
 							// create new entry by title
 							fetch('/admin/api/entry', {
@@ -164,6 +164,7 @@
 			</div>
 
 			<div>
+				{JSON.stringify(data.links)}
 				<label for="visibility" class="label">Visibility</label>
 				<select
 					id="visibility"

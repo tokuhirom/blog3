@@ -159,7 +159,7 @@ export class AdminEntryRepository {
 	 * Get the links that the entry points to.
 	 *
 	 * @param srcPath The path of the entry
-	 * @returns Object. Key is the title of the destination entry. Value is the path of the destination entry.
+	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
 	async getLinksBySrcPath(srcPath: string): Promise<{ [key: string]: string | null }> {
 		const [rows] = await db.query<RowDataPacket[]>(
@@ -173,7 +173,7 @@ export class AdminEntryRepository {
 		);
 		const links: { [key: string]: string | null } = {};
 		rows.forEach((row) => {
-			links[row.dst_title] = row.dst_path;
+			links[row.dst_title.toLowerCase()] = row.dst_path;
 		});
 		return links;
 	}
