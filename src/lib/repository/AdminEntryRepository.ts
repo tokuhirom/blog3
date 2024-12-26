@@ -118,10 +118,15 @@ export class AdminEntryRepository {
 		}
 	}
 
-	async createEmptyEntry(): Promise<string> {
+	static genDefaultTitle(): string {
+		const date = new Date();
+		const title = format(date, 'yyyyMMddHHmmss');
+		return title;
+	}
+
+	async createEmptyEntry(title: string = AdminEntryRepository.genDefaultTitle()): Promise<string> {
 		const date = new Date();
 		const path = format(date, 'yyyy/MM/dd/HHmmss');
-		const title = format(date, 'yyyyMMddHHmmss');
 
 		await db.query(
 			`

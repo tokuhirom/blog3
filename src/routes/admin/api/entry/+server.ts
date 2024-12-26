@@ -17,9 +17,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 };
 
 // Create new entry
-export const POST: RequestHandler = async ({ locals }) => {
+export const POST: RequestHandler = async ({ locals, request }) => {
 	try {
-		const path = await locals.adminEntryRepository.createEmptyEntry();
+		const data = await request.json();
+		const path = await locals.adminEntryRepository.createEmptyEntry(data.title);
 		return new Response(
 			JSON.stringify({
 				path
