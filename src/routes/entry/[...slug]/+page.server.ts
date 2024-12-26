@@ -8,6 +8,7 @@ export const load: PageServerLoad = async (params) => {
 	const path = params.params.slug;
 
 	const entry = await PublicEntryRepository.getEntry(path);
+	const links = await PublicEntryRepository.getLinksBySrcPath(path);
 
 	if (entry === null) {
 		error(404, {
@@ -17,6 +18,6 @@ export const load: PageServerLoad = async (params) => {
 
 	return {
 		entry,
-		body: renderHTMLByEntry(entry)
+		body: renderHTMLByEntry(entry, links)
 	};
 };

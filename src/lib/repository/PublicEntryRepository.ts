@@ -80,4 +80,27 @@ export class PublicEntryRepository {
 			hasNext
 		};
 	}
+
+	/**
+	 * Get the links that the entry points to.
+	 *
+	 * @param srcPath The path of the entry
+	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
+	 */
+	static async getLinksBySrcPath(srcPath: string): Promise<{ [key: string]: string | null }> {
+		const [rows] = await db.query<RowDataPacket[]>(
+			`
+			SELECT entry_link.dst_title, dest_entry.path dst_path
+			FROM entry_link
+				LEFT JOIN entry dest_entry ON (dest_entry.title = entry_link.dst_title AND dest_entry.visibility = 'public')
+			WHERE entry_link.src_path = ?
+			`,
+			[srcPath]
+		);
+		const links: { [key: string]: string | null } = {};
+		rows.forEach((row) => {
+			links[row.dst_title.toLowerCase()] = row.dst_path;
+		});
+		return links;
+	}
 }
