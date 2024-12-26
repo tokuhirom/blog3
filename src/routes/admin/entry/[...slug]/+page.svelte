@@ -140,8 +140,8 @@
 					oninput={handleInput}
 					required
 				/>
-				<span class="visibility-icon" onclick={toggleVisibility}
-					>{visibility === 'private' ? '🔒️' : '🌍'}</span
+				<button class="visibility-icon" onclick={toggleVisibility}
+					>{visibility === 'private' ? '🔒️' : '🌍'}</button
 				>
 			</div>
 
@@ -243,13 +243,6 @@
 		max-width: 800px;
 	}
 
-	.label {
-		display: block;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: #4a5568;
-	}
-
 	.input {
 		width: calc(100% - 2rem); /* Adjust width to make space for the icon */
 		border-radius: 0.375rem;
@@ -263,6 +256,8 @@
 	}
 
 	.visibility-icon {
+		border: 0;
+		background-color: transparent;
 		margin-left: 0.5rem;
 		font-size: 1.5rem;
 		cursor: pointer;
@@ -273,13 +268,6 @@
 		border-radius: 0.25rem;
 		height: 400px;
 		overflow-y: scroll;
-	}
-
-	.select {
-		width: 100%;
-		border-radius: 0.375rem;
-		border: 1px solid #d1d5db;
-		padding: 0.5rem;
 	}
 
 	.delete-button {
