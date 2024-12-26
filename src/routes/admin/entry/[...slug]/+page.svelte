@@ -88,7 +88,7 @@
 	// デバウンスした自動保存関数
 	const debouncedUpdate = debounce(() => {
 		handleUpdate();
-	}, 3000);
+	}, 1000);
 
 	// 入力イベントや変更イベントにデバウンスされた関数をバインド
 	function handleInput() {
@@ -125,6 +125,40 @@
 					onUpdateText={(content) => {
 						body = content;
 						handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
+					}}
+					existsEntryByTitle={(title) => {
+						return !!data.links[title.toLowerCase()];
+					}}
+					onClickEntry={(title) => {
+						if (data.links[title.toLowerCase()]) {
+							location.href = '/admin/entry/' + data.links[title.toLowerCase()];
+						} else {
+							// create new entry by title
+							fetch('/admin/api/entry', {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json'
+								},
+								body: JSON.stringify({ title })
+							})
+								.then((response) => {
+									if (response.ok) {
+										return response.json();
+									} else {
+										throw new Error('Failed to create new entry');
+									}
+								})
+								.then((data) => {
+									location.href = '/admin/entry/' + data.path;
+								})
+								.catch((error) => {
+									console.error('Failed to create new entry:', error);
+									errorMessage = `Failed to create new entry: ${error.message}`;
+								});
+						}
+					}}
+					onSave={() => {
+						handleUpdate();
 					}}
 				></MarkdownEditor>
 			</div>

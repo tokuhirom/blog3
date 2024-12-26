@@ -8,11 +8,14 @@
 	import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 	import { syntaxHighlighting } from '@codemirror/language';
 	import { defaultKeymap } from '@codemirror/commands';
+	import { internalLinkPlugin } from './markdown/InternalLink';
 
 	let container: HTMLDivElement;
 	export let initialContent: string = '';
 	export let onUpdateText: (content: string) => void;
 	export let onSave: (content: string) => void = () => {};
+	export let existsEntryByTitle: (title: string) => boolean;
+	export let onClickEntry: (title: string) => void;
 	let editor: EditorView;
 
 	let isUploading: boolean = false; // アップロード中の状態
@@ -22,6 +25,7 @@
 		const startState = EditorState.create({
 			doc: initialContent,
 			extensions: [
+				internalLinkPlugin(existsEntryByTitle, onClickEntry),
 				markdown({
 					base: markdownLanguage,
 					codeLanguages: languages
