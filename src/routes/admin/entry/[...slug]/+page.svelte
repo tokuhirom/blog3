@@ -6,6 +6,7 @@
 	import { beforeNavigate } from '$app/navigation';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
+	import EntryList from '../../EntryList.svelte';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -190,6 +191,10 @@
 				></MarkdownEditor>
 			</div>
 		</form>
+
+		<div class="link-container">
+			<EntryList entries={data.twohops.links} />
+		</div>
 	</div>
 
 	<div class="right-pane">
