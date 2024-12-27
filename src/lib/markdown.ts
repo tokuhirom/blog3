@@ -92,5 +92,13 @@ export function renderHTMLByEntry(entry: Entry, links: { [key: string]: string |
 
 export function extractLinks(markdown: string): string[] {
 	const links: string[] = markdown.match(/\[\[(.+?)\]\]/g) || [];
-	return Array.from(new Set(links.map((link) => link.slice(2, -2))));
+	const seen = new Set();
+	const result: string[] = [];
+	for (const link of links) {
+		if (!seen.has(link.toLowerCase())) {
+			seen.add(link.toLowerCase());
+			result.push(link.slice(2, -2));
+		}
+	}
+	return result;
 }
