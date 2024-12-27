@@ -46,6 +46,7 @@ tokuhirom の blog のソースコードです。
 | `S3_ENDPOINT`                | 任意      | `https://s3.isk01.sakurastorage.jp` | S3 互換ストレージのエンドポイント      |
 | `BASIC_AUTH_USERNAME`        | 必須      | なし                                | Basic 認証のユーザー名                 |
 | `BASIC_AUTH_PASSWORD`        | 必須      | なし                                | Basic 認証のパスワード                 |
+| `BACKUP_ENCRYPTION_KEY`      | 任意      | なし                                | バックアップの暗号化キー               |
 
 ## Run locally
 
