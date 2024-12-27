@@ -1,5 +1,13 @@
 import type { Handle } from '@sveltejs/kit';
 import { AdminEntryRepository } from '$lib/repository/AdminEntryRepository';
+import { BACKUP_ENCRYPTION_KEY } from '$lib/config';
+import { startBackup } from '$lib/backup';
+
+const encryptionKey = BACKUP_ENCRYPTION_KEY;
+if (encryptionKey) {
+	console.log('Starting backup...');
+	startBackup(encryptionKey);
+}
 
 if (!process.env.BASIC_AUTH_USERNAME || !process.env.BASIC_AUTH_PASSWORD) {
 	console.error(

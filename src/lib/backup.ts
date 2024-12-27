@@ -56,9 +56,8 @@ function execCommand(command: string): Promise<string> {
 	});
 }
 
-const encryptionKey = BACKUP_ENCRYPTION_KEY;
-if (encryptionKey) {
+export function startBackup(encrytpion_key: string) {
 	console.log('Start taking backup');
-	setTimeout(() => takeBackup(encryptionKey), 1000);
-	setInterval(() => takeBackup(encryptionKey), 1000 * 60 * 60 * 24); // 24 時間ごとにバックアップを取る
+	setTimeout(() => takeBackup(encrytpion_key), 1000);
+	setInterval(() => takeBackup(encrytpion_key), 1000 * 60 * 60 * 24); // 24 時間ごとにバックアップを取る
 }
