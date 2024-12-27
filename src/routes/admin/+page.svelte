@@ -21,11 +21,10 @@
 	let loadInterval: ReturnType<typeof setInterval> | null = null;
 
 	function handleSearch(keyword: string) {
-		searchKeyword = keyword.toLowerCase();
+		const lowerKeyword = keyword.toLowerCase();
 		filteredEntries = allEntries.filter(
-			(entry) =>
-				entry.title.toLowerCase().includes(searchKeyword) ||
-				entry.body.toLowerCase().includes(searchKeyword)
+			(entry) => entry.title.toLowerCase().includes(lowerKeyword) // ||
+			// entry.body.toLowerCase().includes(lowerKeyword)
 		);
 	}
 
@@ -51,7 +50,11 @@
 			if (newEntries.length === 0) {
 				hasMore = false;
 			} else {
-				allEntries = [...allEntries, ...newEntries];
+				const existingPaths = allEntries.map((entry) => entry.path);
+				allEntries = [
+					...allEntries,
+					...newEntries.filter((entry) => !existingPaths.includes(entry.path))
+				];
 				handleSearch(searchKeyword);
 			}
 		} catch (err) {
@@ -85,7 +88,7 @@
 <div class="container">
 	<SearchBox onSearch={handleSearch} />
 	<div class="entry-list">
-		{#each filteredEntries as entry}
+		{#each filteredEntries as entry (entry.path)}
 			<EntryCardItem {entry} />
 		{/each}
 	</div>
