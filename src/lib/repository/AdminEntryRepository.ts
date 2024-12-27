@@ -1,6 +1,7 @@
 import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import { db, type Entry } from '$lib/db';
 import { format } from 'date-fns';
+import { extractLinks } from '$lib/markdown';
 
 export class AdminEntryRepository {
 	async getLatestEntries(): Promise<Entry[]> {
@@ -115,10 +116,7 @@ export class AdminEntryRepository {
 	): Promise<void> {
 		// リンクを記録する
 		// entry.body からリンクを抽出する
-		// [[Foobar]] のような記法が対象となる。まず、正規表現ですべて抽出する。
-		let links: string[] = body.match(/\[\[(.+?)\]\]/g) || [];
-		// 小文字に変換して重複を削除する
-		links = Array.from(new Set(links.map((link) => link.toLowerCase())));
+		const links = extractLinks(body).filter((link) => link.toLowerCase() !== title.toLowerCase());
 		// 一旦現在のものを削除する
 		await conn.query(
 			`
@@ -129,7 +127,7 @@ export class AdminEntryRepository {
 
 		// entry_link テーブルに保存する
 		if (links.length > 0) {
-			const values = links.map((link) => [path, link.slice(2, -2)]);
+			const values = links.map((link) => [path, link]);
 			const placeholders = values.map(() => '(?, ?)').join(', ');
 			await conn.query(
 				`
@@ -239,10 +237,7 @@ export class AdminEntryRepository {
 	/**
 	 * Get two hop links from the entry.
 	 */
-	async getTwoHopLinksBySrcPath(
-		targetPath: string,
-		targetTitle: string
-	): Promise<{ newLinks: string[]; links: Entry[]; twohops: TwoHopLink[] }> {
+	async getTwoHopLinksBySrcPath(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
 		// このエントリがリンクしているページのリストを取得
 		const links = await this.getLinksBySrcPath2(targetPath);
 		console.log(
@@ -267,23 +262,31 @@ export class AdminEntryRepository {
 		// twohopEntries を dst_title でグループ化
 		const twohopEntriesByTitle: { [key: string]: Entry[] } = {};
 		for (const entry of twohopEntries) {
-			if (!twohopEntriesByTitle[entry.dst_title]) {
-				twohopEntriesByTitle[entry.dst_title] = [];
+			if (!twohopEntriesByTitle[entry.dst_title.toLowerCase()]) {
+				twohopEntriesByTitle[entry.dst_title.toLowerCase()] = [];
 			}
-			twohopEntriesByTitle[entry.dst_title].push(entry);
+			twohopEntriesByTitle[entry.dst_title.toLowerCase()].push(entry);
 		}
 
 		const resultLinks: Entry[] = [];
 		const resultTwoHops: TwoHopLink[] = [];
 		const newLinks: string[] = [];
+		const seenPath = new Set([targetPath]);
 
 		// twohopEntries に入っているエントリのリストを作成
 		for (const link of links) {
+			if (link.path) {
+				seenPath.add(link.path);
+			}
+
 			if (twohopEntriesByTitle[link.dst_title.toLowerCase()]) {
 				resultTwoHops.push({
 					src: link,
 					links: twohopEntriesByTitle[link.dst_title.toLowerCase()]
 				});
+				for (const entry of twohopEntriesByTitle[link.dst_title.toLowerCase()]) {
+					seenPath.add(entry.path);
+				}
 			} else {
 				if (link.body) {
 					resultLinks.push(link);
@@ -293,7 +296,9 @@ export class AdminEntryRepository {
 			}
 		}
 		for (const reverseLink of reverseLinks) {
-			resultLinks.push(reverseLink);
+			if (!seenPath.has(reverseLink.path)) {
+				resultLinks.push(reverseLink);
+			}
 		}
 
 		return {
@@ -349,6 +354,13 @@ export type HasDestTitle = {
 };
 
 export type TwoHopLink = {
-	src: Entry;
+	src: Entry & HasDestTitle;
 	links: Entry[];
+};
+
+// 名前が良くない
+export type LinkPalletData = {
+	newLinks: string[];
+	links: Entry[];
+	twohops: TwoHopLink[];
 };
