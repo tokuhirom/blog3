@@ -39,3 +39,16 @@ jobs:
       # 型チェック (SvelteKit)
       - name: Run TypeScript and SvelteKit Check
         run: bun run check
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリをクローン
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Docker ビルドを実行
+      - name: Build Docker image
+        run: docker build -t blog3-app .
