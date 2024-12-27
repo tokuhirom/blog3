@@ -116,7 +116,7 @@ export class AdminEntryRepository {
 	): Promise<void> {
 		// リンクを記録する
 		// entry.body からリンクを抽出する
-		const links = extractLinks(body);
+		const links = extractLinks(body).filter((link) => link.toLowerCase() !== title.toLowerCase());
 		// 一旦現在のものを削除する
 		await conn.query(
 			`
@@ -262,23 +262,31 @@ export class AdminEntryRepository {
 		// twohopEntries を dst_title でグループ化
 		const twohopEntriesByTitle: { [key: string]: Entry[] } = {};
 		for (const entry of twohopEntries) {
-			if (!twohopEntriesByTitle[entry.dst_title]) {
-				twohopEntriesByTitle[entry.dst_title] = [];
+			if (!twohopEntriesByTitle[entry.dst_title.toLowerCase()]) {
+				twohopEntriesByTitle[entry.dst_title.toLowerCase()] = [];
 			}
-			twohopEntriesByTitle[entry.dst_title].push(entry);
+			twohopEntriesByTitle[entry.dst_title.toLowerCase()].push(entry);
 		}
 
 		const resultLinks: Entry[] = [];
 		const resultTwoHops: TwoHopLink[] = [];
 		const newLinks: string[] = [];
+		const seenPath = new Set([targetPath]);
 
 		// twohopEntries に入っているエントリのリストを作成
 		for (const link of links) {
+			if (link.path) {
+				seenPath.add(link.path);
+			}
+
 			if (twohopEntriesByTitle[link.dst_title.toLowerCase()]) {
 				resultTwoHops.push({
 					src: link,
 					links: twohopEntriesByTitle[link.dst_title.toLowerCase()]
 				});
+				for (const entry of twohopEntriesByTitle[link.dst_title.toLowerCase()]) {
+					seenPath.add(entry.path);
+				}
 			} else {
 				if (link.body) {
 					resultLinks.push(link);
@@ -288,7 +296,9 @@ export class AdminEntryRepository {
 			}
 		}
 		for (const reverseLink of reverseLinks) {
-			resultLinks.push(reverseLink);
+			if (!seenPath.has(reverseLink.path)) {
+				resultLinks.push(reverseLink);
+			}
 		}
 
 		return {
