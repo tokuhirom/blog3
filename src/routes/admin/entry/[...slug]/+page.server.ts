@@ -5,9 +5,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 	const entry = await locals.adminEntryRepository.getEntry(path);
 	const links = await locals.adminEntryRepository.getLinksBySrcPath(path);
+	const twohops = await locals.adminEntryRepository.getTwoHopLinksBySrcPath(path);
 	console.log('links:', links);
 	return {
 		entry,
-		links
+		links,
+		twohops
 	};
 };

@@ -4,8 +4,11 @@
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
 	import { beforeNavigate } from '$app/navigation';
+	import { type LinkPalletData } from '$lib/repository/AdminEntryRepository';
+	import LinkPallet from '../../LinkPallet.svelte';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
+	import { extractLinks } from '$lib/markdown';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -17,10 +20,32 @@
 	let body: string = $state(entry.body); // 初期値として本文を保持
 	let visibility: 'private' | 'public' = $state(entry.visibility);
 
+	let isDirty = false;
+
+	let currentLinks = extractLinks(entry.body);
+	let linkPallet: LinkPalletData = $state(data.twohops);
+
+	function loadLinks() {
+		fetch(`/admin/api/entry/${entry.path}/links`, {
+			method: 'GET'
+		})
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Failed to get total');
+				}
+			})
+			.then((data) => {
+				linkPallet = data;
+			})
+			.catch((error) => {
+				console.error('Failed to get total:', error);
+			});
+	}
+
 	let successMessage = $state('');
 	let errorMessage = $state('');
-
-	let isDirty = false;
 
 	async function handleDelete(event: Event) {
 		event.preventDefault();
@@ -84,6 +109,27 @@
 		}
 	}
 
+	async function createNewEntry(title: string): Promise<void> {
+		try {
+			const response = await fetch('/admin/api/entry', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ title })
+			});
+			if (response.ok) {
+				const data = await response.json();
+				location.href = '/admin/entry/' + data.path;
+			} else {
+				throw new Error('Failed to create new entry');
+			}
+		} catch (error) {
+			console.error('Failed to create new entry:', error);
+			errorMessage = `Failed to create new entry: ${error instanceof Error ? error.message : error}`;
+		}
+	}
+
 	// デバウンスした自動保存関数
 	const debouncedUpdate = debounce(() => {
 		handleUpdate();
@@ -93,6 +139,12 @@
 	function handleInput() {
 		isDirty = true;
 		debouncedUpdate();
+
+		const newLinks = extractLinks(body);
+		if (currentLinks !== newLinks) {
+			currentLinks = newLinks;
+			loadLinks();
+		}
 	}
 
 	function toggleVisibility() {
@@ -127,83 +179,66 @@
 	});
 </script>
 
-<div class="container {entry.visibility === 'private' ? 'private' : ''}">
-	<div class="left-pane">
-		<form class="form">
-			<div class="title-container">
-				<input
-					id="title"
-					name="title"
-					type="text"
-					class="input"
-					bind:value={title}
-					oninput={handleInput}
-					required
-				/>
-				<button class="visibility-icon" onclick={toggleVisibility}
-					>{visibility === 'private' ? '🔒️' : '🌍'}</button
-				>
-			</div>
+<div>
+	<div class="container {entry.visibility === 'private' ? 'private' : ''}">
+		<div class="left-pane">
+			<form class="form">
+				<div class="title-container">
+					<input
+						id="title"
+						name="title"
+						type="text"
+						class="input"
+						bind:value={title}
+						oninput={handleInput}
+						required
+					/>
+					<button class="visibility-icon" onclick={toggleVisibility}
+						>{visibility === 'private' ? '🔒️' : '🌍'}</button
+					>
+				</div>
 
-			<div class="editor">
-				<input type="hidden" name="body" bind:value={body} />
-				<MarkdownEditor
-					initialContent={body}
-					onUpdateText={(content) => {
-						body = content;
-						handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
-					}}
-					existsEntryByTitle={(title) => {
-						return !!data.links[title.toLowerCase()];
-					}}
-					onClickEntry={(title) => {
-						if (data.links[title.toLowerCase()]) {
-							location.href = '/admin/entry/' + data.links[title.toLowerCase()];
-						} else {
-							// create new entry by title
-							fetch('/admin/api/entry', {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json'
-								},
-								body: JSON.stringify({ title })
-							})
-								.then((response) => {
-									if (response.ok) {
-										return response.json();
-									} else {
-										throw new Error('Failed to create new entry');
-									}
-								})
-								.then((data) => {
-									location.href = '/admin/entry/' + data.path;
-								})
-								.catch((error) => {
-									console.error('Failed to create new entry:', error);
-									errorMessage = `Failed to create new entry: ${error.message}`;
-								});
-						}
-					}}
-					onSave={() => {
-						handleUpdate();
-					}}
-				></MarkdownEditor>
-			</div>
-		</form>
-	</div>
-
-	<div class="right-pane">
-		<div class="button-container">
-			<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
+				<div class="editor">
+					<input type="hidden" name="body" bind:value={body} />
+					<MarkdownEditor
+						initialContent={body}
+						onUpdateText={(content) => {
+							body = content;
+							handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
+						}}
+						existsEntryByTitle={(title) => {
+							return !!data.links[title.toLowerCase()];
+						}}
+						onClickEntry={(title) => {
+							if (data.links[title.toLowerCase()]) {
+								location.href = '/admin/entry/' + data.links[title.toLowerCase()];
+							} else {
+								createNewEntry(title);
+							}
+						}}
+						onSave={() => {
+							handleUpdate();
+						}}
+					></MarkdownEditor>
+				</div>
+			</form>
 		</div>
 
-		<!-- link to the user side page -->
-		{#if visibility === 'public'}
-			<div class="link-container">
-				<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+		<div class="right-pane">
+			<div class="button-container">
+				<button type="submit" class="delete-button" onclick={handleDelete}> Delete </button>
 			</div>
-		{/if}
+
+			<!-- link to the user side page -->
+			{#if visibility === 'public'}
+				<div class="link-container">
+					<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
+				</div>
+			{/if}
+		</div>
 	</div>
+
+	<LinkPallet {linkPallet} />
 </div>
 
 {#if successMessage}
@@ -279,12 +314,6 @@
 
 	.delete-button:hover {
 		background-color: #dc2626;
-	}
-
-	.link-container {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.75rem;
 	}
 
 	.link {
