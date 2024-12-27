@@ -31,20 +31,21 @@ tokuhirom の blog のソースコードです。
 
 # 環境変数一覧
 
-| 環境変数名             | 必須/任意 | デフォルト値                        | 説明                                   |
-| ---------------------- | --------- | ----------------------------------- | -------------------------------------- |
-| `DATABASE_HOST`        | 必須      | なし                                | データベースのホスト名またはIPアドレス |
-| `DATABASE_PORT`        | 必須      | なし                                | データベースのポート番号               |
-| `DATABASE_USER`        | 必須      | なし                                | データベースのユーザー名               |
-| `DATABASE_PASSWORD`    | 必須      | なし                                | データベースのパスワード               |
-| `DATABASE_NAME`        | 必須      | なし                                | 使用するデータベースの名前             |
-| `S3_REGION`            | 任意      | `jp-north-1`                        | S3 互換ストレージのリージョン          |
-| `S3_BUCKET_NAME`       | 任意      | `blog3-attachments`                 | S3 互換ストレージのバケット名          |
-| `S3_ACCESS_KEY_ID`     | 必須      | なし                                | S3 互換ストレージのアクセスキー        |
-| `S3_SECRET_ACCESS_KEY` | 必須      | なし                                | S3 互換ストレージのシークレットキー    |
-| `S3_ENDPOINT`          | 任意      | `https://s3.isk01.sakurastorage.jp` | S3 互換ストレージのエンドポイント      |
-| `BASIC_AUTH_USERNAME`  | 必須      | なし                                | Basic 認証のユーザー名                 |
-| `BASIC_AUTH_PASSWORD`  | 必須      | なし                                | Basic 認証のパスワード                 |
+| 環境変数名                   | 必須/任意 | デフォルト値                        | 説明                                   |
+| ---------------------------- | --------- | ----------------------------------- | -------------------------------------- |
+| `DATABASE_HOST`              | 必須      | なし                                | データベースのホスト名またはIPアドレス |
+| `DATABASE_PORT`              | 必須      | なし                                | データベースのポート番号               |
+| `DATABASE_USER`              | 必須      | なし                                | データベースのユーザー名               |
+| `DATABASE_PASSWORD`          | 必須      | なし                                | データベースのパスワード               |
+| `DATABASE_NAME`              | 必須      | なし                                | 使用するデータベースの名前             |
+| `S3_REGION`                  | 任意      | `jp-north-1`                        | S3 互換ストレージのリージョン          |
+| `S3_ATTACMMETNS_BUCKET_NAME` | 任意      | `blog3-attachments`                 | S3 互換ストレージのバケット名          |
+| `S3_BACKUP_BUCKET_NAME`      | 任意      | `blog3-backup`                      | S3 互換ストレージのバケット名          |
+| `S3_ACCESS_KEY_ID`           | 必須      | なし                                | S3 互換ストレージのアクセスキー        |
+| `S3_SECRET_ACCESS_KEY`       | 必須      | なし                                | S3 互換ストレージのシークレットキー    |
+| `S3_ENDPOINT`                | 任意      | `https://s3.isk01.sakurastorage.jp` | S3 互換ストレージのエンドポイント      |
+| `BASIC_AUTH_USERNAME`        | 必須      | なし                                | Basic 認証のユーザー名                 |
+| `BASIC_AUTH_PASSWORD`        | 必須      | なし                                | Basic 認証のパスワード                 |
 
 ## Run locally
 

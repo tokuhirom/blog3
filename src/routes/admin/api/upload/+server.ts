@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { putObject } from '$lib/s3';
+import { putAttachments } from '$lib/s3';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const buffer = await file.arrayBuffer();
 		const mimeType = file.type;
 
-		await putObject(key, Buffer.from(buffer), mimeType);
+		await putAttachments(key, Buffer.from(buffer), mimeType);
 
 		const publicUrl = `https://blog-attachments.64p.org/${key}`;
 
