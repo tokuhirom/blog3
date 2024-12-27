@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { exec } from 'child_process';
 import { putObject } from './s3';
-import { BACKUP_BUCKET_NAME, BACKUP_ENCRYPTION_KEY } from './config';
+import { BACKUP_BUCKET_NAME } from './config';
 
 async function takeBackup(encryption_key: string) {
 	console.log('takeBackup');

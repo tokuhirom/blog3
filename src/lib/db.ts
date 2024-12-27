@@ -49,10 +49,3 @@ export type EntryLinkWithPath = {
 	dst_title: string;
 	dst_path: string;
 };
-
-/**
- * Take a mysqldump
- */
-export async function takeBackup(dumpPath: string): Promise<void> {
-	// mysqldump コマンドを実行する
-}
