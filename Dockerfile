@@ -19,6 +19,9 @@ RUN npm run build
 FROM node:22 AS release
 WORKDIR /usr/src/app
 
+# 必要なパッケージをインストール
+RUN apt-get update && apt-get install -y openssl mysql-client
+
 # ビルド成果物と依存関係をコピー
 COPY --from=build /usr/src/app/build ./build
 COPY --from=build /usr/src/app/node_modules ./node_modules
