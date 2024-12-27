@@ -4,6 +4,29 @@
 	import { type LinkPalletData } from '$lib/repository/AdminEntryRepository';
 
 	export let linkPallet: LinkPalletData;
+
+	function createNewEntry(title: string) {
+		fetch('/admin/api/entry', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ title })
+		})
+			.then(async (response) => {
+				if (response.ok) {
+					const data = await response.json();
+					location.href = `/admin/entry/${data.path}`;
+				} else {
+					console.error('Failed to create new entry');
+					alert('Failed to create new entry. Cannot get new entry path');
+				}
+			})
+			.catch((err) => {
+				console.error('Error creating new entry:', err);
+				alert('Failed to create new entry');
+			});
+	}
 </script>
 
 <div class="link-pallet">
@@ -18,7 +41,7 @@
 				<EntryCardItem entry={twohops.src} backgroundColor={'yellowgreen'} />
 			{:else}
 				<CardItem
-					onClick={() => alert('TODO: create new entry. Not implemented yet.')}
+					onClick={() => createNewEntry(twohops.src.dst_title)}
 					title={twohops.src.dst_title}
 					content=""
 					backgroundColor="#c0f6f6"
@@ -34,12 +57,7 @@
 		<div class="one-hop-link">
 			<CardItem onClick={() => false} title="New Item" content="" backgroundColor="darkgoldenrod" />
 			{#each linkPallet.newLinks as title}
-				<CardItem
-					onClick={() => alert('TODO: create new entry. Not implemented yet.')}
-					{title}
-					content=""
-					color="gray"
-				/>
+				<CardItem onClick={() => createNewEntry(title)} {title} content="" color="gray" />
 			{/each}
 		</div>
 	{/if}

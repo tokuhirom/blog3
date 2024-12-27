@@ -109,6 +109,27 @@
 		}
 	}
 
+	async function createNewEntry(title: string): Promise<void> {
+		try {
+			const response = await fetch('/admin/api/entry', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ title })
+			});
+			if (response.ok) {
+				const data = await response.json();
+				location.href = '/admin/entry/' + data.path;
+			} else {
+				throw new Error('Failed to create new entry');
+			}
+		} catch (error) {
+			console.error('Failed to create new entry:', error);
+			errorMessage = `Failed to create new entry: ${error instanceof Error ? error.message : error}`;
+		}
+	}
+
 	// デバウンスした自動保存関数
 	const debouncedUpdate = debounce(() => {
 		handleUpdate();
@@ -192,28 +213,7 @@
 							if (data.links[title.toLowerCase()]) {
 								location.href = '/admin/entry/' + data.links[title.toLowerCase()];
 							} else {
-								// create new entry by title
-								fetch('/admin/api/entry', {
-									method: 'POST',
-									headers: {
-										'Content-Type': 'application/json'
-									},
-									body: JSON.stringify({ title })
-								})
-									.then((response) => {
-										if (response.ok) {
-											return response.json();
-										} else {
-											throw new Error('Failed to create new entry');
-										}
-									})
-									.then((data) => {
-										location.href = '/admin/entry/' + data.path;
-									})
-									.catch((error) => {
-										console.error('Failed to create new entry:', error);
-										errorMessage = `Failed to create new entry: ${error.message}`;
-									});
+								createNewEntry(title);
 							}
 						}}
 						onSave={() => {
