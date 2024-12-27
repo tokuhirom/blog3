@@ -5,7 +5,7 @@ dotenv.config();
 
 // 環境変数から設定を取得
 const REGION = process.env.S3_REGION || 'jp-north-1';
-const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'blog3-attachments';
+const ATTACHMENTS_BUCKET_NAME = process.env.S3_ATTACHMENTS_BUCKET_NAME || 'blog3-attachments';
 const ACCESS_KEY_ID: string | undefined = process.env.S3_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY: string | undefined = process.env.S3_SECRET_ACCESS_KEY;
 const ENDPOINT = process.env.S3_ENDPOINT || 'https://s3.isk01.sakurastorage.jp';
@@ -29,11 +29,12 @@ export const s3 = new S3Client({
 export async function putObject(
 	key: string, // S3 バケット内のファイルパス
 	body: Buffer | Uint8Array | Blob | string, // ファイルの内容
-	contentType: string // ファイルの MIME タイプ
+	contentType: string, // ファイルの MIME タイプ
+	bucketName: string = ATTACHMENTS_BUCKET_NAME // バケット名
 ): Promise<void> {
 	try {
 		const command = new PutObjectCommand({
-			Bucket: BUCKET_NAME,
+			Bucket: bucketName,
 			Key: key,
 			Body: body,
 			ContentType: contentType
