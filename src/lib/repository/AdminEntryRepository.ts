@@ -127,7 +127,7 @@ export class AdminEntryRepository {
 
 		// entry_link テーブルに保存する
 		if (links.length > 0) {
-			const values = links.map((link) => [path, link.slice(2, -2)]);
+			const values = links.map((link) => [path, link]);
 			const placeholders = values.map(() => '(?, ?)').join(', ');
 			await conn.query(
 				`
