@@ -89,3 +89,8 @@ export function renderHTMLByEntry(entry: Entry, links: { [key: string]: string |
 		throw new Error(`Unknown format: ${entry.format}`);
 	}
 }
+
+export function extractLinks(markdown: string): string[] {
+	const links: string[] = markdown.match(/\[\[(.+?)\]\]/g) || [];
+	return Array.from(new Set(links.map((link) => link.slice(2, -2))));
+}

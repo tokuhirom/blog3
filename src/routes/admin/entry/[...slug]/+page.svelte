@@ -4,10 +4,12 @@
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
 	import { beforeNavigate } from '$app/navigation';
+	import { type LinkPallet } from '$lib/repository/AdminEntryRepository';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 	import CardItem from '../../CardItem.svelte';
 	import EntryCardItem from '../../EntryCardItem.svelte';
+	import { extractLinks } from '$lib/markdown';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {
@@ -19,10 +21,32 @@
 	let body: string = $state(entry.body); // 初期値として本文を保持
 	let visibility: 'private' | 'public' = $state(entry.visibility);
 
+	let isDirty = false;
+
+	let currentLinks = extractLinks(entry.body);
+	let linkPallet: LinkPallet = $state(data.twohops);
+
+	function loadLinks() {
+		fetch(`/admin/api/entry/${entry.path}/links`, {
+			method: 'GET'
+		})
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Failed to get total');
+				}
+			})
+			.then((data) => {
+				linkPallet = data;
+			})
+			.catch((error) => {
+				console.error('Failed to get total:', error);
+			});
+	}
+
 	let successMessage = $state('');
 	let errorMessage = $state('');
-
-	let isDirty = false;
 
 	async function handleDelete(event: Event) {
 		event.preventDefault();
@@ -95,6 +119,12 @@
 	function handleInput() {
 		isDirty = true;
 		debouncedUpdate();
+
+		const newLinks = extractLinks(body);
+		if (currentLinks !== newLinks) {
+			currentLinks = newLinks;
+			loadLinks();
+		}
 	}
 
 	function toggleVisibility() {
@@ -211,11 +241,11 @@
 
 	<div class="link-container">
 		<div class="one-hop-link">
-			{#each data.twohops.links as link}
+			{#each linkPallet.links as link}
 				<EntryCardItem entry={link} />
 			{/each}
 		</div>
-		{#each data.twohops.twohops as twohops}
+		{#each linkPallet.twohops as twohops}
 			<div class="two-hop-link">
 				{#if twohops.src.title}
 					<EntryCardItem entry={twohops.src} backgroundColor={'yellowgreen'} />
@@ -233,7 +263,7 @@
 				{/each}
 			</div>
 		{/each}
-		{#if data.twohops.newLinks.length > 0}
+		{#if linkPallet.newLinks.length > 0}
 			<div class="one-hop-link">
 				<CardItem
 					onClick={() => false}
