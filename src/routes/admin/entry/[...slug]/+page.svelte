@@ -4,11 +4,10 @@
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
 	import { beforeNavigate } from '$app/navigation';
-	import { type LinkPallet } from '$lib/repository/AdminEntryRepository';
+	import { type LinkPalletData } from '$lib/repository/AdminEntryRepository';
+	import LinkPallet from '../../LinkPallet.svelte';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
-	import CardItem from '../../CardItem.svelte';
-	import EntryCardItem from '../../EntryCardItem.svelte';
 	import { extractLinks } from '$lib/markdown';
 
 	let { data }: { data: PageData } = $props();
@@ -24,7 +23,7 @@
 	let isDirty = false;
 
 	let currentLinks = extractLinks(entry.body);
-	let linkPallet: LinkPallet = $state(data.twohops);
+	let linkPallet: LinkPalletData = $state(data.twohops);
 
 	function loadLinks() {
 		fetch(`/admin/api/entry/${entry.path}/links`, {
@@ -239,49 +238,7 @@
 		</div>
 	</div>
 
-	<div class="link-container">
-		<div class="one-hop-link">
-			{#each linkPallet.links as link}
-				<EntryCardItem entry={link} />
-			{/each}
-		</div>
-		{#each linkPallet.twohops as twohops}
-			<div class="two-hop-link">
-				{#if twohops.src.title}
-					<EntryCardItem entry={twohops.src} backgroundColor={'yellowgreen'} />
-				{:else}
-					<CardItem
-						onClick={() => alert('TODO: create new entry. Not implemented yet.')}
-						title={twohops.src.dst_title}
-						content=""
-						backgroundColor="#c0f6f6"
-						color="gray"
-					/>
-				{/if}
-				{#each twohops.links as link}
-					<EntryCardItem entry={link} />
-				{/each}
-			</div>
-		{/each}
-		{#if linkPallet.newLinks.length > 0}
-			<div class="one-hop-link">
-				<CardItem
-					onClick={() => false}
-					title="New Item"
-					content=""
-					backgroundColor="darkgoldenrod"
-				/>
-				{#each data.twohops.newLinks as title}
-					<CardItem
-						onClick={() => alert('TODO: create new entry. Not implemented yet.')}
-						{title}
-						content=""
-						color="gray"
-					/>
-				{/each}
-			</div>
-		{/if}
-	</div>
+	<LinkPallet {linkPallet} />
 </div>
 
 {#if successMessage}
@@ -388,19 +345,5 @@
 			margin-left: 0;
 			margin-top: 1rem; /* Add some space between the panes */
 		}
-	}
-
-	.one-hop-link {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		clear: both;
-	}
-	.two-hop-link {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		clear: both;
-		margin-top: 1rem;
 	}
 </style>

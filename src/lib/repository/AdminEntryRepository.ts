@@ -237,7 +237,7 @@ export class AdminEntryRepository {
 	/**
 	 * Get two hop links from the entry.
 	 */
-	async getTwoHopLinksBySrcPath(targetPath: string, targetTitle: string): Promise<LinkPallet> {
+	async getTwoHopLinksBySrcPath(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
 		// このエントリがリンクしているページのリストを取得
 		const links = await this.getLinksBySrcPath2(targetPath);
 		console.log(
@@ -349,7 +349,7 @@ export type TwoHopLink = {
 };
 
 // 名前が良くない
-export type LinkPallet = {
+export type LinkPalletData = {
 	newLinks: string[];
 	links: Entry[];
 	twohops: TwoHopLink[];
