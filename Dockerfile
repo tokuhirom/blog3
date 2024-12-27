@@ -20,7 +20,7 @@ FROM node:22 AS release
 WORKDIR /usr/src/app
 
 # 必要なパッケージをインストール
-RUN apt-get update && apt-get install -y openssl mysql-client
+RUN apt-get update && apt-get install -y openssl mariadb-client
 
 # ビルド成果物と依存関係をコピー
 COPY --from=build /usr/src/app/build ./build
