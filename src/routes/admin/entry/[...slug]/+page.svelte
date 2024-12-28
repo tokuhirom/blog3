@@ -268,7 +268,7 @@
 							}
 						}}
 						onSave={() => {
-							handleUpdate();
+							handleUpdateBody();
 						}}
 					></MarkdownEditor>
 				</div>
