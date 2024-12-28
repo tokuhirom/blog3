@@ -47,32 +47,44 @@
 			});
 	}
 
-	let successMessage = $state('');
-	let errorMessage = $state('');
+	let message = $state('');
+	let messageType: 'success' | 'error' | '' = $state('');
+
+	function clearMessage() {
+		message = '';
+		messageType = '';
+	}
+
+	function showMessage(type: 'success' | 'error', text: string) {
+		messageType = type;
+		message = text;
+		setTimeout(() => {
+			message = '';
+			messageType = '';
+		}, 5000); // Hide message after 5 seconds
+	}
 
 	async function handleDelete(event: Event) {
 		event.preventDefault();
 
 		const confirmed = confirm(`Are you sure you want to delete the entry "${title}"?`);
 		if (confirmed) {
-			successMessage = '';
-			errorMessage = '';
+			clearMessage();
 
 			const response = await fetch('/admin/api/entry/' + entry.path, {
 				method: 'DELETE'
 			});
 			if (response.ok) {
-				successMessage = 'Entry deleted successfully';
+				showMessage('success', 'Entry deleted successfully');
 				location.href = '/admin';
 			} else {
-				errorMessage = 'Failed to delete entry';
+				showMessage('error', 'Failed to delete entry');
 			}
 		}
 	}
 
 	async function handleUpdateBody() {
-		successMessage = '';
-		errorMessage = '';
+		clearMessage();
 
 		try {
 			const request = {
@@ -87,7 +99,7 @@
 				body: JSON.stringify(request)
 			});
 			if (response.ok) {
-				successMessage = 'Entry updated successfully';
+				showMessage('success', 'Entry updated successfully');
 				isDirty = false; // Reset dirty flag on successful update
 				original_body = body;
 			} else {
@@ -100,17 +112,20 @@
 				} catch (e) {
 					console.error('Failed to parse error response', e);
 				}
-				errorMessage = `Failed to update entry body: ${response.statusText} (${response.status}) - ${errorDetails}`;
+				showMessage(
+					'error',
+					`Failed to update entry body: ${response.statusText} (${response.status}) - ${errorDetails}`
+				);
 			}
 		} catch (e) {
-			errorMessage = 'Failed to update entry body';
+			showMessage('error', 'Failed to update entry body');
 			console.error('Failed to update entry body:', e);
 		}
 	}
 
 	async function handleUpdateTitle() {
-		successMessage = '';
-		errorMessage = '';
+		message = '';
+		messageType = '';
 
 		try {
 			const request = {
@@ -125,7 +140,7 @@
 				body: JSON.stringify(request)
 			});
 			if (response.ok) {
-				successMessage = 'Entry updated successfully';
+				showMessage('success', 'Entry updated successfully');
 				isDirty = false; // Reset dirty flag on successful update
 				original_title = title;
 			} else {
@@ -138,15 +153,20 @@
 				} catch (e) {
 					console.error('Failed to parse error response', e);
 				}
-				errorMessage = `Failed to update entry title: ${response.statusText} (${response.status}) - ${errorDetails}`;
+				showMessage(
+					'error',
+					`Failed to update entry title: ${response.statusText} (${response.status}) - ${errorDetails}`
+				);
 			}
 		} catch (e) {
-			errorMessage = 'Failed to update entry title';
+			showMessage('error', 'Failed to update entry title');
 			console.error('Failed to update entry title:', e);
 		}
 	}
 
 	async function createNewEntry(title: string): Promise<void> {
+		clearMessage();
+
 		try {
 			const response = await fetch('/admin/api/entry', {
 				method: 'POST',
@@ -159,11 +179,14 @@
 				const data = await response.json();
 				location.href = '/admin/entry/' + data.path;
 			} else {
-				throw new Error('Failed to create new entry');
+				showMessage('error', 'Failed to create new entry');
 			}
 		} catch (error) {
 			console.error('Failed to create new entry:', error);
-			errorMessage = `Failed to create new entry: ${error instanceof Error ? error.message : error}`;
+			showMessage(
+				'error',
+				`Failed to create new entry: ${error instanceof Error ? error.message : error}`
+			);
 		}
 	}
 
@@ -215,7 +238,7 @@
 			})
 			.catch((error) => {
 				console.error('Failed to update visibility:', error);
-				errorMessage = `Failed to update visibility: ${error.message}`;
+				showMessage('error', `Failed to update visibility: ${error.message}`);
 			});
 	}
 
@@ -285,12 +308,10 @@
 		</div>
 	</div>
 
-	{#if successMessage}
-		<p class="success-message">{successMessage}</p>
-	{/if}
-
-	{#if errorMessage}
-		<p class="error-message">{errorMessage}</p>
+	{#if message}
+		<div class="popup-message {messageType}">
+			<p>{message}</p>
+		</div>
 	{/if}
 
 	<LinkPallet {linkPallet} />
@@ -375,12 +396,24 @@
 		text-decoration: underline;
 	}
 
-	.success-message {
-		color: #10b981;
+	.popup-message {
+		position: fixed;
+		bottom: 1rem;
+		right: 1rem;
+		padding: 1rem;
+		border-radius: 0.375rem;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		z-index: 1000;
 	}
 
-	.error-message {
-		color: #ef4444;
+	.popup-message.success {
+		background-color: #10b981;
+		color: white;
+	}
+
+	.popup-message.error {
+		background-color: #ef4444;
+		color: white;
 	}
 
 	@media (max-width: 600px) {
