@@ -41,19 +41,58 @@ export class AdminEntryRepository {
 	}
 
 	/**
-	 * Update an entry by path
+	 * Update an entry title by path
+	 * with optimistic concurrency control
 	 */
-	async updateEntry(
+	async updateEntryTitle(
 		path: string,
 		data: {
 			title: string;
-			body: string;
-			updated_at: string | null;
+			original_title: string;
 		}
 	): Promise<Entry> {
-		// updated_at is only for optimistic concurrency control
+		console.log('Update entry title:', path, data);
+		const [result] = await db.query<ResultSetHeader>(
+			`
+			UPDATE entry
+			SET title = ?
+			WHERE path = ? AND title = ?
+			`,
+			[data.title, path, data.original_title]
+		);
+		if (result.affectedRows === 0) {
+			// The entry is not found or the original title is different
+			// check the current status.
+			const [existingEntry] = await db.query<ResultSetHeader[]>(
+				`SELECT 1 FROM entry WHERE path = ?`,
+				[path]
+			);
+			if (existingEntry.length === 0) {
+				throw new Error('Entry not found');
+			} else {
+				throw new Error('Update conflict: Reload the entry and try again');
+			}
+		}
 
-		console.log('Update entry:', path, data);
+		const entry = await this.getEntry(path);
+		if (!entry) {
+			// very rare case
+			throw new Error('Cannot get entry after update');
+		}
+		return entry;
+	}
+
+	/**
+	 * Update an entry by path with optimistic concurrency control
+	 */
+	async updateEntryBody(
+		path: string,
+		data: {
+			body: string;
+			original_body: string;
+		}
+	): Promise<Entry> {
+		console.log('Update entry body:', path, data);
 
 		const conn = await db.getConnection();
 		try {
@@ -63,10 +102,10 @@ export class AdminEntryRepository {
 			const [result] = await conn.query<ResultSetHeader>(
 				`
 				UPDATE entry
-				SET title = ?, body = ?
-				WHERE path = ? AND (updated_at = ? OR (updated_at IS NULL AND ? IS NULL))
+				SET body = ?
+				WHERE path = ? AND body = ?
 				`,
-				[data.title, data.body, path, data.updated_at, data.updated_at]
+				[data.body, path, data.original_body]
 			);
 
 			// 更新が成功したかをチェック
@@ -83,10 +122,18 @@ export class AdminEntryRepository {
 				}
 			}
 
-			this.updateEntryLink(conn, path, data.title, data.body);
+			const entry = await this.getEntry(path);
+			if (!entry) {
+				// very rare case
+				throw new Error('Cannot get entry after update');
+			}
+
+			this.updateEntryLink(conn, path, entry.title, data.body);
 
 			console.log('Entry updated:', path);
 			conn.commit();
+
+			return entry;
 		} catch (error) {
 			console.log('Got unknown error:', path, error);
 			conn.rollback();
@@ -95,13 +142,6 @@ export class AdminEntryRepository {
 			console.log('Release connection');
 			conn.release();
 		}
-
-		const entry = await this.getEntry(path);
-		if (!entry) {
-			// very rare case
-			throw new Error('Cannot get entry after update');
-		}
-		return entry;
 	}
 
 	/**

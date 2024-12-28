@@ -20,6 +20,9 @@
 	let body: string = $state(entry.body); // 初期値として本文を保持
 	let visibility: 'private' | 'public' = $state(entry.visibility);
 
+	let original_title = entry.title;
+	let original_body = entry.body;
+
 	let isDirty = false;
 
 	let currentLinks = extractLinks(entry.body);
@@ -67,17 +70,16 @@
 		}
 	}
 
-	async function handleUpdate() {
+	async function handleUpdateBody() {
 		successMessage = '';
 		errorMessage = '';
 
 		try {
 			const request = {
-				title,
 				body,
-				updated_at: entry.updated_at
+				original_body
 			};
-			const response = await fetch('/admin/api/entry/' + entry.path, {
+			const response = await fetch('/admin/api/entry/' + entry.path + '/body', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -87,6 +89,45 @@
 			if (response.ok) {
 				successMessage = 'Entry updated successfully';
 				isDirty = false; // Reset dirty flag on successful update
+				original_body = body;
+			} else {
+				let errorDetails = 'Unknown error';
+				try {
+					const errorData = await response.json();
+					if (errorData && errorData.error) {
+						errorDetails = errorData.error;
+					}
+				} catch (e) {
+					console.error('Failed to parse error response', e);
+				}
+				errorMessage = `Failed to update entry body: ${response.statusText} (${response.status}) - ${errorDetails}`;
+			}
+		} catch (e) {
+			errorMessage = 'Failed to update entry body';
+			console.error('Failed to update entry body:', e);
+		}
+	}
+
+	async function handleUpdateTitle() {
+		successMessage = '';
+		errorMessage = '';
+
+		try {
+			const request = {
+				title,
+				original_title
+			};
+			const response = await fetch('/admin/api/entry/' + entry.path + '/title', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(request)
+			});
+			if (response.ok) {
+				successMessage = 'Entry updated successfully';
+				isDirty = false; // Reset dirty flag on successful update
+				original_title = title;
 
 				response.json().then((data) => {
 					entry.updated_at = data.updated_at;
@@ -101,11 +142,11 @@
 				} catch (e) {
 					console.error('Failed to parse error response', e);
 				}
-				errorMessage = `Failed to update entry: ${response.statusText} (${response.status}) - ${errorDetails}`;
+				errorMessage = `Failed to update entry title: ${response.statusText} (${response.status}) - ${errorDetails}`;
 			}
 		} catch (e) {
-			errorMessage = 'Failed to update entry';
-			console.error('Failed to update entry:', e);
+			errorMessage = 'Failed to update entry title';
+			console.error('Failed to update entry title:', e);
 		}
 	}
 
@@ -131,14 +172,24 @@
 	}
 
 	// デバウンスした自動保存関数
-	const debouncedUpdate = debounce(() => {
-		handleUpdate();
-	}, 1000);
+	const debouncedUpdateBody = debounce(() => {
+		handleUpdateBody();
+	}, 800);
+
+	// title related.
+	const debouncedTitleUpdate = debounce(() => {
+		handleUpdateTitle();
+	}, 500);
+
+	function handleTitleInput() {
+		isDirty = true;
+		debouncedTitleUpdate();
+	}
 
 	// 入力イベントや変更イベントにデバウンスされた関数をバインド
-	function handleInput() {
+	function handleInputBody() {
 		isDirty = true;
-		debouncedUpdate();
+		debouncedUpdateBody();
 
 		const newLinks = extractLinks(body);
 		if (currentLinks !== newLinks) {
@@ -190,7 +241,7 @@
 						type="text"
 						class="input"
 						bind:value={title}
-						oninput={handleInput}
+						oninput={handleTitleInput}
 						required
 					/>
 					<button class="visibility-icon" onclick={toggleVisibility}
@@ -204,7 +255,7 @@
 						initialContent={body}
 						onUpdateText={(content) => {
 							body = content;
-							handleInput(); // エディタ更新時にデバウンスされた更新をトリガー
+							handleInputBody(); // エディタ更新時にデバウンスされた更新をトリガー
 						}}
 						existsEntryByTitle={(title) => {
 							return !!data.links[title.toLowerCase()];
@@ -217,7 +268,7 @@
 							}
 						}}
 						onSave={() => {
-							handleUpdate();
+							handleUpdateBody();
 						}}
 					></MarkdownEditor>
 				</div>
@@ -238,16 +289,16 @@
 		</div>
 	</div>
 
+	{#if successMessage}
+		<p class="success-message">{successMessage}</p>
+	{/if}
+
+	{#if errorMessage}
+		<p class="error-message">{errorMessage}</p>
+	{/if}
+
 	<LinkPallet {linkPallet} />
 </div>
-
-{#if successMessage}
-	<p class="success-message">{successMessage}</p>
-{/if}
-
-{#if errorMessage}
-	<p class="error-message">{errorMessage}</p>
-{/if}
 
 <style>
 	.container {
