@@ -128,10 +128,6 @@
 				successMessage = 'Entry updated successfully';
 				isDirty = false; // Reset dirty flag on successful update
 				original_title = title;
-
-				response.json().then((data) => {
-					entry.updated_at = data.updated_at;
-				});
 			} else {
 				let errorDetails = 'Unknown error';
 				try {
