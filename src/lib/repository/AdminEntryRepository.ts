@@ -42,7 +42,6 @@ export class AdminEntryRepository {
 
 	/**
 	 * Update an entry title by path
-	 * with optimistic concurrency control
 	 */
 	async updateEntryTitle(
 		path: string,
@@ -83,7 +82,7 @@ export class AdminEntryRepository {
 	}
 
 	/**
-	 * Update an entry by path with optimistic concurrency control
+	 * Update an entry by path
 	 */
 	async updateEntryBody(
 		path: string,
