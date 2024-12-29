@@ -51,11 +51,16 @@
 				hasMore = false;
 			} else {
 				const existingPaths = allEntries.map((entry) => entry.path);
-				allEntries = [
-					...allEntries,
-					...newEntries.filter((entry) => !existingPaths.includes(entry.path))
-				];
-				handleSearch(searchKeyword);
+				const addingNewEntries = newEntries.filter((entry) => !existingPaths.includes(entry.path));
+				if (addingNewEntries.length == 0) {
+					console.log(
+						`All entries are duplicated... stopping loading more entries. lastPath=${lastPath}, newEntries=${newEntries.map((entry) => entry.title)}`
+					);
+					hasMore = false;
+				} else {
+					allEntries = [...allEntries, ...addingNewEntries];
+					handleSearch(searchKeyword);
+				}
 			}
 		} catch (err) {
 			console.error(err);

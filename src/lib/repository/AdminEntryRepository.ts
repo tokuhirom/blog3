@@ -6,7 +6,7 @@ import { extractLinks } from '$lib/markdown';
 export class AdminEntryRepository {
 	async getLatestEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
-			'SELECT * FROM entry ORDER BY IFNULL(updated_at, created_at) DESC, path DESC LIMIT 100',
+			'SELECT * FROM entry ORDER BY COALESCE(updated_at, created_at) DESC, path DESC LIMIT 100',
 			[]
 		);
 		return rows;
@@ -15,12 +15,12 @@ export class AdminEntryRepository {
 	/**
 	 * Get entries older than the given path.
 	 */
-	async getEntriesOlderThan(lastPath: string, limit = 100): Promise<Entry[]> {
+	async getEntriesOlderThan(lastPath: string, limit = 200): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT * FROM entry
-			WHERE path < ?
-			ORDER BY IFNULL(updated_at, created_at) DESC, path DESC
+			WHERE path <= ?
+			ORDER BY COALESCE(updated_at, created_at) DESC, path DESC
 			LIMIT ?
 			`,
 			[lastPath, limit]
