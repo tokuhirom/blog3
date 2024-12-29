@@ -10,11 +10,9 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 		const req = await request.json();
 
 		const body = req.body;
-		const original_body = req.original_body;
 
 		const entry = await locals.adminEntryRepository.updateEntryBody(path, {
-			body,
-			original_body
+			body
 		});
 		return new Response(JSON.stringify(entry), { status: 200 });
 	} catch (error) {

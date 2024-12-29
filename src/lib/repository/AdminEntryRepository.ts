@@ -79,13 +79,11 @@ export class AdminEntryRepository {
 
 	/**
 	 * Update an entry title by path
-	 * with optimistic concurrency control
 	 */
 	async updateEntryTitle(
 		path: string,
 		data: {
 			title: string;
-			original_title: string;
 		}
 	): Promise<Entry> {
 		console.log('Update entry title:', path, data);
@@ -93,22 +91,12 @@ export class AdminEntryRepository {
 			`
 			UPDATE entry
 			SET title = ?
-			WHERE path = ? AND title = ?
+			WHERE path = ?
 			`,
-			[data.title, path, data.original_title]
+			[data.title, path]
 		);
 		if (result.affectedRows === 0) {
-			// The entry is not found or the original title is different
-			// check the current status.
-			const [existingEntry] = await db.query<ResultSetHeader[]>(
-				`SELECT 1 FROM entry WHERE path = ?`,
-				[path]
-			);
-			if (existingEntry.length === 0) {
-				throw new Error('Entry not found');
-			} else {
-				throw new Error('Update conflict: Reload the entry and try again');
-			}
+			throw new Error('Entry not found');
 		}
 
 		const entry = await this.getEntry(path);
@@ -120,13 +108,12 @@ export class AdminEntryRepository {
 	}
 
 	/**
-	 * Update an entry by path with optimistic concurrency control
+	 * Update an entry by path
 	 */
 	async updateEntryBody(
 		path: string,
 		data: {
 			body: string;
-			original_body: string;
 		}
 	): Promise<Entry> {
 		console.log('Update entry body:', path, data);
@@ -140,23 +127,14 @@ export class AdminEntryRepository {
 				`
 				UPDATE entry
 				SET body = ?
-				WHERE path = ? AND body = ?
+				WHERE path = ?
 				`,
-				[data.body, path, data.original_body]
+				[data.body, path]
 			);
 
 			// 更新が成功したかをチェック
 			if (result.affectedRows === 0) {
-				const [existingEntry] = await conn.query<ResultSetHeader[]>(
-					`SELECT 1 FROM entry WHERE path = ?`,
-					[path]
-				);
-
-				if (existingEntry.length === 0) {
-					throw new Error('Entry not found');
-				} else {
-					throw new Error('Update conflict: Reload the entry and try again');
-				}
+				throw new Error('Entry not found');
 			}
 
 			const entry = await this.getEntry(path);

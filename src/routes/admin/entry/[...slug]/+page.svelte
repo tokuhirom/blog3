@@ -21,9 +21,6 @@
 	let body: string = $state(entry.body); // 初期値として本文を保持
 	let visibility: 'private' | 'public' = $state(entry.visibility);
 
-	let original_title = entry.title;
-	let original_body = entry.body;
-
 	let isDirty = false;
 
 	let currentLinks = extractLinks(entry.body);
@@ -89,8 +86,7 @@
 
 		try {
 			const request = {
-				body,
-				original_body
+				body
 			};
 			const response = await fetch('/admin/api/entry/' + entry.path + '/body', {
 				method: 'POST',
@@ -102,7 +98,6 @@
 			if (response.ok) {
 				showMessage('success', 'Entry updated successfully');
 				isDirty = false; // Reset dirty flag on successful update
-				original_body = body;
 			} else {
 				let errorDetails = 'Unknown error';
 				try {
@@ -130,8 +125,7 @@
 
 		try {
 			const request = {
-				title,
-				original_title
+				title
 			};
 			const response = await fetch('/admin/api/entry/' + entry.path + '/title', {
 				method: 'POST',
@@ -143,7 +137,6 @@
 			if (response.ok) {
 				showMessage('success', 'Entry updated successfully');
 				isDirty = false; // Reset dirty flag on successful update
-				original_title = title;
 			} else {
 				let errorDetails = 'Unknown error';
 				try {
