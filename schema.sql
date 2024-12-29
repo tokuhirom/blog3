@@ -22,18 +22,3 @@ create table entry_link (
   FOREIGN KEY (src_path) REFERENCES entry(path) ON DELETE CASCADE,
   INDEX (dst_title)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-DELIMITER //
-
-CREATE TRIGGER before_update_entry_visibility
-BEFORE UPDATE ON entry
-FOR EACH ROW
-BEGIN
-  IF NEW.visibility = 'public' AND OLD.visibility = 'private' AND NEW.published_at IS NULL THEN
-    SET NEW.published_at = NOW();
-  END IF;
-END;
-
-//
-
-DELIMITER ;
