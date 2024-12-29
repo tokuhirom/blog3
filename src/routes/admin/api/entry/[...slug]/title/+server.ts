@@ -10,11 +10,9 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 		const req = await request.json();
 
 		const title = req.title;
-		const original_title = req.original_title;
 
 		const entry = await locals.adminEntryRepository.updateEntryTitle(path, {
-			title,
-			original_title
+			title
 		});
 		return new Response(JSON.stringify(entry), { status: 200 });
 	} catch (error) {
