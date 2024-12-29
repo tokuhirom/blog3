@@ -293,6 +293,10 @@ export class AdminEntryRepository {
 	 * Get two hop links from the entry.
 	 */
 	async getTwoHopLinksBySrcPath(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
+		if (!targetTitle) {
+			throw new Error('Missing targetTitle');
+		}
+
 		// このエントリがリンクしているページのリストを取得
 		const links = await this.getLinksBySrcPath2(targetPath);
 		console.log(
@@ -367,6 +371,7 @@ export class AdminEntryRepository {
 	 * このタイトルのエントリにリンクしているエントリのリストを取得する。
 	 */
 	private async getEntriesByLinkedTitle(targetTitle: string): Promise<Entry[]> {
+		console.log(`getEntriesByLinkedTitle: ${targetTitle}`);
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT DISTINCT entry.*
