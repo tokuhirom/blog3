@@ -63,7 +63,7 @@ export class PublicEntryRepository {
 			`
 			SELECT * FROM entry
 			WHERE visibility = 'public'
-			ORDER BY path DESC
+			ORDER BY published_at DESC
 			LIMIT ? OFFSET ?
 			`,
 			[entriesPerPage + 1, offset]

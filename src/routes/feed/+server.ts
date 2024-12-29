@@ -39,7 +39,7 @@ export const GET: RequestHandler = async () => {
 			.txt(entry.body)
 			.up()
 			.ele('pubDate')
-			.txt(new Date(entry.created_at).toUTCString())
+			.txt(new Date(entry.published_at!).toUTCString())
 			.up()
 			.ele('guid')
 			.txt(`https://blog.64p.org/entry/${entry.path}`)
