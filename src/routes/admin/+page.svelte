@@ -23,8 +23,9 @@
 	function handleSearch(keyword: string) {
 		const lowerKeyword = keyword.toLowerCase();
 		filteredEntries = allEntries.filter(
-			(entry) => entry.title.toLowerCase().includes(lowerKeyword) // ||
-			// entry.body.toLowerCase().includes(lowerKeyword)
+			(entry) =>
+				entry.title.toLowerCase().includes(lowerKeyword) ||
+				entry.body.toLowerCase().includes(lowerKeyword)
 		);
 	}
 
