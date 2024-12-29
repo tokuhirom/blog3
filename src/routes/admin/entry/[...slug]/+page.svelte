@@ -6,6 +6,7 @@
 	import { beforeNavigate } from '$app/navigation';
 	import { type LinkPalletData } from '$lib/repository/AdminEntryRepository';
 	import LinkPallet from '../../LinkPallet.svelte';
+	import { onMount } from 'svelte';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
 	import { extractLinks } from '$lib/markdown';
@@ -246,6 +247,69 @@
 		if (isDirty && !confirm('You have unsaved changes. Are you sure you want to leave?')) {
 			cancel();
 		}
+	});
+
+	function getEditDistance(a: string, b: string): number {
+		const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+
+		for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+		for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+		for (let i = 1; i <= a.length; i++) {
+			for (let j = 1; j <= b.length; j++) {
+				if (a[i - 1] === b[j - 1]) {
+					dp[i][j] = dp[i - 1][j - 1];
+				} else {
+					dp[i][j] =
+						Math.min(
+							dp[i - 1][j], // 削除
+							dp[i][j - 1], // 挿入
+							dp[i - 1][j - 1] // 置換
+						) + 1;
+				}
+			}
+		}
+
+		return dp[a.length][b.length];
+	}
+
+	// 定期的に本文情報を再取得する。
+	// 他のユーザーが大幅に変更していた場合は警告を表示し、リロードを促す。
+	// TODO: 編集不可状態とする。
+	onMount(() => {
+		const interval = setInterval(() => {
+			fetch(`/admin/api/entry/${entry.path}`, {
+				method: 'GET'
+			})
+				.then((response) => {
+					if (response.ok) {
+						return response.json();
+					} else {
+						throw new Error('Failed to get total');
+					}
+				})
+				.then((data) => {
+					// 本文が短いときは消えてもダメージ少ないので無視
+					if (data.body.length > 100 && !isDirty) {
+						const threshold = Math.max(body.length, data.body.length) * 0.1; // 10%以上の変更で判定
+						const editDistance = getEditDistance(body, data.body);
+						if (editDistance > threshold) {
+							if (
+								confirm(
+									`他のユーザーが大幅に変更しました。リロードしてください。 ${editDistance} > ${threshold}`
+								)
+							) {
+								location.reload();
+							} else {
+								clearInterval(interval);
+							}
+						}
+					}
+				})
+				.catch((error) => {
+					console.error('Failed to get total:', error);
+				});
+		}, 10000);
 	});
 </script>
 
