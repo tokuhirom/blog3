@@ -36,8 +36,45 @@ export class AdminEntryRepository {
 		return rows.length > 0 ? rows[0] : null;
 	}
 
-	async updateEntryVisibility(path: string, visibility: 'private' | 'public'): Promise<void> {
-		await db.query('UPDATE entry SET visibility = ? WHERE path = ?', [visibility, path]);
+	async updateEntryVisibility(path: string, newVisibility: 'private' | 'public'): Promise<void> {
+		const connection = await db.getConnection();
+
+		try {
+			await connection.beginTransaction();
+
+			// Get the current visibility and published_at
+			const [rows] = await connection.query<RowDataPacket[]>(
+				'SELECT visibility, published_at FROM entry WHERE path = ?',
+				[path]
+			);
+
+			if (rows.length === 0) {
+				throw new Error('Entry not found');
+			}
+
+			const { visibility, published_at } = rows[0];
+
+			// Update visibility
+			await connection.query('UPDATE entry SET visibility = ? WHERE path = ?', [
+				newVisibility,
+				path
+			]);
+
+			// If visibility changed from private to public and published_at is null, set published_at to current time
+			if (visibility === 'private' && newVisibility === 'public' && !published_at) {
+				await connection.query(
+					'UPDATE entry SET published_at = NOW() WHERE path = ? AND published_at IS NULL',
+					[path]
+				);
+			}
+
+			await connection.commit();
+		} catch (error) {
+			await connection.rollback();
+			throw error;
+		} finally {
+			connection.release();
+		}
 	}
 
 	/**
