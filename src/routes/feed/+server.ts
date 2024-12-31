@@ -1,13 +1,14 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { create } from 'xmlbuilder2';
 import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
+import { renderHTMLByEntry } from '$lib/markdown';
 
 export const GET: RequestHandler = async () => {
 	const { entries } = await PublicEntryRepository.getPaginatedEntry(1, 30);
 
 	// RSSフィードのヘッダーを作成
 	const feed = create({ version: '1.0' })
-		.ele('rss', { version: '2.0' })
+		.ele('rss', { version: '2.0', 'xmlns:content': 'http://purl.org/rss/1.0/modules/content/' })
 		.ele('channel')
 		.ele('title')
 		.txt('My Blog RSS Feed')
@@ -37,6 +38,9 @@ export const GET: RequestHandler = async () => {
 			.up()
 			.ele('description')
 			.txt(entry.body)
+			.up()
+			.ele('content:encoded')
+			.txt(`<![CDATA[${renderHTMLByEntry(entry, {})}]]>`)
 			.up()
 			.ele('pubDate')
 			.txt(new Date(entry.published_at!).toUTCString())
