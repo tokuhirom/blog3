@@ -30,18 +30,22 @@
 
 <style>
 	.container {
+		max-width: 1080px;
 		margin: 0 auto;
 		padding: 1rem;
 	}
+
 	.flex-container {
 		display: flex;
 		flex-wrap: wrap;
+		margin: auto;
 		gap: 1rem;
 		justify-content: flex-start;
 	}
+
 	.entry-link {
-		flex: 1 1 200px;
-		max-width: 200px;
+		flex: 1 1 180px;
+		max-width: 180px;
 		display: block;
 		border-radius: 0.5rem;
 		border: 1px solid #e2e8f0;
@@ -52,11 +56,13 @@
 			0 4px 6px -2px rgba(0, 0, 0, 0.05);
 		transition: box-shadow 0.2s;
 	}
+
 	.entry-link:hover {
 		box-shadow:
 			0 10px 15px -3px rgba(0, 0, 0, 0.2),
 			0 4px 6px -2px rgba(0, 0, 0, 0.1);
 	}
+
 	.entry-title {
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -65,6 +71,7 @@
 		font-weight: 600;
 		color: #2d3748;
 	}
+
 	.entry-body {
 		margin-top: 0.5rem;
 		display: -webkit-box;
@@ -75,12 +82,14 @@
 		font-size: 0.875rem;
 		color: #718096;
 	}
+
 	.pager {
 		margin-top: 1.5rem;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
+
 	.pager-link {
 		border-radius: 0.25rem;
 		background-color: #4299e1;
@@ -88,6 +97,7 @@
 		color: white;
 		transition: background-color 0.2s;
 	}
+
 	.pager-link:hover {
 		background-color: #3182ce;
 	}
