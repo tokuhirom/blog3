@@ -40,6 +40,10 @@ jobs:
       - name: Run TypeScript and SvelteKit Check
         run: bun run check
 
+      # テスト
+      - name: Run test suite
+        run: bun run test
+
   docker-build:
     name: Docker Build
     runs-on: ubuntu-latest

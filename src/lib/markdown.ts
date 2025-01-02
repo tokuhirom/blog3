@@ -61,7 +61,10 @@ function buildEntryLinkPlugin(links: { [key: string]: string | null }): (md: Mar
 
 export function renderHTML(markdown: string, links: { [key: string]: string | null }): string {
 	const md: MarkdownIt = new MarkdownIt({
-		linkify: true, // URL を自動リンク化
+		// Enable HTML tags in source
+		html: true,
+		// Autoconvert URL-like text to links
+		linkify: true,
 		highlight: (code, lang) => {
 			if (lang && hljs.getLanguage(lang)) {
 				// 指定されたシンタックスでハイライト
@@ -74,6 +77,14 @@ export function renderHTML(markdown: string, links: { [key: string]: string | nu
 			// シンタックス指定がない場合、そのままエスケープして表示
 			return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`;
 		}
+	});
+	md.core.ruler.push('ignore_html_comments', (state) => {
+		state.tokens = state.tokens.filter((token) => {
+			if (token.type === 'html_block' || token.type === 'html_inline') {
+				return !token.content.trim().startsWith('<!--');
+			}
+			return true;
+		});
 	});
 	md.use(buildEntryLinkPlugin(links));
 
