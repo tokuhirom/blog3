@@ -222,6 +222,11 @@
 
 	function toggleVisibility() {
 		const newVisibility = visibility === 'private' ? 'public' : 'private';
+
+		if (!confirm(`Are you sure you want to change the visibility of this entry?`)) {
+			return;
+		}
+
 		fetch(`/admin/api/entry/${entry.path}/visibility`, {
 			method: 'POST',
 			headers: {
