@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { create } from 'xmlbuilder2';
 import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
 import { renderHTMLByEntry } from '$lib/markdown';
+import { convert } from 'html-to-text';
 
 export const GET: RequestHandler = async () => {
 	const { entries } = await PublicEntryRepository.getPaginatedEntry(1, 30);
@@ -28,6 +29,11 @@ export const GET: RequestHandler = async () => {
 
 	// エントリを追加
 	entries.forEach((entry) => {
+		const html = renderHTMLByEntry(entry, {});
+		const text = convert(html, {
+			wordwrap: 80 // テキストの行幅を設定
+		});
+
 		feed
 			.ele('item')
 			.ele('title')
@@ -37,10 +43,10 @@ export const GET: RequestHandler = async () => {
 			.txt(`https://blog.64p.org/entry/${entry.path}`)
 			.up()
 			.ele('description')
-			.txt(entry.body)
+			.txt(text)
 			.up()
 			.ele('content:encoded')
-			.dat(renderHTMLByEntry(entry, {}))
+			.dat(html)
 			.up()
 			.ele('pubDate')
 			.txt(new Date(entry.published_at!).toUTCString())
