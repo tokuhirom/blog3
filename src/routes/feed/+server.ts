@@ -40,7 +40,7 @@ export const GET: RequestHandler = async () => {
 			.txt(entry.body)
 			.up()
 			.ele('content:encoded')
-			.txt(`<![CDATA[${renderHTMLByEntry(entry, {})}]]>`)
+			.dat(renderHTMLByEntry(entry, {}))
 			.up()
 			.ele('pubDate')
 			.txt(new Date(entry.published_at!).toUTCString())
