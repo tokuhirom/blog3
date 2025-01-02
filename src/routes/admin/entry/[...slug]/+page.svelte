@@ -283,46 +283,48 @@
 		return dat.titles;
 	}
 
+	// 定期的に本文情報を再取得する。
+	// 他のユーザーが大幅に変更していた場合は警告を表示し、リロードを促す。
+	// TODO: 編集不可状態とする。
+	function checkOtherUsersUpdate() {
+		fetch(`/admin/api/entry/${entry.path}`, {
+			method: 'GET'
+		})
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Failed to get total');
+				}
+			})
+			.then((data) => {
+				// 本文が短いときは消えてもダメージ少ないので無視
+				if (data.body.length > 100 && !isDirty) {
+					const threshold = Math.max(body.length, data.body.length) * 0.1; // 10%以上の変更で判定
+					const editDistance = getEditDistance(body, data.body);
+					if (editDistance > threshold) {
+						if (
+							confirm(
+								`他のユーザーが大幅に変更しました。リロードしてください。 ${editDistance} > ${threshold}`
+							)
+						) {
+							location.reload();
+						}
+					}
+				}
+			})
+			.catch((error) => {
+				console.error('Failed to get total:', error);
+			});
+	}
+
 	onMount(() => {
 		// get page titles
 		setTimeout(async () => (pageTitles = await getPageTitles()), 0);
 
-		// 定期的に本文情報を再取得する。
-		// 他のユーザーが大幅に変更していた場合は警告を表示し、リロードを促す。
-		// TODO: 編集不可状態とする。
-		const interval = setInterval(() => {
-			fetch(`/admin/api/entry/${entry.path}`, {
-				method: 'GET'
-			})
-				.then((response) => {
-					if (response.ok) {
-						return response.json();
-					} else {
-						throw new Error('Failed to get total');
-					}
-				})
-				.then((data) => {
-					// 本文が短いときは消えてもダメージ少ないので無視
-					if (data.body.length > 100 && !isDirty) {
-						const threshold = Math.max(body.length, data.body.length) * 0.1; // 10%以上の変更で判定
-						const editDistance = getEditDistance(body, data.body);
-						if (editDistance > threshold) {
-							if (
-								confirm(
-									`他のユーザーが大幅に変更しました。リロードしてください。 ${editDistance} > ${threshold}`
-								)
-							) {
-								location.reload();
-							} else {
-								clearInterval(interval);
-							}
-						}
-					}
-				})
-				.catch((error) => {
-					console.error('Failed to get total:', error);
-				});
-		}, 10000);
+		document.addEventListener('visibilitychange', () => {
+			checkOtherUsersUpdate();
+		});
 	});
 </script>
 
