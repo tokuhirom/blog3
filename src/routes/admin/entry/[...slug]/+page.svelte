@@ -48,6 +48,13 @@
 	let message = $state('');
 	let messageType: 'success' | 'error' | '' = $state('');
 
+	let updatedMessage = $state('');
+
+	function showUpdatedMessage(text: string) {
+		updatedMessage = text;
+		setTimeout(() => (updatedMessage = ''), 1000);
+	}
+
 	function clearMessage() {
 		message = '';
 		messageType = '';
@@ -96,7 +103,7 @@
 				body: JSON.stringify(request)
 			});
 			if (response.ok) {
-				showMessage('success', 'Entry updated successfully');
+				showUpdatedMessage('Updated');
 				isDirty = false; // Reset dirty flag on successful update
 			} else {
 				let errorDetails = 'Unknown error';
@@ -362,6 +369,12 @@
 					<a href="/entry/{entry.path}" class="link">Go to User Side Page</a>
 				</div>
 			{/if}
+
+			{#if updatedMessage !== ''}
+				<div class="updated-message">
+					{updatedMessage}
+				</div>
+			{/if}
 		</div>
 	</div>
 
@@ -482,5 +495,9 @@
 			margin-left: 0;
 			margin-top: 1rem; /* Add some space between the panes */
 		}
+	}
+
+	.updated-message {
+		color: #10b981;
 	}
 </style>
