@@ -9,6 +9,7 @@
 	import { syntaxHighlighting } from '@codemirror/language';
 	import { defaultKeymap } from '@codemirror/commands';
 	import { internalLinkPlugin } from './markdown/InternalLink';
+	import { autocompletion, type CompletionContext } from '@codemirror/autocomplete';
 
 	let container: HTMLDivElement;
 	export let initialContent: string = '';
@@ -21,6 +22,29 @@
 	let isUploading: boolean = false; // アップロード中の状態
 	let errorMessage: string = ''; // エラー通知メッセージ
 
+	export let pageTitles: string[] = [];
+
+	const myCompletion = (context: CompletionContext) => {
+		{
+			// `[[foobar]]` style notation
+			const word = context.matchBefore(/\[\[(?:(?!\]\].*).)*/);
+			if (word) {
+				console.log('Return links');
+				const options = pageTitles.map((title) => {
+					return {
+						label: `[[${title}]]`,
+						type: 'keyword'
+					};
+				});
+				return {
+					from: word.from,
+					options: options
+				};
+			}
+		}
+		return null;
+	};
+
 	onMount(() => {
 		const startState = EditorState.create({
 			doc: initialContent,
@@ -32,6 +56,7 @@
 				}),
 				history(),
 				syntaxHighlighting(oneDarkHighlightStyle),
+				autocompletion({ override: [myCompletion], closeOnBlur: false }),
 				EditorView.lineWrapping,
 				keymap.of([...historyKeymap, ...defaultKeymap, indentWithTab]),
 				EditorView.theme({

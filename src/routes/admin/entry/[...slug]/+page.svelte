@@ -21,6 +21,8 @@
 	let body: string = $state(entry.body); // 初期値として本文を保持
 	let visibility: 'private' | 'public' = $state(entry.visibility);
 
+	let pageTitles: string[] = $state([]);
+
 	let isDirty = false;
 
 	let currentLinks = extractLinks(entry.body);
@@ -273,10 +275,21 @@
 		return dp[a.length][b.length];
 	}
 
-	// 定期的に本文情報を再取得する。
-	// 他のユーザーが大幅に変更していた場合は警告を表示し、リロードを促す。
-	// TODO: 編集不可状態とする。
+	async function getPageTitles(): Promise<string[]> {
+		const resp = await fetch(`/admin/api/entry/title`, {
+			method: 'GET'
+		});
+		const dat = await resp.json();
+		return dat.titles;
+	}
+
 	onMount(() => {
+		// get page titles
+		setTimeout(async () => (pageTitles = await getPageTitles()), 0);
+
+		// 定期的に本文情報を再取得する。
+		// 他のユーザーが大幅に変更していた場合は警告を表示し、リロードを促す。
+		// TODO: 編集不可状態とする。
 		const interval = setInterval(() => {
 			fetch(`/admin/api/entry/${entry.path}`, {
 				method: 'GET'
@@ -353,6 +366,7 @@
 						onSave={() => {
 							handleUpdateBody();
 						}}
+						{pageTitles}
 					></MarkdownEditor>
 				</div>
 			</form>

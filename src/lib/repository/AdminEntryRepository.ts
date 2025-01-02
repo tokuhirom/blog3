@@ -407,6 +407,16 @@ export class AdminEntryRepository {
 		);
 		return rows;
 	}
+
+	async getTitles(): Promise<string[]> {
+		const [rows] = await db.query<RowDataPacket[]>(
+			`
+			SELECT title
+			FROM entry
+			`
+		);
+		return rows.map((it) => it.title);
+	}
 }
 
 export type HasDestTitle = {
