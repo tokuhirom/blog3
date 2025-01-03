@@ -22,3 +22,12 @@ create table entry_link (
   FOREIGN KEY (src_path) REFERENCES entry(path) ON DELETE CASCADE,
   INDEX (dst_title)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+create table amazon_cache (
+	asin varchar(255) primary key,
+	title varchar(5000) default null,
+	image_medium_url text default null,
+	link varchar(5000) not null,
+  created_at datetime DEFAULT CURRENT_TIMESTAMP,
+  KEY created_at (created_at)
+) engine=innodb default charset=utf8mb4;

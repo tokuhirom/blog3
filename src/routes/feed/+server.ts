@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { create } from 'xmlbuilder2';
 import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
-import { renderHTMLByEntry } from '$lib/markdown';
+import { renderHTMLByEntry } from '$lib/server/markdown';
 import { convert } from 'html-to-text';
 
 export const GET: RequestHandler = async () => {
@@ -28,8 +28,8 @@ export const GET: RequestHandler = async () => {
 		.up();
 
 	// エントリを追加
-	entries.forEach((entry) => {
-		const html = renderHTMLByEntry(entry, {});
+	entries.forEach(async (entry) => {
+		const html = await renderHTMLByEntry(entry, {});
 		const text = convert(html, {
 			wordwrap: 80 // テキストの行幅を設定
 		});

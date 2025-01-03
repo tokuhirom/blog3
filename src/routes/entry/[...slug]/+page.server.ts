@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
-import { renderHTMLByEntry } from '$lib/markdown';
+import { renderHTMLByEntry } from '$lib/server/markdown';
 
 export const load: PageServerLoad = async (params) => {
 	console.log('Loading entry page content!(detail)');
@@ -18,6 +18,6 @@ export const load: PageServerLoad = async (params) => {
 
 	return {
 		entry,
-		body: renderHTMLByEntry(entry, links)
+		body: await renderHTMLByEntry(entry, links)
 	};
 };

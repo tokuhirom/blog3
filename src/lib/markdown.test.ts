@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { renderHTML } from './markdown';
+import { renderHTML } from './server/markdown';
 
 describe('renderHTML', () => {
 	it('should ignore HTML comments', () => {

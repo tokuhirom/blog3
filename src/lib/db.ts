@@ -50,3 +50,10 @@ export type EntryLinkWithPath = {
 	dst_title: string;
 	dst_path: string;
 };
+
+export type AmazonCache = {
+	asin: string;
+	title: string | null;
+	image_medium_url: string | null;
+	link: string;
+};

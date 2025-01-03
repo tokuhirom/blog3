@@ -1,7 +1,7 @@
 import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import { db, type Entry } from '$lib/db';
 import { format } from 'date-fns';
-import { extractLinks } from '$lib/markdown';
+import { extractLinks } from '$lib/server/markdown';
 
 export class AdminEntryRepository {
 	async getLatestEntries(): Promise<Entry[]> {
