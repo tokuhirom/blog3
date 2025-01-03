@@ -37,7 +37,7 @@
 		align-items: flex-start; /* 左寄せにします（テキストが左揃えの場合） */
 		justify-content: flex-start; /* アイテムを上に寄せます */
 		float: left;
-		width: 150px;
+		width: 180px;
 		height: 180px;
 		margin: 9px;
 		padding: 9px;

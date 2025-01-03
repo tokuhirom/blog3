@@ -111,6 +111,8 @@
 <style>
 	.container {
 		padding: 1rem;
+		margin: 0 auto;
+		max-width: 1200px;
 	}
 
 	.loading-message {
@@ -122,6 +124,9 @@
 	.entry-list {
 		display: flex;
 		flex-wrap: wrap;
+		margin: auto;
 		gap: 1rem;
+		justify-content: flex-start;
+		max-width: 1200px;
 	}
 </style>
