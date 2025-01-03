@@ -39,7 +39,8 @@
 	}
 </script>
 
-<div tabindex="0" onkeydown={handleKeydown}>
+<!-- eslint-disable-next-line svelte/valid-compile -->
+<div onkeydown={handleKeydown} role="button" tabindex="-1">
 	{#each entries as entry}
 		<div class="entry" style={entry.visibility === 'private' ? 'color: gray;' : ''}>
 			<div>
