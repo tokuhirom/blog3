@@ -19,16 +19,27 @@
 	}
 
 	function doConvert(entry: Entry) {
+		entries = entries.filter((it: Entry) => it.path !== entry.path);
+
 		fetch(`/admin/htmlmigration/${entry.path}/commit`, {
 			method: 'POST'
 		}).then(() => {
-			entries = entries.filter((it: Entry) => it.path !== entry.path);
 			console.log('DONE');
 		});
 	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'c') {
+			if (entries.length > 0) {
+				console.log(`convert ${entries[0].path}`);
+				doConvert(entries[0]);
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			}
+		}
+	}
 </script>
 
-<div>
+<div tabindex="0" onkeydown={handleKeydown}>
 	{#each entries as entry}
 		<div class="entry" style={entry.visibility === 'private' ? 'color: gray;' : ''}>
 			<div>

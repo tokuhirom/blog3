@@ -420,7 +420,7 @@ export class AdminEntryRepository {
 
 	async getHTMLEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
-			'SELECT * FROM entry WHERE format="html" ORDER BY COALESCE(updated_at, created_at) DESC, path DESC',
+			'SELECT * FROM entry WHERE format="html" ORDER BY COALESCE(updated_at, created_at) DESC, path DESC LIMIT 30',
 			[]
 		);
 		return rows;
