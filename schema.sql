@@ -6,7 +6,7 @@ CREATE TABLE "entry" (
   "format" enum('html','mkdn') NOT NULL DEFAULT 'mkdn',
   "published_at" datetime DEFAULT NULL,
   "created_at" datetime DEFAULT CURRENT_TIMESTAMP,
-  "updated_at" datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  "updated_at" datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY ("path"),
   UNIQUE title ("title"),
   KEY "created_at" ("created_at"),
