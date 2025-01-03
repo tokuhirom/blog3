@@ -1,7 +1,7 @@
 import MarkdownIt from 'markdown-it';
-import type { Entry } from '../db';
+import type { Entry } from '$lib/entity';
 import hljs from 'highlight.js'; // highlight.js をインポート
-import { getProductDetailsWithCache } from '$lib/server/repository/AmazonRepository';
+import { getProductDetails } from '$lib/server/repository/AmazonRepository';
 
 async function preloadAsinCache(markdown: string): Promise<Record<string, string | null>> {
 	const matches = markdown.match(/\[asin:(.+?):detail\]/g) || [];
@@ -12,7 +12,7 @@ async function preloadAsinCache(markdown: string): Promise<Record<string, string
 		console.log(`getting amazon product info: ${asin}`);
 		if (!(asin in asinCache)) {
 			try {
-				const product = await getProductDetailsWithCache(asin);
+				const product = await getProductDetails(asin);
 				if (product) {
 					asinCache[asin] = `
                         <div class="asin-product">

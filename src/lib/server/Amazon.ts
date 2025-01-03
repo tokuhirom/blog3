@@ -1,7 +1,8 @@
-// import { GetItemsRequest, PartnerType, Host, Region } from 'paapi5-typescript-sdk';
 import { AMAZON_SECRET_KEY, AMAZON_ACCESS_KEY } from '$lib/config';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
-import amazonPaapi from 'amazon-paapi';
+const execAsync = promisify(exec);
 
 if (!AMAZON_ACCESS_KEY) {
 	console.error('Missing AMAZON_ACCESS_KEY');
@@ -30,32 +31,36 @@ export async function fetchProductDetails(asin: string): Promise<AmazonProductDe
 	}
 	console.log(credentials);
 
-	/*
-	const request = new GetItemsRequest(
-		{
-			ItemIds: [asin],
-			Resources: ['Images.Primary.Medium', 'ItemInfo.Title']
-		},
-		credentials.partnerTag,
-		PartnerType.ASSOCIATES,
-		credentials.accessKey,
-		credentials.secretKey,
-		Host.JAPAN,
-		Region.JAPAN
-	);
-	console.log(Host.JAPAN);
-	console.log(Region.JAPAN);
-	console.log(request);
-	const response = await request.send();
-	console.log(response);
-	 */
+	if (!/^[a-zA-Z0-9]+$/.test(asin)) {
+		throw new Error(`Invalid ASIN: ${asin}`);
+	}
 
-	const item = response.ItemsResult.Items[0];
-	console.log(`got item: ${item}`);
-	return {
-		asin: asin,
-		title: item.ItemInfo?.Title?.DisplayValue,
-		image_medium_url: item.Images?.Primary?.Medium?.URL,
-		link: `https://www.amazon.co.jp/dp/${asin}?tag=${credentials.partnerTag}`
-	};
+	const command = `perl amazon-batch/main.pl ${asin}`;
+	try {
+		// 外部コマンドを実行
+		const { stdout } = await execAsync(command);
+
+		// 標準出力を JSON としてパース
+		const response = JSON.parse(stdout);
+
+		if (
+			!response ||
+			!response.ItemsResult ||
+			!response.ItemsResult.Items ||
+			response.ItemsResult.Items.length === 0
+		) {
+			throw new Error('Invalid response from external command');
+		}
+
+		const item = response.ItemsResult.Items[0];
+		return {
+			asin: asin,
+			title: item.ItemInfo?.Title?.DisplayValue,
+			image_medium_url: item.Images?.Primary?.Medium?.URL,
+			link: `https://www.amazon.co.jp/dp/${asin}?tag=${credentials.partnerTag}`
+		};
+	} catch (error) {
+		console.error('Failed to fetch product details', error);
+		throw new Error('Failed to fetch product details');
+	}
 }
