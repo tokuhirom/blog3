@@ -162,7 +162,7 @@ function buildEntryLinkPlugin(links: { [key: string]: string | null }): (md: Mar
 export async function renderHTML(
 	markdown: string,
 	links: { [key: string]: string | null }
-): string {
+): Promise<string> {
 	const md: MarkdownIt = new MarkdownIt({
 		// Enable HTML tags in source
 		html: true,
@@ -200,7 +200,7 @@ export async function renderHTML(
 export async function renderHTMLByEntry(
 	entry: Entry,
 	links: { [key: string]: string | null }
-): string {
+): Promise<string> {
 	if (entry.format === 'mkdn') {
 		return await renderHTML(entry.body, links);
 	} else if (entry.format === 'html') {
