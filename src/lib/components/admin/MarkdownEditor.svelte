@@ -95,13 +95,14 @@
 
 		for (const item of items) {
 			if (item.type.startsWith('image/')) {
+				event.preventDefault();
+
 				const file = item.getAsFile();
 				if (file) {
 					isUploading = true; // アップロード中フラグを立てる
 					uploadImage(file)
 						.then((url) => {
 							insertMarkdownImage(url);
-							event.preventDefault();
 						})
 						.catch((error) => {
 							console.error('Image upload failed:', error);
@@ -111,10 +112,6 @@
 							isUploading = false; // アップロード完了でフラグを下ろす
 						});
 				}
-			} else if (item.type === 'text/plain') {
-				const text = event.clipboardData.getData('text/plain');
-				insertTextAtCursor(text);
-				event.preventDefault();
 			}
 		}
 	}
