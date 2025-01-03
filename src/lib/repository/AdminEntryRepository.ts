@@ -15,15 +15,15 @@ export class AdminEntryRepository {
 	/**
 	 * Get entries older than the given path.
 	 */
-	async getEntriesOlderThan(lastPath: string, limit = 200): Promise<Entry[]> {
+	async getEntriesOlderThan(last_updated_at: string, limit: number): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT * FROM entry
-			WHERE path <= ?
-			ORDER BY COALESCE(updated_at, created_at) DESC, path DESC
+			WHERE updated_at <= ?
+			ORDER BY updated_at DESC, path DESC
 			LIMIT ?
 			`,
-			[lastPath, limit]
+			[last_updated_at, limit]
 		);
 		return rows;
 	}

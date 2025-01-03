@@ -34,15 +34,17 @@
 
 		isLoading = true;
 
-		const lastPath = allEntries[allEntries.length - 1]?.path;
-		if (!lastPath) {
+		const last_updated_at = allEntries[allEntries.length - 1]?.updated_at;
+		if (!last_updated_at) {
 			isLoading = false;
 			hasMore = false;
 			return;
 		}
 
 		try {
-			const response = await fetch(`/admin/api/entry?last_path=${encodeURIComponent(lastPath)}`);
+			const response = await fetch(
+				`/admin/api/entry?last_updated_at=${encodeURIComponent(last_updated_at)}`
+			);
 			if (!response.ok) {
 				throw new Error('Failed to load more entries');
 			}
@@ -55,7 +57,7 @@
 				const addingNewEntries = newEntries.filter((entry) => !existingPaths.includes(entry.path));
 				if (addingNewEntries.length == 0) {
 					console.log(
-						`All entries are duplicated... stopping loading more entries. lastPath=${lastPath}, newEntries=${newEntries.map((entry) => entry.title)}`
+						`All entries are duplicated... stopping loading more entries. last_updated_at=${last_updated_at}, newEntries=${newEntries.map((entry) => entry.title)}`
 					);
 					hasMore = false;
 				} else {
