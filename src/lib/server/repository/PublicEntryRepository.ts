@@ -1,5 +1,5 @@
 import { type RowDataPacket } from 'mysql2/promise';
-import { db } from '$lib/db';
+import { db } from '$lib/server/db';
 import { type Entry } from '$lib/entity';
 
 export class PublicEntryRepository {
