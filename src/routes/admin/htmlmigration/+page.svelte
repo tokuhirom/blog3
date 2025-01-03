@@ -51,7 +51,7 @@
 				<pre class="html">{entry.body}</pre>
 				<pre class="mkdn">{html2md(entry.body)}</pre>
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-				<div class="rendered">{@html renderHTML(html2md(entry.body))}</div>
+				<div class="rendered">{@html renderHTML(html2md(entry.body), {})}</div>
 			</div>
 
 			<div class="fix">
