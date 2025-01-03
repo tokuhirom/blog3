@@ -35,7 +35,7 @@ export async function fetchProductDetails(asin: string): Promise<AmazonProductDe
 		throw new Error(`Invalid ASIN: ${asin}`);
 	}
 
-	const command = `perl amazon-batch/main.pl ${asin}`;
+	const command = `perl amazon-batch/getitems.pl ${asin}`;
 	try {
 		// 外部コマンドを実行
 		const { stdout } = await execAsync(command);
