@@ -331,6 +331,12 @@
 			checkOtherUsersUpdate();
 		});
 	});
+
+	function selectIfPlaceholder(target: HTMLInputElement) {
+		if (/^2\d+$/.test(target.value)) {
+			target.select(); // 入力値を全選択
+		}
+	}
 </script>
 
 <div>
@@ -344,6 +350,7 @@
 						type="text"
 						class="input"
 						bind:value={title}
+						onfocus={(event) => selectIfPlaceholder(event.target as HTMLInputElement)}
 						oninput={handleTitleInput}
 						required
 					/>
