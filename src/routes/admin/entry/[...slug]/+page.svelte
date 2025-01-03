@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Entry } from '$lib/db';
+	import { type Entry } from '$lib/entity';
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
 	import { beforeNavigate } from '$app/navigation';
-	import { type LinkPalletData } from '$lib/repository/AdminEntryRepository';
+	import { type LinkPalletData } from '$lib/server/repository/AdminEntryRepository';
 	import LinkPallet from '../../LinkPallet.svelte';
 	import { onMount } from 'svelte';
 

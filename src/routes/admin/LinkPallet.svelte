@@ -1,7 +1,7 @@
 <script lang="ts">
 	import EntryCardItem from './EntryCardItem.svelte';
 	import CardItem from './CardItem.svelte';
-	import { type LinkPalletData } from '$lib/repository/AdminEntryRepository';
+	import { type LinkPalletData } from '$lib/server/repository/AdminEntryRepository';
 
 	export let linkPallet: LinkPalletData;
 

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { PublicEntryRepository } from '$lib/repository/PublicEntryRepository';
+import { PublicEntryRepository } from '$lib/server/repository/PublicEntryRepository';
 import { renderHTMLByEntry } from '$lib/markdown';
 
 export const load: PageServerLoad = async (params) => {

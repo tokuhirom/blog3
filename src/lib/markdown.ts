@@ -1,5 +1,5 @@
 import MarkdownIt from 'markdown-it';
-import type { Entry } from './db';
+import { type Entry } from '$lib/entity';
 import hljs from 'highlight.js'; // highlight.js をインポート
 
 // カスタム記法用のプラグインを定義
