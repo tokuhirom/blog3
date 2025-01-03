@@ -339,7 +339,7 @@
 	}
 </script>
 
-<div>
+<div class="parent">
 	<div class="container {entry.visibility === 'private' ? 'private' : ''}">
 		<div class="left-pane">
 			<form class="form">
@@ -419,6 +419,8 @@
 	.container {
 		display: flex;
 		flex-wrap: wrap;
+		max-width: 1200px;
+		margin: auto;
 	}
 
 	.container.private {
