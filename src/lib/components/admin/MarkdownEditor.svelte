@@ -116,13 +116,6 @@
 		}
 	}
 
-	function insertTextAtCursor(text: string) {
-		const transaction = editor.state.update({
-			changes: { from: editor.state.selection.main.from, insert: text }
-		});
-		editor.dispatch(transaction);
-	}
-
 	async function uploadImage(file: File): Promise<string> {
 		const formData = new FormData();
 		formData.append('file', file);
