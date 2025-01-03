@@ -15,6 +15,7 @@ async function preloadAsinCache(markdown: string): Promise<Record<string, string
 				const product = await getProductDetails(asin);
 				if (product) {
 					asinCache[asin] = `
+					<div style="margin-left: 20px; margin-right: 20px">
                         <div class="asin-product" style="
                             display: flex;
                             align-items: center;
@@ -38,6 +39,7 @@ async function preloadAsinCache(markdown: string): Promise<Record<string, string
                                 ">${product.title}</a>
                             </p>
                         </div>
+					</div>
 					`;
 				} else {
 					asinCache[asin] = null; // キャッシュに "見つからなかった" 状態を保存
