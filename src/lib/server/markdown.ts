@@ -15,13 +15,30 @@ async function preloadAsinCache(markdown: string): Promise<Record<string, string
 				const product = await getProductDetails(asin);
 				if (product) {
 					asinCache[asin] = `
-                        <div class="asin-product">
-                            <a href="${product.link}" target="_blank">
-                                <img src="${product.image_medium_url}" alt="${product.title}" />
+                        <div class="asin-product" style="
+                            display: flex;
+                            align-items: center;
+                            border: 1px solid #cccccc;
+                            border-radius: 3px;
+                            padding: 10px;
+                            margin: 10px 0;
+                        ">
+                            <a href="${product.link}" target="_blank" style="margin-right: 10px;">
+                                <img src="${product.image_medium_url}" alt="${product.title}" style="
+                                    max-width: 100px;
+                                    max-height: 100px;
+                                    border-radius: 4px;
+                                " />
                             </a>
-                            <p><a href="${product.link}" target="_blank">${product.title}</a></p>
+                            <p style="margin: 0;">
+                                <a href="${product.link}" target="_blank" style="
+                                    text-decoration: none;
+                                    color: #9999ff;
+									vertical-align: top;
+                                ">${product.title}</a>
+                            </p>
                         </div>
-                    `;
+					`;
 				} else {
 					asinCache[asin] = null; // キャッシュに "見つからなかった" 状態を保存
 				}
