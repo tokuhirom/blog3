@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Entry } from '$lib/db';
+	import { type Entry } from '$lib/entity';
 	import CardItem from './CardItem.svelte';
 
 	export let entry: Entry;

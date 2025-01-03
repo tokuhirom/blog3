@@ -1,5 +1,6 @@
 import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
-import { db, type Entry } from '$lib/db';
+import { db } from '$lib/server/db';
+import { type Entry } from '$lib/entity';
 import { format } from 'date-fns';
 import { extractLinks } from '$lib/server/markdown';
 

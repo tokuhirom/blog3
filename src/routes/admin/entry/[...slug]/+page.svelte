@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Entry } from '$lib/db';
+	import { type Entry } from '$lib/entity';
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
 	import { beforeNavigate } from '$app/navigation';
-	import { type LinkPalletData } from '$lib/repository/AdminEntryRepository';
+	import { type LinkPalletData } from '$lib/server/repository/AdminEntryRepository';
 	import LinkPallet from '../../LinkPallet.svelte';
 	import { onMount } from 'svelte';
 
@@ -331,6 +331,12 @@
 			checkOtherUsersUpdate();
 		});
 	});
+
+	function selectIfPlaceholder(target: HTMLInputElement) {
+		if (/^2\d+$/.test(target.value)) {
+			target.select(); // 入力値を全選択
+		}
+	}
 </script>
 
 <div>
@@ -344,6 +350,7 @@
 						type="text"
 						class="input"
 						bind:value={title}
+						onfocus={(event) => selectIfPlaceholder(event.target as HTMLInputElement)}
 						oninput={handleTitleInput}
 						required
 					/>
