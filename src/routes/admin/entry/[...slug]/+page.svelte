@@ -317,10 +317,10 @@
 						}
 					}
 				}
+			})
+			.catch((error) => {
+				console.error('Failed to get total:', error);
 			});
-		s.catch((error) => {
-			console.error('Failed to get total:', error);
-		});
 	}
 
 	onMount(() => {
