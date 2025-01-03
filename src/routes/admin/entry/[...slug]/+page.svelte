@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Entry } from '$lib/db';
+	import { type Entry } from '$lib/entity';
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 	import { debounce } from '$lib/utils';
