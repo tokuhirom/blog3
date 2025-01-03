@@ -28,25 +28,3 @@ export const db: Pool = mysql.createPool({
 	database: process.env.DATABASE_NAME!,
 	dateStrings: true
 });
-
-export type Entry = {
-	path: string;
-	title: string;
-	body: string;
-	visibility: 'private' | 'public';
-	format: 'html' | 'mkdn';
-	created_at: string;
-	updated_at: string | null;
-	published_at: string | null;
-};
-
-export type EntryLink = {
-	src_path: string;
-	dst_title: string;
-};
-
-export type EntryLinkWithPath = {
-	src_path: string;
-	dst_title: string;
-	dst_path: string;
-};

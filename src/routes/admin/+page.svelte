@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SearchBox from './SearchBox.svelte';
-	import type { Entry } from '$lib/db';
+	import { type Entry } from '$lib/entity';
 	import type { PageData } from './$types';
 	import { error } from '@sveltejs/kit';
 	import { onMount, onDestroy } from 'svelte';
