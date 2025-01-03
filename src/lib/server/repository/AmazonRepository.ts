@@ -1,6 +1,6 @@
 import { type RowDataPacket } from 'mysql2/promise';
 
-import { fetchProductDetails, type AmazonProductDetail } from '$lib/Amazon';
+import { fetchProductDetails, type AmazonProductDetail } from '$lib/server/Amazon';
 import { db } from '$lib/db';
 
 export async function getProductDetailsWithCache(asin: string): Promise<AmazonProductDetail> {

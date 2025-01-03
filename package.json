@@ -48,6 +48,7 @@
 		"@codemirror/theme-one-dark": "^6.1.2",
 		"@codemirror/view": "^6.36.1",
 		"@types/markdown-it": "^14.1.2",
+		"amazon-paapi": "^1.0.7",
 		"date-fns": "^4.1.0",
 		"dotenv": "^16.4.7",
 		"highlight.js": "^11.11.0",

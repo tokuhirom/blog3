@@ -1,5 +1,7 @@
-import { GetItemsRequest, PartnerType, Host, Region } from 'paapi5-typescript-sdk';
+// import { GetItemsRequest, PartnerType, Host, Region } from 'paapi5-typescript-sdk';
 import { AMAZON_SECRET_KEY, AMAZON_ACCESS_KEY } from '$lib/config';
+
+import amazonPaapi from 'amazon-paapi';
 
 if (!AMAZON_ACCESS_KEY) {
 	console.error('Missing AMAZON_ACCESS_KEY');
@@ -28,6 +30,7 @@ export async function fetchProductDetails(asin: string): Promise<AmazonProductDe
 	}
 	console.log(credentials);
 
+	/*
 	const request = new GetItemsRequest(
 		{
 			ItemIds: [asin],
@@ -45,6 +48,7 @@ export async function fetchProductDetails(asin: string): Promise<AmazonProductDe
 	console.log(request);
 	const response = await request.send();
 	console.log(response);
+	 */
 
 	const item = response.ItemsResult.Items[0];
 	console.log(`got item: ${item}`);
