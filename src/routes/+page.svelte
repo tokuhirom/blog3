@@ -45,15 +45,12 @@
 
 	.entry-link {
 		flex: 1 1 180px;
-		max-width: 180px;
+		max-width: 162px;
 		display: block;
 		border-radius: 0.5rem;
 		border: 1px solid #e2e8f0;
 		background-color: white;
 		padding: 1rem;
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -2px rgba(0, 0, 0, 0.05);
 		transition: box-shadow 0.2s;
 	}
 
@@ -75,8 +72,8 @@
 	.entry-body {
 		margin-top: 0.5rem;
 		display: -webkit-box;
-		line-clamp: 3;
-		-webkit-line-clamp: 3;
+		line-clamp: 7;
+		-webkit-line-clamp: 7;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 		font-size: 0.875rem;
