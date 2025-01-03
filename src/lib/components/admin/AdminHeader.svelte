@@ -43,19 +43,19 @@
 		z-index: 10;
 		width: 100%;
 		background-color: #d97706;
-		padding: 1rem;
 		color: white;
+		height: 62px;
+		vertical-align: middle;
 	}
 
 	.container {
 		max-width: 1200px;
 		margin: 0 auto;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
 	}
 
 	a {
+		display: block;
+		float: left;
 		text-decoration: none;
 		color: white;
 	}
@@ -71,8 +71,7 @@
 	}
 
 	nav {
-		display: flex;
-		gap: 1rem;
+		float: right;
 	}
 
 	button {
