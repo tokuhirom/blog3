@@ -1,5 +1,5 @@
 import type { Handle } from '@sveltejs/kit';
-import { AdminEntryRepository } from '$lib/repository/AdminEntryRepository';
+import { AdminEntryRepository } from '$lib/server/repository/AdminEntryRepository';
 import { BACKUP_ENCRYPTION_KEY } from '$lib/config';
 import { startBackup } from '$lib/backup';
 

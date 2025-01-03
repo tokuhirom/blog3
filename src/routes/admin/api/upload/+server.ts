@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { putObject } from '$lib/s3';
+import { putObject } from '$lib/server/s3';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
