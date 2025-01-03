@@ -1,7 +1,7 @@
 import { type RowDataPacket } from 'mysql2/promise';
 
 import { fetchProductDetails, type AmazonProductDetail } from '$lib/server/Amazon';
-import { db } from '$lib/db';
+import { db } from '$lib/sever/db';
 
 export async function getProductDetailsWithCache(asin: string): Promise<AmazonProductDetail> {
 	const [rows] = await db.query<AmazonProductDetail[] & RowDataPacket[]>(
