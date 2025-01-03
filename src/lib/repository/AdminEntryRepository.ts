@@ -417,6 +417,22 @@ export class AdminEntryRepository {
 		);
 		return rows.map((it) => it.title);
 	}
+
+	async getHTMLEntries(): Promise<Entry[]> {
+		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
+			'SELECT * FROM entry WHERE format="html" ORDER BY COALESCE(updated_at, created_at) DESC, path DESC',
+			[]
+		);
+		return rows;
+	}
+
+	async convertToMarkdown(path: string, newBody: string): Promise<void> {
+		await db.query(`UPDATE entry SET body = ?, format = ? WHERE path = ? AND format='html'`, [
+			newBody,
+			'mkdn',
+			path
+		]);
+	}
 }
 
 export type HasDestTitle = {

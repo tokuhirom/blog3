@@ -391,6 +391,8 @@
 				</div>
 			{/if}
 
+			<div style="color: green">{entry.format}</div>
+
 			{#if updatedMessage !== ''}
 				<div class="updated-message">
 					{updatedMessage}
