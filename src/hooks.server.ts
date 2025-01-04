@@ -4,6 +4,7 @@ import { BACKUP_ENCRYPTION_KEY } from '$lib/config';
 import { startBackup } from '$lib/server/backup';
 import { startAmazonShortURLRewriteWorker } from '$lib/server/worker/AmazonShortURLRewriteWorker';
 import { startEntryImageWorker } from '$lib/server/worker/EntryImageWorker';
+import { AdminEntryService } from '$lib/server/service/AdminEntryService';
 
 const encryptionKey = BACKUP_ENCRYPTION_KEY;
 if (encryptionKey) {
@@ -72,6 +73,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 
 		event.locals.adminEntryRepository = new AdminEntryRepository();
+		event.locals.adminEntryService = new AdminEntryService(event.locals.adminEntryRepository);
 		return resolve(event);
 	} else {
 		return resolve(event);

@@ -8,6 +8,9 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 
 	try {
 		const entry = await locals.adminEntryRepository.getEntry(path);
+		if (!entry) {
+			return new Response(JSON.stringify({ error: 'Entry not found' }), { status: 404 });
+		}
 		const twohops = await locals.adminEntryRepository.getLinkPalletData(path, entry.title);
 		return new Response(JSON.stringify(twohops), { status: 200 });
 	} catch (error) {
