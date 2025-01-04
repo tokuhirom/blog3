@@ -2,10 +2,17 @@
 	import { type Entry, type EntryImageAware } from '$lib/entity';
 	import CardItem from './CardItem.svelte';
 
-	export let entry: Entry & EntryImageAware;
-	export let backgroundColor = entry.visibility == 'private' ? '#cccccc' : '#f6f6f6';
-	export let color = '#0f0f0f';
-	export let onClick: (event: MouseEvent) => void;
+	let {
+		entry,
+		backgroundColor = entry.visibility == 'private' ? '#cccccc' : '#f6f6f6',
+		color = '#0f0f0f',
+		onClick
+	}: {
+		entry: Entry & EntryImageAware;
+		backgroundColor: string;
+		color: string;
+		onClick: (event: MouseEvent) => void;
+	} = $props();
 
 	let title = entry.title;
 	let content = entry.body ? entry.body.slice(0, 100) + '...' : '';

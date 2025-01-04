@@ -12,17 +12,27 @@
 	import { autocompletion, type CompletionContext } from '@codemirror/autocomplete';
 
 	let container: HTMLDivElement;
-	export let initialContent: string = '';
-	export let onUpdateText: (content: string) => void;
-	export let onSave: (content: string) => void = () => {};
-	export let existsEntryByTitle: (title: string) => boolean;
-	export let onClickEntry: (title: string) => void;
+
+	let {
+		initialContent = '',
+		onUpdateText,
+		onSave = () => {},
+		existsEntryByTitle,
+		onClickEntry,
+		pageTitles = []
+	}: {
+		initialContent: string;
+		onUpdateText: (content: string) => void;
+		onSave: (content: string) => void;
+		existsEntryByTitle: (title: string) => boolean;
+		onClickEntry: (title: string) => void;
+		pageTitles: string[];
+	} = $props();
+
 	let editor: EditorView;
 
-	let isUploading: boolean = false; // アップロード中の状態
-	let errorMessage: string = ''; // エラー通知メッセージ
-
-	export let pageTitles: string[] = [];
+	let isUploading: boolean = $state(false); // アップロード中の状態
+	let errorMessage: string = $state(''); // エラー通知メッセージ
 
 	const myCompletion = (context: CompletionContext) => {
 		{
