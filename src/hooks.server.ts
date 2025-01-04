@@ -2,12 +2,14 @@ import type { Handle } from '@sveltejs/kit';
 import { AdminEntryRepository } from '$lib/server/repository/AdminEntryRepository';
 import { BACKUP_ENCRYPTION_KEY } from '$lib/config';
 import { startBackup } from '$lib/server/backup';
+import { startAmazonShortURLRewriteWorker } from '$lib/server/worker/AmazonShortURLRewriteWorker';
 
 const encryptionKey = BACKUP_ENCRYPTION_KEY;
 if (encryptionKey) {
 	console.log('Starting backup...');
 	startBackup(encryptionKey);
 }
+startAmazonShortURLRewriteWorker();
 
 if (!process.env.BASIC_AUTH_USERNAME || !process.env.BASIC_AUTH_PASSWORD) {
 	console.error(
