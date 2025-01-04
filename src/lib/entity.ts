@@ -20,3 +20,6 @@ export type AmazonCache = {
 	image_medium_url: string | null;
 	link: string;
 };
+export type HasDestTitle = {
+	dst_title: string;
+};

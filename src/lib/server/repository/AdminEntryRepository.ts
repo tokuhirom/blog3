@@ -1,6 +1,6 @@
 import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import { db } from '$lib/server/db';
-import { type Entry, type EntryImageAware } from '$lib/entity';
+import { HasDestTitle, type Entry, type EntryImageAware } from '$lib/entity';
 import { format } from 'date-fns';
 import { extractLinks } from '$lib/extractLinks';
 import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
@@ -365,12 +365,3 @@ export class AdminEntryRepository {
 		return rows.map((it) => it.title);
 	}
 }
-
-export type HasDestTitle = {
-	dst_title: string;
-};
-
-export type TwoHopLink = {
-	src: Entry & HasDestTitle & EntryImageAware;
-	links: (Entry & EntryImageAware)[];
-};
