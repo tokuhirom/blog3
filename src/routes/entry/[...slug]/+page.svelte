@@ -41,7 +41,6 @@
 	}
 	.entry-body {
 		margin-top: 1rem;
-		white-space: pre-line;
 		color: #4a5568;
 	}
 	.entry-meta {
