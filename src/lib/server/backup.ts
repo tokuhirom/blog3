@@ -15,7 +15,7 @@ async function takeBackup(encryption_key: string) {
 	try {
 		// mysqldump コマンドを実行してバックアップを取る
 		await execCommand(
-			`mysqldump --set-gtid-purged=OFF --host=${process.env.DATABASE_HOST} --port=${process.env.DATABASE_PORT} --user=${process.env.DATABASE_USER} --password=${process.env.DATABASE_PASSWORD} ${process.env.DATABASE_NAME} > ${dump_file_name}`
+			`mysqldump --host=${process.env.DATABASE_HOST} --port=${process.env.DATABASE_PORT} --user=${process.env.DATABASE_USER} --password=${process.env.DATABASE_PASSWORD} ${process.env.DATABASE_NAME} > ${dump_file_name}`
 		);
 
 		// openssl コマンドで共通鍵暗号で暗号化する
