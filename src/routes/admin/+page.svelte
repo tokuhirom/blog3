@@ -4,7 +4,6 @@
 	import type { PageData } from './$types';
 	import { error } from '@sveltejs/kit';
 	import { onMount, onDestroy } from 'svelte';
-	import EntryCardItem from '../../lib/components/common/EntryCardItem.svelte';
 	import AdminEntryCardItem from './AdminEntryCardItem.svelte';
 
 	let searchKeyword = '';

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import EntryCardItem from '$lib/components/common/EntryCardItem.svelte';
 	import PublicEntryCardItem from '$lib/components/public/PublicEntryCardItem.svelte';
 	import { type LinkPalletData } from '$lib/LinkPallet';
 
