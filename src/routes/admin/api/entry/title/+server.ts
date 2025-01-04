@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ locals }) => {
 	try {
-		const titles = await locals.adminEntryRepository.getTitles();
+		const titles = await locals.adminEntryService.getTitles();
 		return new Response(JSON.stringify({ titles }), { status: 200 });
 	} catch (error) {
 		console.error(error);
