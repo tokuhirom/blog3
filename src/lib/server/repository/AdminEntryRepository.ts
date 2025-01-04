@@ -275,12 +275,24 @@ export class AdminEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	private async getLinkedEntries(srcPath: string): Promise<(HasDestTitle & Entry)[]> {
-		const [rows] = await db.query<(HasDestTitle & Entry)[] & RowDataPacket[]>(
+	private async getLinkedEntries(
+		srcPath: string
+	): Promise<(HasDestTitle & Entry & EntryImageAware)[]> {
+		const [rows] = await db.query<(HasDestTitle & Entry & EntryImageAware)[] & RowDataPacket[]>(
 			`
-			SELECT DISTINCT entry_link.dst_title AS dst_title, dest_entry.title title, dest_entry.path path, dest_entry.body, dest_entry.visibility, dest_entry.format, dest_entry.created_at, dest_entry.updated_at
+			SELECT DISTINCT
+				entry_link.dst_title AS dst_title,
+				dest_entry.title title,
+				dest_entry.path path,
+				dest_entry.body,
+				dest_entry.visibility,
+				dest_entry.format,
+				dest_entry.created_at,
+				dest_entry.updated_at,
+				entry_image.url AS image_url
 			FROM entry_link
 				LEFT JOIN entry dest_entry ON (dest_entry.title = entry_link.dst_title)
+				LEFT JOIN entry_image ON (dest_entry.path = entry_image.path)
 			WHERE entry_link.src_path = ?
 			`,
 			[srcPath]
@@ -338,9 +350,9 @@ export class AdminEntryRepository {
 	/**
 	 * このタイトルのエントリにリンクしているエントリのリストを取得する。
 	 */
-	private async getEntriesByLinkedTitle(targetTitle: string): Promise<Entry[]> {
+	private async getEntriesByLinkedTitle(targetTitle: string): Promise<(Entry & EntryImageAware)[]> {
 		console.log(`getEntriesByLinkedTitle: ${targetTitle}`);
-		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
+		const [rows] = await db.query<(Entry & EntryImageAware)[] & RowDataPacket[]>(
 			`
 			SELECT DISTINCT entry.*
 			FROM entry_link
@@ -358,16 +370,17 @@ export class AdminEntryRepository {
 	private async getEntriesByLinkedTitles(
 		origPath: string,
 		targetTitles: string[]
-	): Promise<(HasDestTitle & Entry)[]> {
+	): Promise<(HasDestTitle & Entry & EntryImageAware)[]> {
 		if (targetTitles.length === 0) {
 			return [];
 		}
 		const placeholders = targetTitles.map(() => 'LOWER(?)').join(', ');
-		const [rows] = await db.query<(HasDestTitle & Entry)[] & RowDataPacket[]>(
+		const [rows] = await db.query<(HasDestTitle & Entry & EntryImageAware)[] & RowDataPacket[]>(
 			`
-			SELECT DISTINCT dst_title, entry.*
+			SELECT DISTINCT dst_title, entry.*, entry_image.url AS image_url
 			FROM entry_link
 				INNER JOIN entry ON (entry.path = entry_link.src_path)
+				LEFT JOIN entry_image ON (entry.path = entry_image.path)
 			WHERE entry.path != ? AND LOWER(entry_link.dst_title) IN (${placeholders})
 				AND dst_title != LOWER(entry.title)
 			`,
@@ -392,6 +405,6 @@ export type HasDestTitle = {
 };
 
 export type TwoHopLink = {
-	src: Entry & HasDestTitle;
-	links: Entry[];
+	src: Entry & HasDestTitle & EntryImageAware;
+	links: (Entry & EntryImageAware)[];
 };

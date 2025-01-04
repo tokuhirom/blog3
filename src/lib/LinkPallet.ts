@@ -1,20 +1,20 @@
-import type { Entry } from './entity';
+import type { Entry, EntryImageAware } from './entity';
 import type { HasDestTitle, TwoHopLink } from './server/repository/AdminEntryRepository';
 
 export type LinkPalletData = {
 	newLinks: string[];
-	links: Entry[];
+	links: (Entry & EntryImageAware)[];
 	twohops: TwoHopLink[];
 };
 
 export function buildLinkPalletData(
-	links: (HasDestTitle & Entry)[],
-	reverseLinks: Entry[],
-	twohopEntries: (HasDestTitle & Entry)[],
+	links: (HasDestTitle & Entry & EntryImageAware)[],
+	reverseLinks: (Entry & EntryImageAware)[],
+	twohopEntries: (HasDestTitle & Entry & EntryImageAware)[],
 	targetPath: string
 ): LinkPalletData {
 	// twohopEntries を dst_title でグループ化
-	const twohopEntriesByTitle: { [key: string]: Entry[] } = {};
+	const twohopEntriesByTitle: { [key: string]: (Entry & EntryImageAware)[] } = {};
 	for (const entry of twohopEntries) {
 		if (!twohopEntriesByTitle[entry.dst_title.toLowerCase()]) {
 			twohopEntriesByTitle[entry.dst_title.toLowerCase()] = [];
@@ -22,7 +22,7 @@ export function buildLinkPalletData(
 		twohopEntriesByTitle[entry.dst_title.toLowerCase()].push(entry);
 	}
 
-	const resultLinks: Entry[] = [];
+	const resultLinks: (Entry & EntryImageAware)[] = [];
 	const resultTwoHops: TwoHopLink[] = [];
 	const newLinks: string[] = [];
 	const seenPath = new Set([targetPath]);

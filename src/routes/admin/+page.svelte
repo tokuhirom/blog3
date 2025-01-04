@@ -49,7 +49,7 @@
 				throw new Error('Failed to load more entries');
 			}
 
-			const newEntries: Entry[] = await response.json();
+			const newEntries: (Entry & EntryImageAware)[] = await response.json();
 			if (newEntries.length === 0) {
 				hasMore = false;
 			} else {
