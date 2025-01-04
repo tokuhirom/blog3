@@ -1,7 +1,7 @@
 <script lang="ts">
-	import EntryCardItem from './EntryCardItem.svelte';
-	import CardItem from './CardItem.svelte';
+	import CardItem from '../../lib/components/common/CardItem.svelte';
 	import { type LinkPalletData } from '$lib/LinkPallet';
+	import AdminEntryCardItem from './AdminEntryCardItem.svelte';
 
 	export let linkPallet: LinkPalletData;
 
@@ -32,13 +32,13 @@
 <div class="link-pallet">
 	<div class="one-hop-link">
 		{#each linkPallet.links as link}
-			<EntryCardItem entry={link} />
+			<AdminEntryCardItem entry={link} />
 		{/each}
 	</div>
 	{#each linkPallet.twohops as twohops}
 		<div class="two-hop-link">
 			{#if twohops.src.title}
-				<EntryCardItem entry={twohops.src} backgroundColor={'yellowgreen'} />
+				<AdminEntryCardItem entry={twohops.src} backgroundColor={'yellowgreen'} />
 			{:else}
 				<CardItem
 					onClick={() => createNewEntry(twohops.src.dst_title)}
@@ -49,7 +49,7 @@
 				/>
 			{/if}
 			{#each twohops.links as link}
-				<EntryCardItem entry={link} />
+				<AdminEntryCardItem entry={link} />
 			{/each}
 		</div>
 	{/each}

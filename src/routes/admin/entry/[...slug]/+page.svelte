@@ -5,7 +5,7 @@
 	import { debounce } from '$lib/utils';
 	import { beforeNavigate } from '$app/navigation';
 	import { type LinkPalletData } from '$lib/LinkPallet';
-	import LinkPallet from '../../LinkPallet.svelte';
+	import LinkPallet from '../../AdminLinkPallet.svelte';
 	import { onMount } from 'svelte';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';

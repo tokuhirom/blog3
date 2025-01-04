@@ -1,10 +1,15 @@
 import type { Entry, EntryImageAware } from './entity';
-import type { HasDestTitle, TwoHopLink } from './server/repository/AdminEntryRepository';
+import type { HasDestTitle } from './entity';
 
 export type LinkPalletData = {
 	newLinks: string[];
 	links: (Entry & EntryImageAware)[];
 	twohops: TwoHopLink[];
+};
+
+export type TwoHopLink = {
+	src: Entry & HasDestTitle & EntryImageAware;
+	links: (Entry & EntryImageAware)[];
 };
 
 export function buildLinkPalletData(

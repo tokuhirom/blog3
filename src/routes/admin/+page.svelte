@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 	import { error } from '@sveltejs/kit';
 	import { onMount, onDestroy } from 'svelte';
-	import EntryCardItem from './EntryCardItem.svelte';
+	import AdminEntryCardItem from './AdminEntryCardItem.svelte';
 
 	let searchKeyword = '';
 	let { data }: { data: PageData } = $props();
@@ -97,7 +97,7 @@
 	<SearchBox onSearch={handleSearch} />
 	<div class="entry-list">
 		{#each filteredEntries as entry (entry.path)}
-			<EntryCardItem {entry} />
+			<AdminEntryCardItem {entry} />
 		{/each}
 	</div>
 	{#if isLoading || hasMore}
