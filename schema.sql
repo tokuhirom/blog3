@@ -5,6 +5,7 @@ CREATE TABLE "entry" (
   "visibility" enum('private','public') DEFAULT 'private' NOT NULL,
   "format" enum('html','mkdn') NOT NULL DEFAULT 'mkdn',
   "published_at" datetime DEFAULT NULL,
+  last_edited_at datetime DEFAULT CURRENT_TIMESTAMP comment 'last manualy edited at',
   "created_at" datetime DEFAULT CURRENT_TIMESTAMP,
   "updated_at" datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY ("path"),
@@ -12,6 +13,7 @@ CREATE TABLE "entry" (
   KEY "created_at" ("created_at"),
   KEY "updated_at" ("updated_at"),
   KEY "published_at" ("published_at"),
+  KEY last_edited_at (last_edited_at),
   FULLTEXT KEY "idx_bigram" ("title","body") /*!50100 WITH PARSER "ngram" */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

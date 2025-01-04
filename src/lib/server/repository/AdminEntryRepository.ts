@@ -12,8 +12,9 @@ export class AdminEntryRepository {
 			FROM entry
 				LEFT JOIN entry_image ON (entry.path = entry_image.path)
 			ORDER BY
-				COALESCE(updated_at, entry.created_at) DESC
-				, path DESC LIMIT 100
+				last_edited_at DESC
+				, path DESC
+			LIMIT 100
 			`,
 			[]
 		);
@@ -24,7 +25,7 @@ export class AdminEntryRepository {
 	 * Get entries older than the given path.
 	 */
 	async getEntriesOlderThan(
-		last_updated_at: string,
+		last_last_edited_at: string,
 		limit: number
 	): Promise<(Entry & EntryImageAware)[]> {
 		const [rows] = await db.query<(Entry & EntryImageAware)[] & RowDataPacket[]>(
@@ -32,11 +33,11 @@ export class AdminEntryRepository {
 			SELECT entry.*, entry_image.url AS image_url
 			FROM entry
 				LEFT JOIN entry_image ON (entry.path = entry_image.path)
-			WHERE updated_at <= ?
-			ORDER BY updated_at DESC, path DESC
+			WHERE last_edited_at <= ?
+			ORDER BY last_edited_at DESC, path DESC
 			LIMIT ?
 			`,
-			[last_updated_at, limit]
+			[last_last_edited_at, limit]
 		);
 		return rows;
 	}
@@ -103,7 +104,7 @@ export class AdminEntryRepository {
 		const [result] = await db.query<ResultSetHeader>(
 			`
 			UPDATE entry
-			SET title = ?
+			SET title = ?, last_edited_at = NOW()
 			WHERE path = ?
 			`,
 			[data.title, path]
@@ -139,7 +140,7 @@ export class AdminEntryRepository {
 			const [result] = await conn.query<ResultSetHeader>(
 				`
 				UPDATE entry
-				SET body = ?
+				SET body = ?, last_edited_at = NOW()
 				WHERE path = ?
 				`,
 				[data.body, path]
