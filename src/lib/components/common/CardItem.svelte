@@ -2,7 +2,7 @@
 	let {
 		title,
 		content = '',
-		onClick = (event: MouseEvent) => {},
+		onClick = () => {},
 		backgroundColor = '#f6f6f6',
 		color = '#0f0f0f',
 		imgSrc = undefined
