@@ -3,7 +3,7 @@
 	import 'highlight.js/styles/github.css';
 	import PublicLinkPallet from './PublicLinkPallet.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>

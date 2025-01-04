@@ -3,7 +3,7 @@
 	import { type LinkPalletData } from '$lib/LinkPallet';
 	import AdminEntryCardItem from './AdminEntryCardItem.svelte';
 
-	export let linkPallet: LinkPalletData;
+	let { linkPallet }: { linkPallet: LinkPalletData } = $props();
 
 	function createNewEntry(title: string) {
 		fetch('/admin/api/entry', {

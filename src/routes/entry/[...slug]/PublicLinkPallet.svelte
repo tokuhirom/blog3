@@ -1,8 +1,8 @@
 <script lang="ts">
 	import PublicEntryCardItem from '$lib/components/public/PublicEntryCardItem.svelte';
-	import { type LinkPalletData } from '$lib/LinkPallet';
+	import type { LinkPalletData } from '$lib/LinkPallet';
 
-	export let linkPallet: LinkPalletData;
+	let { linkPallet }: { linkPallet: LinkPalletData } = $props();
 </script>
 
 <div class="link-pallet">
