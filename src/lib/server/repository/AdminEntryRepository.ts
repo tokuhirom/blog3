@@ -1,14 +1,20 @@
 import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import { db } from '$lib/server/db';
-import { type Entry } from '$lib/entity';
+import { type Entry, type EntryImageAware } from '$lib/entity';
 import { format } from 'date-fns';
 import { extractLinks } from '$lib/extractLinks';
 import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
 
 export class AdminEntryRepository {
-	async getLatestEntries(): Promise<Entry[]> {
-		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
-			'SELECT * FROM entry ORDER BY COALESCE(updated_at, created_at) DESC, path DESC LIMIT 100',
+	async getLatestEntries(): Promise<(EntryImageAware & Entry)[]> {
+		const [rows] = await db.query<(EntryImageAware & Entry)[] & RowDataPacket[]>(
+			`SELECT entry.*, entry_image.url AS image_url
+			FROM entry
+				LEFT JOIN entry_image ON (entry.path = entry_image.path)
+			ORDER BY
+				COALESCE(updated_at, entry.created_at) DESC
+				, path DESC LIMIT 100
+			`,
 			[]
 		);
 		return rows;
@@ -17,10 +23,15 @@ export class AdminEntryRepository {
 	/**
 	 * Get entries older than the given path.
 	 */
-	async getEntriesOlderThan(last_updated_at: string, limit: number): Promise<Entry[]> {
-		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
+	async getEntriesOlderThan(
+		last_updated_at: string,
+		limit: number
+	): Promise<(Entry & EntryImageAware)[]> {
+		const [rows] = await db.query<(Entry & EntryImageAware)[] & RowDataPacket[]>(
 			`
-			SELECT * FROM entry
+			SELECT entry.*, entry_image.url AS image_url
+			FROM entry
+				LEFT JOIN entry_image ON (entry.path = entry_image.path)
 			WHERE updated_at <= ?
 			ORDER BY updated_at DESC, path DESC
 			LIMIT ?

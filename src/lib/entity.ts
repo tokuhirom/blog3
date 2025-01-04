@@ -9,6 +9,10 @@ export type Entry = {
 	published_at: string | null;
 };
 
+export type EntryImageAware = {
+	image_url: string | null;
+};
+
 export type AmazonCache = {
 	asin: string;
 	title: string | null;
