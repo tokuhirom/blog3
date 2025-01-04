@@ -43,7 +43,7 @@
 
 		try {
 			const response = await fetch(
-				`/admin/api/entry?last_updated_at=${encodeURIComponent(last_last_edited_at)}`
+				`/admin/api/entry?last_last_edited_at=${encodeURIComponent(last_last_edited_at)}`
 			);
 			if (!response.ok) {
 				throw new Error('Failed to load more entries');
