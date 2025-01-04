@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let title: string | undefined;
 	export let content: string | undefined;
-	export let onClick: () => void;
+	export let onClick: (event: MouseEvent) => void;
 	export let backgroundColor = '#f6f6f6';
 	export let color = '#0f0f0f';
 
