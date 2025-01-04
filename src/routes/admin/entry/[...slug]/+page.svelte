@@ -404,6 +404,8 @@
 				</div>
 			{/if}
 		</div>
+
+		<LinkPallet {linkPallet} />
 	</div>
 
 	{#if message}
@@ -411,8 +413,6 @@
 			<p>{message}</p>
 		</div>
 	{/if}
-
-	<LinkPallet {linkPallet} />
 </div>
 
 <style>
