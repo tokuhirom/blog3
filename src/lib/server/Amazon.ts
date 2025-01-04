@@ -1,6 +1,7 @@
 import { AMAZON_SECRET_KEY, AMAZON_ACCESS_KEY } from '$lib/config';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { type GetItemsResponse } from '$lib/entities/getitems';
 
 const execAsync = promisify(exec);
 
@@ -18,6 +19,7 @@ const credentials = {
 	marketplace: 'www.amazon.co.jp'
 };
 
+// blog3 で使う型
 export type AmazonProductDetail = {
 	asin: string;
 	title: string | undefined | null;
@@ -41,7 +43,7 @@ export async function fetchProductDetails(asin: string): Promise<AmazonProductDe
 		const { stdout } = await execAsync(command);
 
 		// 標準出力を JSON としてパース
-		const response = JSON.parse(stdout);
+		const response: GetItemsResponse = JSON.parse(stdout);
 
 		if (
 			!response ||
