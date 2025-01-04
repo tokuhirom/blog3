@@ -18,7 +18,7 @@ RUN npm run build
 RUN apt-get update && apt-get install -y cpanminus
 
 # cpanminus を動かして amazon 用のライブラリをインストールする
-RUN cd amazon-batch/ && cpanm --notest -L extlib --installdeps .
+RUN cd amazon-batch/ && cpanm --notest --no-man-pages -L extlib --installdeps .
 
 # 実行用の軽量なイメージを作成
 FROM node:22 AS release
