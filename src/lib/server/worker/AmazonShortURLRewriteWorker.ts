@@ -16,10 +16,11 @@ async function doRewrite(): Promise<void> {
 		if (!m) {
 			continue;
 		}
+		let newBody = body;
 		for (const url of m) {
 			console.log(`Rewriting ${url}`);
 			const asin = await amazonShortUrlToAsin(url);
-			const newBody = body.replace(url, `[asin:${asin}:detail]`);
+			newBody = newBody.replace(url, `[asin:${asin}:detail]`);
 
 			console.log(`########## Rewriting ${url} to [asin:${asin}:detail]`);
 			console.log(newBody);
