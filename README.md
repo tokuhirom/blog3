@@ -47,6 +47,8 @@ tokuhirom の blog のソースコードです。
 | `BASIC_AUTH_USERNAME`        | 必須      | なし                                | Basic 認証のユーザー名                 |
 | `BASIC_AUTH_PASSWORD`        | 必須      | なし                                | Basic 認証のパスワード                 |
 | `BACKUP_ENCRYPTION_KEY`      | 任意      | なし                                | バックアップの暗号化キー               |
+| `AMAZON_ACCESS_KEY`          | 任意      | なし                                | Amazon PAAPI5 のアクセスキー           |
+| `AMAZON_SECRET_KEY`          | 任意      | なし                                | Amazon PAAPI5 のシークレットキー       |
 
 ## Run locally
 
