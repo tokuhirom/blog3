@@ -1,14 +1,14 @@
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const last_updated_at = url.searchParams.get('last_updated_at');
-	if (!last_updated_at) {
-		return new Response(JSON.stringify({ error: 'Missing last_updated_at' }), { status: 400 });
+	const last_last_edited_at = url.searchParams.get('last_last_edited_at');
+	if (!last_last_edited_at) {
+		return new Response(JSON.stringify({ error: 'Missing last_last_edited_at' }), { status: 400 });
 	}
 
 	const limit = 300;
 	try {
-		const rows = await locals.adminEntryRepository.getEntriesOlderThan(last_updated_at, limit);
+		const rows = await locals.adminEntryRepository.getEntriesOlderThan(last_last_edited_at, limit);
 		return new Response(JSON.stringify(rows), { status: 200 });
 	} catch (error) {
 		console.error(error);
