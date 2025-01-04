@@ -3,6 +3,7 @@ import { AdminEntryRepository } from '$lib/server/repository/AdminEntryRepositor
 import { BACKUP_ENCRYPTION_KEY } from '$lib/config';
 import { startBackup } from '$lib/server/backup';
 import { startAmazonShortURLRewriteWorker } from '$lib/server/worker/AmazonShortURLRewriteWorker';
+import { startEntryImageWorker } from '$lib/server/worker/EntryImageWorker';
 
 const encryptionKey = BACKUP_ENCRYPTION_KEY;
 if (encryptionKey) {
@@ -10,6 +11,7 @@ if (encryptionKey) {
 	startBackup(encryptionKey);
 }
 startAmazonShortURLRewriteWorker();
+startEntryImageWorker();
 
 if (!process.env.BASIC_AUTH_USERNAME || !process.env.BASIC_AUTH_PASSWORD) {
 	console.error(

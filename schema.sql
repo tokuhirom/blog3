@@ -15,6 +15,15 @@ CREATE TABLE "entry" (
   FULLTEXT KEY "idx_bigram" ("title","body") /*!50100 WITH PARSER "ngram" */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+create table entry_image (
+  path varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+  url varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  created_at datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (path),
+  KEY created_at (created_at),
+  FOREIGN KEY (path) REFERENCES entry(path) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 create table entry_link (
   src_path varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
   dst_title varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,

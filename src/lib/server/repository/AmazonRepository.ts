@@ -50,3 +50,20 @@ export async function getNotProcessedAsins() {
 	const existingAsins = new Set(existingRows.map((row) => row.asin));
 	return asinArray.filter((asin) => !existingAsins.has(asin));
 }
+
+export class AmazonRepository {
+	async getAsinImage(asin: string): Promise<string | null> {
+		const [rows] = await db.query<RowDataPacket[]>(
+			`
+            SELECT image_medium_url
+            FROM amazon_cache
+            WHERE asin = ?
+            `,
+			[asin]
+		);
+		if (rows.length === 0) {
+			return null;
+		}
+		return rows[0].image_medium_url;
+	}
+}
