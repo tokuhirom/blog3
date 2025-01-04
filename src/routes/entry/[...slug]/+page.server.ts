@@ -8,7 +8,7 @@ export const load: PageServerLoad = async (params) => {
 	const path = params.params.slug;
 
 	const entry = await PublicEntryRepository.getEntry(path);
-	const links = await PublicEntryRepository.getLinksBySrcPath(path);
+	const links = await PublicEntryRepository.getLinkedEntryPaths(path);
 
 	if (entry === null) {
 		error(404, {

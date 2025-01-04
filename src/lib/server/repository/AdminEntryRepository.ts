@@ -3,6 +3,7 @@ import { db } from '$lib/server/db';
 import { type Entry } from '$lib/entity';
 import { format } from 'date-fns';
 import { extractLinks } from '$lib/extractLinks';
+import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
 
 export class AdminEntryRepository {
 	async getLatestEntries(): Promise<Entry[]> {
@@ -263,7 +264,7 @@ export class AdminEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	private async getLinksBySrcPath2(srcPath: string): Promise<(HasDestTitle & Entry)[]> {
+	private async getLinkedEntries(srcPath: string): Promise<(HasDestTitle & Entry)[]> {
 		const [rows] = await db.query<(HasDestTitle & Entry)[] & RowDataPacket[]>(
 			`
 			SELECT DISTINCT entry_link.dst_title AS dst_title, dest_entry.title title, dest_entry.path path, dest_entry.body, dest_entry.visibility, dest_entry.format, dest_entry.created_at, dest_entry.updated_at
@@ -282,9 +283,9 @@ export class AdminEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	async getLinksBySrcPath(srcPath: string): Promise<{ [key: string]: string | null }> {
+	async getLinkedEntryPaths(srcPath: string): Promise<{ [key: string]: string | null }> {
 		const links: { [key: string]: string | null } = {};
-		(await this.getLinksBySrcPath2(srcPath)).forEach((row) => {
+		(await this.getLinkedEntries(srcPath)).forEach((row) => {
 			links[row.dst_title.toLowerCase()] = row.path;
 		});
 		return links;
@@ -293,13 +294,13 @@ export class AdminEntryRepository {
 	/**
 	 * Get two hop links from the entry.
 	 */
-	async getTwoHopLinksBySrcPath(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
+	async getLinkPalletData(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
 		if (!targetTitle) {
 			throw new Error('Missing targetTitle');
 		}
 
 		// このエントリがリンクしているページのリストを取得
-		const links = await this.getLinksBySrcPath2(targetPath);
+		const links = await this.getLinkedEntries(targetPath);
 		console.log(
 			'links:',
 			links.map((link) => link.dst_title)
@@ -319,53 +320,8 @@ export class AdminEntryRepository {
 			'twohopEntries:',
 			twohopEntries.map((link) => 'dest=' + link.dst_title + ' ' + link.title)
 		);
-		// twohopEntries を dst_title でグループ化
-		const twohopEntriesByTitle: { [key: string]: Entry[] } = {};
-		for (const entry of twohopEntries) {
-			if (!twohopEntriesByTitle[entry.dst_title.toLowerCase()]) {
-				twohopEntriesByTitle[entry.dst_title.toLowerCase()] = [];
-			}
-			twohopEntriesByTitle[entry.dst_title.toLowerCase()].push(entry);
-		}
 
-		const resultLinks: Entry[] = [];
-		const resultTwoHops: TwoHopLink[] = [];
-		const newLinks: string[] = [];
-		const seenPath = new Set([targetPath]);
-
-		// twohopEntries に入っているエントリのリストを作成
-		for (const link of links) {
-			if (link.path) {
-				seenPath.add(link.path);
-			}
-
-			if (twohopEntriesByTitle[link.dst_title.toLowerCase()]) {
-				resultTwoHops.push({
-					src: link,
-					links: twohopEntriesByTitle[link.dst_title.toLowerCase()]
-				});
-				for (const entry of twohopEntriesByTitle[link.dst_title.toLowerCase()]) {
-					seenPath.add(entry.path);
-				}
-			} else {
-				if (link.body) {
-					resultLinks.push(link);
-				} else {
-					newLinks.push(link.dst_title);
-				}
-			}
-		}
-		for (const reverseLink of reverseLinks) {
-			if (!seenPath.has(reverseLink.path)) {
-				resultLinks.push(reverseLink);
-			}
-		}
-
-		return {
-			newLinks: Array.from(new Set(newLinks)),
-			links: Array.from(new Set(resultLinks)),
-			twohops: resultTwoHops
-		};
+		return buildLinkPalletData(links, reverseLinks, twohopEntries, targetPath);
 	}
 
 	/**
@@ -427,11 +383,4 @@ export type HasDestTitle = {
 export type TwoHopLink = {
 	src: Entry & HasDestTitle;
 	links: Entry[];
-};
-
-// 名前が良くない
-export type LinkPalletData = {
-	newLinks: string[];
-	links: Entry[];
-	twohops: TwoHopLink[];
 };
