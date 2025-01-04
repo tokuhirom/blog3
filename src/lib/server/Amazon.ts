@@ -27,20 +27,28 @@ export type AmazonProductDetail = {
 	link: string;
 };
 
-export async function fetchProductDetails(asin: string): Promise<AmazonProductDetail> {
+export async function fetchProductDetails(
+	asins: string[]
+): Promise<Record<string, AmazonProductDetail>> {
 	if (!credentials.accessKey || !credentials.secretKey) {
 		throw new Error(`Missing AMAZON_ACCESS_KEY or AMAZON_SECRET_KEY`);
 	}
 	console.log(credentials);
 
-	if (!/^[a-zA-Z0-9]+$/.test(asin)) {
-		throw new Error(`Invalid ASIN: ${asin}`);
+	if (asins.length > 10) {
+		throw new Error('Maximum of 10 ASINs can be processed at once');
 	}
 
-	const command = `perl amazon-batch/getitems.pl ${asin}`;
+	const invalidAsins = asins.filter((asin) => !/^[a-zA-Z0-9]+$/.test(asin));
+	if (invalidAsins.length > 0) {
+		throw new Error(`Invalid ASINs: ${invalidAsins.join(', ')}`);
+	}
+
+	const command = `perl amazon-batch/getitems.pl ${asins.join(' ')}`;
+	console.log(`Running command: ${command}`);
 	try {
 		// 外部コマンドを実行
-		const { stdout } = await execAsync(command);
+		const { stdout, stderr } = await execAsync(command);
 
 		// 標準出力を JSON としてパース
 		const response: GetItemsResponse = JSON.parse(stdout);
@@ -51,16 +59,21 @@ export async function fetchProductDetails(asin: string): Promise<AmazonProductDe
 			!response.ItemsResult.Items ||
 			response.ItemsResult.Items.length === 0
 		) {
-			throw new Error('Invalid response from external command');
+			throw new Error(`Invalid response from external command: ${stdout}, ${stderr}`);
 		}
 
-		const item = response.ItemsResult.Items[0];
-		return {
-			asin: asin,
-			title: item.ItemInfo?.Title?.DisplayValue,
-			image_medium_url: item.Images?.Primary?.Medium?.URL,
-			link: `https://www.amazon.co.jp/dp/${asin}?tag=${credentials.partnerTag}`
-		};
+		// ASINをキーとしたオブジェクトを生成
+		const productDetailsMap: Record<string, AmazonProductDetail> = {};
+		for (const item of response.ItemsResult.Items) {
+			productDetailsMap[item.ASIN] = {
+				asin: item.ASIN,
+				title: item.ItemInfo?.Title?.DisplayValue,
+				image_medium_url: item.Images?.Primary?.Medium?.URL,
+				link: item.DetailPageURL
+			};
+		}
+
+		return productDetailsMap;
 	} catch (error) {
 		console.error('Failed to fetch product details', error);
 		throw new Error('Failed to fetch product details');

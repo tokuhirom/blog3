@@ -7,9 +7,17 @@ export const GET: RequestHandler = async () => {
 	try {
 		const asins = await getNotProcessedAsins();
 		if (asins.length > 0) {
-			const fromApi = await fetchProductDetails(asins[0]);
-			await insertProductDetail(fromApi);
-			return new Response(JSON.stringify(fromApi), { status: 200 });
+			const asinsToProcess = asins.slice(0, 10);
+			const productDetailsMap = await fetchProductDetails(asinsToProcess);
+			for (const asin of asinsToProcess) {
+				const productDetail = productDetailsMap[asin];
+				if (productDetail) {
+					await insertProductDetail(productDetail);
+				} else {
+					console.warn(`No product detail found for ASIN: ${asin}`);
+				}
+			}
+			return new Response(JSON.stringify(productDetailsMap), { status: 200 });
 		} else {
 			return new Response(JSON.stringify({ error: 'No data' }), { status: 500 });
 		}
