@@ -1,9 +1,8 @@
 import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql2/promise';
 import { db } from '$lib/server/db';
-import { HasDestTitle, type Entry, type EntryImageAware } from '$lib/entity';
+import { type Entry, type EntryImageAware, type HasDestTitle } from '$lib/entity';
 import { format } from 'date-fns';
 import { extractLinks } from '$lib/extractLinks';
-import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
 
 export class AdminEntryRepository {
 	async getLatestEntries(): Promise<(EntryImageAware & Entry)[]> {
