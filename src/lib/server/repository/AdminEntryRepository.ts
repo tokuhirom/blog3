@@ -276,9 +276,7 @@ export class AdminEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	private async getLinkedEntries(
-		srcPath: string
-	): Promise<(HasDestTitle & Entry & EntryImageAware)[]> {
+	async getLinkedEntries(srcPath: string): Promise<(HasDestTitle & Entry & EntryImageAware)[]> {
 		const [rows] = await db.query<(HasDestTitle & Entry & EntryImageAware)[] & RowDataPacket[]>(
 			`
 			SELECT DISTINCT
@@ -316,42 +314,9 @@ export class AdminEntryRepository {
 	}
 
 	/**
-	 * Get two hop links from the entry.
-	 */
-	async getLinkPalletData(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
-		if (!targetTitle) {
-			throw new Error('Missing targetTitle');
-		}
-
-		// このエントリがリンクしているページのリストを取得
-		const links = await this.getLinkedEntries(targetPath);
-		console.log(
-			'links:',
-			links.map((link) => link.dst_title)
-		);
-		// このエントリにリンクしているページのリストを取得
-		const reverseLinks = await this.getEntriesByLinkedTitle(targetTitle);
-		console.log(
-			'reverseLinks:',
-			reverseLinks.map((link) => link.title)
-		);
-		// links の指す先のタイトルにリンクしているエントリのリストを取得
-		const twohopEntries = await this.getEntriesByLinkedTitles(
-			targetPath,
-			links.map((link) => link.dst_title.toLowerCase())
-		);
-		console.log(
-			'twohopEntries:',
-			twohopEntries.map((link) => 'dest=' + link.dst_title + ' ' + link.title)
-		);
-
-		return buildLinkPalletData(links, reverseLinks, twohopEntries, targetPath);
-	}
-
-	/**
 	 * このタイトルのエントリにリンクしているエントリのリストを取得する。
 	 */
-	private async getEntriesByLinkedTitle(targetTitle: string): Promise<(Entry & EntryImageAware)[]> {
+	async getEntriesByLinkedTitle(targetTitle: string): Promise<(Entry & EntryImageAware)[]> {
 		console.log(`getEntriesByLinkedTitle: ${targetTitle}`);
 		const [rows] = await db.query<(Entry & EntryImageAware)[] & RowDataPacket[]>(
 			`
@@ -368,7 +333,7 @@ export class AdminEntryRepository {
 	/**
 	 * このタイトルのエントリにリンクしているエントリのリストを取得する。
 	 */
-	private async getEntriesByLinkedTitles(
+	async getEntriesByLinkedTitles(
 		origPath: string,
 		targetTitles: string[]
 	): Promise<(HasDestTitle & Entry & EntryImageAware)[]> {
