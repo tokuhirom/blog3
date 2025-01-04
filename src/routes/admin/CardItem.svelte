@@ -5,7 +5,7 @@
 	export let backgroundColor = '#f6f6f6';
 	export let color = '#0f0f0f';
 
-	export let imgSrc: string | undefined = undefined;
+	export let imgSrc: string | undefined | null = undefined;
 </script>
 
 <button

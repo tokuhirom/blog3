@@ -10,6 +10,10 @@ export type Entry = {
 	last_edited_at: string;
 };
 
+export type EntryImageAware = {
+	image_url: string | null;
+};
+
 export type AmazonCache = {
 	asin: string;
 	title: string | null;
