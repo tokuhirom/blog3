@@ -5,8 +5,14 @@
 	export let entry: Entry;
 	export let backgroundColor = entry.visibility == 'private' ? '#cccccc' : '#f6f6f6';
 	export let color = '#0f0f0f';
-	export let onClick: () => void = function () {
-		location.href = '/admin/entry/' + entry.path;
+	export let onClick: (event: MouseEvent) => void = function (event: MouseEvent) {
+		if (event.metaKey || event.ctrlKey) {
+			// Commandキー (Mac) または Ctrlキー (Windows/Linux) が押されている場合、別タブで開く
+			window.open('/admin/entry/' + entry.path, '_blank');
+		} else {
+			// 通常クリック時は同じタブで開く
+			location.href = '/admin/entry/' + entry.path;
+		}
 	};
 
 	let title = entry.title;
