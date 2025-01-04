@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SearchBox from './SearchBox.svelte';
-	import { type Entry } from '$lib/entity';
+	import { type Entry, type EntryImageAware } from '$lib/entity';
 	import type { PageData } from './$types';
 	import { error } from '@sveltejs/kit';
 	import { onMount, onDestroy } from 'svelte';
@@ -13,8 +13,8 @@
 		error(500, 'Missing entries data');
 	}
 
-	let allEntries: Entry[] = $state(data.entries);
-	let filteredEntries: Entry[] = $state(data.entries);
+	let allEntries: (Entry & EntryImageAware)[] = $state(data.entries);
+	let filteredEntries: (Entry & EntryImageAware)[] = $state(data.entries);
 
 	let isLoading = $state(false);
 	let hasMore = $state(true);
