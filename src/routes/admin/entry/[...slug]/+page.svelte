@@ -404,8 +404,6 @@
 				</div>
 			{/if}
 		</div>
-
-		<LinkPallet {linkPallet} />
 	</div>
 
 	{#if message}
@@ -413,9 +411,18 @@
 			<p>{message}</p>
 		</div>
 	{/if}
+
+	<div class="link-pallet-container">
+		<LinkPallet {linkPallet} />
+	</div>
 </div>
 
 <style>
+	.link-pallet-container {
+		max-width: 1200px;
+		margin: auto;
+	}
+
 	.container {
 		display: flex;
 		flex-wrap: wrap;
