@@ -30,11 +30,11 @@
 <style>
 	.container {
 		margin: 0 auto;
-		max-width: 48rem;
+		max-width: 1200px;
+		margin-top: 40px;
 	}
 	.container-wrapper {
 		margin: 0 auto;
-		max-width: 48rem;
 		border-radius: 0.5rem;
 		background-color: white;
 		padding: 1rem;
