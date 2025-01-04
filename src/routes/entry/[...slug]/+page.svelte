@@ -16,10 +16,8 @@
 		{@html data.body}
 	</p>
 	<div class="entry-meta">
-		<div>Created: <span class="entry-date">{data.entry.created_at}</span></div>
-		{#if data.entry.updated_at !== null}
-			<div>Updated: <span class="entry-date">{data.entry.updated_at}</span></div>
-		{/if}
+		<div>Published: <span class="entry-date">{data.entry.published_at}</span></div>
+		<div>Updated: <span class="entry-date">{data.entry.last_edited_at}</span></div>
 	</div>
 </div>
 
