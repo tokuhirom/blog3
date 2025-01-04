@@ -13,7 +13,7 @@ export async function amazonShortUrlToAsin(url: string): Promise<string> {
 		}
 
 		// Extract the ASIN from the URL using a regular expression
-		const asinMatch = location.match(/\/(dp|product)\/([A-Z0-9]{10})/);
+		const asinMatch = location.match(/\/(?:dp|product)\/([A-Z0-9]{10})/);
 		if (!asinMatch) {
 			throw new Error('ASIN not found in the Location URL');
 		}
