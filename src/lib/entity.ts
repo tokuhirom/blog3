@@ -8,3 +8,10 @@ export type Entry = {
 	updated_at: string | null;
 	published_at: string | null;
 };
+
+export type AmazonCache = {
+	asin: string;
+	title: string | null;
+	image_medium_url: string | null;
+	link: string;
+};

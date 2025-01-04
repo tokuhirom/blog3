@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 
 	import MarkdownEditor from '$lib/components/admin/MarkdownEditor.svelte';
-	import { extractLinks } from '$lib/markdown';
+	import { extractLinks } from '$lib/extractLinks';
 
 	let { data }: { data: PageData } = $props();
 	if (!data.entry) {

@@ -2,7 +2,7 @@ import { type Connection, type ResultSetHeader, type RowDataPacket } from 'mysql
 import { db } from '$lib/server/db';
 import { type Entry } from '$lib/entity';
 import { format } from 'date-fns';
-import { extractLinks } from '$lib/markdown';
+import { extractLinks } from '$lib/extractLinks';
 
 export class AdminEntryRepository {
 	async getLatestEntries(): Promise<Entry[]> {
