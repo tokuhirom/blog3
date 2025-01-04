@@ -7,6 +7,7 @@ export type Entry = {
 	created_at: string;
 	updated_at: string | null;
 	published_at: string | null;
+	last_edited_at: string;
 };
 
 export type AmazonCache = {

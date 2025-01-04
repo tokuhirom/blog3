@@ -34,8 +34,8 @@
 
 		isLoading = true;
 
-		const last_updated_at = allEntries[allEntries.length - 1]?.updated_at;
-		if (!last_updated_at) {
+		const last_last_edited_at = allEntries[allEntries.length - 1]?.last_edited_at;
+		if (!last_last_edited_at) {
 			isLoading = false;
 			hasMore = false;
 			return;
@@ -43,7 +43,7 @@
 
 		try {
 			const response = await fetch(
-				`/admin/api/entry?last_updated_at=${encodeURIComponent(last_updated_at)}`
+				`/admin/api/entry?last_updated_at=${encodeURIComponent(last_last_edited_at)}`
 			);
 			if (!response.ok) {
 				throw new Error('Failed to load more entries');
@@ -57,7 +57,7 @@
 				const addingNewEntries = newEntries.filter((entry) => !existingPaths.includes(entry.path));
 				if (addingNewEntries.length == 0) {
 					console.log(
-						`All entries are duplicated... stopping loading more entries. last_updated_at=${last_updated_at}, newEntries=${newEntries.map((entry) => entry.title)}`
+						`All entries are duplicated... stopping loading more entries. last_last_edited_at=${last_last_edited_at}, newEntries=${newEntries.map((entry) => entry.title)}`
 					);
 					hasMore = false;
 				} else {

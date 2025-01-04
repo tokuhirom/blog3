@@ -8,7 +8,7 @@ import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
 export class AdminEntryRepository {
 	async getLatestEntries(): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
-			'SELECT * FROM entry ORDER BY COALESCE(updated_at, created_at) DESC, path DESC LIMIT 100',
+			'SELECT * FROM entry ORDER BY last_edited_at DESC, path DESC LIMIT 100',
 			[]
 		);
 		return rows;
@@ -17,15 +17,15 @@ export class AdminEntryRepository {
 	/**
 	 * Get entries older than the given path.
 	 */
-	async getEntriesOlderThan(last_updated_at: string, limit: number): Promise<Entry[]> {
+	async getEntriesOlderThan(last_last_edited_at: string, limit: number): Promise<Entry[]> {
 		const [rows] = await db.query<Entry[] & RowDataPacket[]>(
 			`
 			SELECT * FROM entry
-			WHERE updated_at <= ?
-			ORDER BY updated_at DESC, path DESC
+			WHERE last_edited_at <= ?
+			ORDER BY last_edited_at DESC, path DESC
 			LIMIT ?
 			`,
-			[last_updated_at, limit]
+			[last_last_edited_at, limit]
 		);
 		return rows;
 	}
@@ -92,7 +92,7 @@ export class AdminEntryRepository {
 		const [result] = await db.query<ResultSetHeader>(
 			`
 			UPDATE entry
-			SET title = ?
+			SET title = ?, last_edited_at = NOW()
 			WHERE path = ?
 			`,
 			[data.title, path]
@@ -128,7 +128,7 @@ export class AdminEntryRepository {
 			const [result] = await conn.query<ResultSetHeader>(
 				`
 				UPDATE entry
-				SET body = ?
+				SET body = ?, last_edited_at = NOW()
 				WHERE path = ?
 				`,
 				[data.body, path]
