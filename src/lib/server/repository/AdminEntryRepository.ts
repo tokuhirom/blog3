@@ -263,7 +263,7 @@ export class AdminEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	private async getLinksBySrcPath2(srcPath: string): Promise<(HasDestTitle & Entry)[]> {
+	private async getLinkedEntries(srcPath: string): Promise<(HasDestTitle & Entry)[]> {
 		const [rows] = await db.query<(HasDestTitle & Entry)[] & RowDataPacket[]>(
 			`
 			SELECT DISTINCT entry_link.dst_title AS dst_title, dest_entry.title title, dest_entry.path path, dest_entry.body, dest_entry.visibility, dest_entry.format, dest_entry.created_at, dest_entry.updated_at
@@ -282,9 +282,9 @@ export class AdminEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	async getLinksBySrcPath(srcPath: string): Promise<{ [key: string]: string | null }> {
+	async getLinkedEntryPaths(srcPath: string): Promise<{ [key: string]: string | null }> {
 		const links: { [key: string]: string | null } = {};
-		(await this.getLinksBySrcPath2(srcPath)).forEach((row) => {
+		(await this.getLinkedEntries(srcPath)).forEach((row) => {
 			links[row.dst_title.toLowerCase()] = row.path;
 		});
 		return links;
@@ -299,7 +299,7 @@ export class AdminEntryRepository {
 		}
 
 		// このエントリがリンクしているページのリストを取得
-		const links = await this.getLinksBySrcPath2(targetPath);
+		const links = await this.getLinkedEntries(targetPath);
 		console.log(
 			'links:',
 			links.map((link) => link.dst_title)

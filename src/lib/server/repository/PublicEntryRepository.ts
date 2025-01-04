@@ -88,7 +88,7 @@ export class PublicEntryRepository {
 	 * @param srcPath The path of the entry
 	 * @returns Object. Key is the title of the destination entry(lower cased). Value is the path of the destination entry.
 	 */
-	static async getLinksBySrcPath(srcPath: string): Promise<{ [key: string]: string | null }> {
+	static async getLinkedEntryPaths(srcPath: string): Promise<{ [key: string]: string | null }> {
 		const [rows] = await db.query<RowDataPacket[]>(
 			`
 			SELECT entry_link.dst_title, dest_entry.path dst_path
