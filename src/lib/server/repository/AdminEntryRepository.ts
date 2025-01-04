@@ -293,7 +293,7 @@ export class AdminEntryRepository {
 	/**
 	 * Get two hop links from the entry.
 	 */
-	async getTwoHopLinksBySrcPath(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
+	async getLinkPalletData(targetPath: string, targetTitle: string): Promise<LinkPalletData> {
 		if (!targetTitle) {
 			throw new Error('Missing targetTitle');
 		}
