@@ -10,6 +10,15 @@ function convertJstToUtc(jstDatetime: string): string {
 	return jstDate.toUTCString();
 }
 
+function escapeHtml(str: string): string {
+	return str
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
+}
+
 export const GET: RequestHandler = async () => {
 	const { entries } = await PublicEntryRepository.getPaginatedEntry(1, 30);
 
@@ -58,7 +67,7 @@ export const GET: RequestHandler = async () => {
 			.txt(`https://blog.64p.org/entry/${entry.path}`)
 			.up()
 			.ele('description')
-			.txt(text)
+			.txt(escapeHtml(text))
 			.up()
 			.ele('content:encoded')
 			.dat(html)
