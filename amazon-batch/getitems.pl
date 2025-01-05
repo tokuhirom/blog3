@@ -58,11 +58,11 @@ __END__
 
 =head1 NAME
 
-main.pl - Get information from Amazon API
+getitems.pl - Get information from Amazon API
 
 =head1 SYNOPSIS
 
-    AMAZON_ACCESS_KEY=... AMAZON_SECRET_KEY=... perl main.pl B01M2BOZDL B0DNVYNZ2M
+    AMAZON_ACCESS_KEY=... AMAZON_SECRET_KEY=... perl getitems.pl B01M2BOZDL B0DNVYNZ2M
 
 =head1 DESCRIPTION
 
