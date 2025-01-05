@@ -2,21 +2,11 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { create } from 'xmlbuilder2';
 import { PublicEntryRepository } from '$lib/server/repository/PublicEntryRepository';
 import { renderHTMLByEntry } from '$lib/server/markdown';
-import { convert } from 'html-to-text';
 
 function convertJstToUtc(jstDatetime: string): string {
 	// jsDateTime is comming from mysql's DATETIME column.
 	const jstDate = new Date(`${jstDatetime} GMT+0900`);
 	return jstDate.toUTCString();
-}
-
-function escapeHtml(str: string): string {
-	return str
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&#39;');
 }
 
 export const GET: RequestHandler = async () => {
@@ -54,9 +44,6 @@ export const GET: RequestHandler = async () => {
 	// エントリを追加
 	for (const entry of entries) {
 		const html = await renderHTMLByEntry(entry, {});
-		const text = convert(html, {
-			wordwrap: 80 // テキストの行幅を設定
-		});
 
 		feed
 			.ele('item')
@@ -67,7 +54,7 @@ export const GET: RequestHandler = async () => {
 			.txt(`https://blog.64p.org/entry/${entry.path}`)
 			.up()
 			.ele('description')
-			.txt(escapeHtml(text))
+			.txt('')
 			.up()
 			.ele('content:encoded')
 			.dat(html)
