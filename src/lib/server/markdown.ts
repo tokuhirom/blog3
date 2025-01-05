@@ -151,7 +151,11 @@ function buildEntryLinkPlugin(links: { [key: string]: string | null }): (md: Mar
 			const token = tokens[idx];
 			const title = token.content;
 			const pageFound = links[token.content.toLowerCase()];
-			return `<a ${pageFound ? 'href="/entry/' + pageFound + '"' : ''} class="entry-link ${pageFound ? 'found' : 'not-found'}">${md.utils.escapeHtml(title)}</a>`;
+			if (pageFound) {
+				return `<a href="/entry/${pageFound}" class="entry-link found">${md.utils.escapeHtml(title)}</a>`;
+			} else {
+				return `<b>${md.utils.escapeHtml(title)}</b>`;
+			}
 		};
 	};
 }
