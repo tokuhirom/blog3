@@ -45,9 +45,6 @@ export const GET: RequestHandler = async () => {
 	// エントリを追加
 	for (const entry of entries) {
 		const html = await renderHTMLByEntry(entry, {});
-		const text = convert(html, {
-			wordwrap: 80 // テキストの行幅を設定
-		});
 
 		feed
 			.ele('item')
