@@ -28,7 +28,7 @@ export const GET: RequestHandler = async () => {
 		.up();
 
 	// エントリを追加
-	entries.forEach(async (entry) => {
+	for (const entry of entries) {
 		const html = await renderHTMLByEntry(entry, {});
 		const text = convert(html, {
 			wordwrap: 80 // テキストの行幅を設定
@@ -55,7 +55,7 @@ export const GET: RequestHandler = async () => {
 			.txt(`https://blog.64p.org/entry/${entry.path}`)
 			.up()
 			.up();
-	});
+	}
 
 	// XML文字列を生成
 	const xml = feed.end({ prettyPrint: true });
