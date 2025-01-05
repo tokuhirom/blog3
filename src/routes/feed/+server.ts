@@ -9,13 +9,22 @@ export const GET: RequestHandler = async () => {
 
 	// RSSフィードのヘッダーを作成
 	const feed = create({ version: '1.0' })
-		.ele('rss', { version: '2.0', 'xmlns:content': 'http://purl.org/rss/1.0/modules/content/' })
+		.ele('rss', {
+			version: '2.0',
+			'xmlns:content': 'http://purl.org/rss/1.0/modules/content/',
+			'xmlns:atom': 'http://www.w3.org/2005/Atom'
+		})
 		.ele('channel')
 		.ele('title')
 		.txt("tokuhirom's blog")
 		.up()
 		.ele('link')
 		.txt('https://blog.64p.org')
+		.up()
+		.ele('atom:link')
+		.att('href', 'https://blog.64p.org/feed')
+		.att('rel', 'self')
+		.att('type', 'application/rss+xml')
 		.up()
 		.ele('description')
 		.txt('The latest articles from my blog')

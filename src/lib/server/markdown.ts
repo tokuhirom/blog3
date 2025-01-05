@@ -137,10 +137,7 @@ function buildEntryLinkPlugin(links: { [key: string]: string | null }): (md: Mar
 			if (!silent) {
 				const content = state.src.slice(start + 2, end);
 				const token = state.push('entry_link', 'a', 0);
-				token.attrs = [
-					['class', 'entry-link'],
-					['data-title', content]
-				];
+				token.attrs = [['class', 'entry-link']];
 				token.content = content;
 				token.markup = '[[';
 				token.info = '';
@@ -154,7 +151,11 @@ function buildEntryLinkPlugin(links: { [key: string]: string | null }): (md: Mar
 			const token = tokens[idx];
 			const title = token.content;
 			const pageFound = links[token.content.toLowerCase()];
-			return `<a ${pageFound ? 'href="/entry/' + pageFound + '"' : ''} class="entry-link ${pageFound ? 'found' : 'not-found'}" data-title="${md.utils.escapeHtml(title)}">${md.utils.escapeHtml(title)}</a>`;
+			if (pageFound) {
+				return `<a href="/entry/${pageFound}" class="entry-link found">${md.utils.escapeHtml(title)}</a>`;
+			} else {
+				return `<b>${md.utils.escapeHtml(title)}</b>`;
+			}
 		};
 	};
 }
