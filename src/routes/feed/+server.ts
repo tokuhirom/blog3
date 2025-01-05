@@ -2,7 +2,6 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { create } from 'xmlbuilder2';
 import { PublicEntryRepository } from '$lib/server/repository/PublicEntryRepository';
 import { renderHTMLByEntry } from '$lib/server/markdown';
-import { convert } from 'html-to-text';
 
 function convertJstToUtc(jstDatetime: string): string {
 	// jsDateTime is comming from mysql's DATETIME column.
