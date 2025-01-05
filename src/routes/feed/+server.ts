@@ -12,7 +12,7 @@ export const GET: RequestHandler = async () => {
 		.ele('rss', { version: '2.0', 'xmlns:content': 'http://purl.org/rss/1.0/modules/content/' })
 		.ele('channel')
 		.ele('title')
-		.txt('My Blog RSS Feed')
+		.txt("tokuhirom's blog")
 		.up()
 		.ele('link')
 		.txt('https://blog.64p.org')
