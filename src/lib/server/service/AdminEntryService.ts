@@ -61,9 +61,9 @@ export class AdminEntryService {
 		// TODO update entry_image?
 
 		return entry;
-  }
+	}
 
-  async updateEntryVisibility(path: string, newVisibility: 'private' | 'public'): Promise<void> {
+	async updateEntryVisibility(path: string, newVisibility: 'private' | 'public'): Promise<void> {
 		await this.adminEntryRepository.updateEntryVisibility(path, newVisibility);
 		for (const hubUrl of HUB_URLS) {
 			console.log(`Notify Hub: ${hubUrl}`);
