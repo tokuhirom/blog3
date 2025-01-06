@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 
 		const body = req.body;
 
-		const entry = await locals.adminEntryRepository.updateEntryBody(path, {
+		const entry = await locals.adminEntryService.updateEntryBody(path, {
 			body
 		});
 		return new Response(JSON.stringify(entry), { status: 200 });

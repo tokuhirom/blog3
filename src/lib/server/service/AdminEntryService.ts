@@ -1,3 +1,4 @@
+import type { Entry } from '$lib/entity';
 import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
 import type { AdminEntryRepository } from '../repository/AdminEntryRepository';
 
@@ -43,5 +44,20 @@ export class AdminEntryService {
 		);
 
 		return buildLinkPalletData(links, reverseLinks, twohopEntries, targetPath);
+	}
+
+	async updateEntryBody(
+		path: string,
+		data: {
+			body: string;
+		}
+	): Promise<Entry> {
+		const entry = await this.adminEntryRepository.updateEntryBody(path, data);
+
+		// TODO fix amzn.to links
+		// TODO resolve asin notation?
+		// TODO update entry_image?
+
+		return entry;
 	}
 }
