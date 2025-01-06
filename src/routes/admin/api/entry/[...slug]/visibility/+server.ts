@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 
 		const visibility = req.visibility;
 
-		await locals.adminEntryRepository.updateEntryVisibility(path, visibility);
+		await locals.adminEntryService.updateEntryVisibility(path, visibility);
 		return new Response(JSON.stringify({ visibility }), { status: 200 });
 	} catch (error) {
 		console.error(error);
