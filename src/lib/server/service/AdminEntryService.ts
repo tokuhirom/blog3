@@ -1,4 +1,6 @@
+import { HUB_URLS } from '$lib/config';
 import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
+import { notifyHub } from '../pubsubhubbub';
 import type { AdminEntryRepository } from '../repository/AdminEntryRepository';
 
 export class AdminEntryService {
@@ -43,5 +45,13 @@ export class AdminEntryService {
 		);
 
 		return buildLinkPalletData(links, reverseLinks, twohopEntries, targetPath);
+	}
+
+	async updateEntryVisibility(path: string, newVisibility: 'private' | 'public'): Promise<void> {
+		await this.adminEntryRepository.updateEntryVisibility(path, newVisibility);
+		for (const hubUrl of HUB_URLS) {
+			console.log(`Notify Hub: ${hubUrl}`);
+			await notifyHub(hubUrl, `https://blog.64p.org/feed`);
+		}
 	}
 }
