@@ -3,3 +3,7 @@ export const BACKUP_ENCRYPTION_KEY = process.env.BACKUP_ENCRYPTION_KEY;
 
 export const AMAZON_ACCESS_KEY = process.env.AMAZON_ACCESS_KEY;
 export const AMAZON_SECRET_KEY = process.env.AMAZON_SECRET_KEY;
+
+export const HUB_URLS = process.env.HUB_URLS
+	? process.env.HUB_URLS.split(',')
+	: ['https://pubsubhubbub.appspot.com/', 'https://pubsubhubbub.superfeedr.com/'];
