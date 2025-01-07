@@ -8,6 +8,11 @@
 
 <svelte:head>
 	<title>{data.entry.title} - tokuhirom's blog</title>
+	<script
+		async
+		src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9032322815824634"
+		crossorigin="anonymous"
+	></script>
 </svelte:head>
 
 <div class="container">
