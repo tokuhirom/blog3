@@ -14,8 +14,20 @@
 		onClick: (event: MouseEvent) => void;
 	} = $props();
 
+	function simplifyMarkdown(text: string): string {
+		return text
+			.replaceAll(/\n/g, ' ')
+			.replaceAll(/\[(.*?)\]\(.*?\)/g, '$1')
+			.replace(/\[\[(.*?)\]\]/g, '$1')
+			.replace(/`.*?`/g, '')
+			.replace(/#+/g, '')
+			.replace(/\s+/g, ' ')
+			.replace(/https?:\/\/\S+/g, ' ')
+			.trim();
+	}
+
 	let title = entry.title;
-	let content = entry.body ? entry.body.slice(0, 100) + '...' : '';
+	let content = entry.body ? simplifyMarkdown(entry.body).slice(0, 100) + '...' : '';
 	let imgSrc = entry.image_url;
 </script>
 
