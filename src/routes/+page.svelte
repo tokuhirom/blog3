@@ -18,10 +18,10 @@
 
 	<nav class="pager">
 		{#if data.page > 1}
-			<a href="/?page={data.page - 1}" class="pager-link"> Previous </a>
+			<a href="/?page={data.page - 1}" class="pager-link pager-link-prev"> Previous </a>
 		{/if}
 		{#if data.hasNext}
-			<a href="/?page={data.page + 1}" class="pager-link"> Next </a>
+			<a href="/?page={data.page + 1}" class="pager-link pager-link-next"> Next </a>
 		{/if}
 	</nav>
 </div>
@@ -82,7 +82,7 @@
 		margin-top: 1.5rem;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: space-between; /* これで左右に配置される */
 	}
 
 	.pager-link {
@@ -95,5 +95,13 @@
 
 	.pager-link:hover {
 		background-color: #3182ce;
+	}
+
+	.pager-link-prev {
+		margin-right: auto; /* 左寄せ */
+	}
+
+	.pager-link-next {
+		margin-left: auto; /* 右寄せ */
 	}
 </style>
