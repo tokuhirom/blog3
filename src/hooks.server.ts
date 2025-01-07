@@ -5,6 +5,7 @@ import { startBackup } from '$lib/server/backup';
 import { startAmazonShortURLRewriteWorker } from '$lib/server/worker/AmazonShortURLRewriteWorker';
 import { startEntryImageWorker } from '$lib/server/worker/EntryImageWorker';
 import { AdminEntryService } from '$lib/server/service/AdminEntryService';
+import { startAmazonGetItemWorker } from '$lib/server/worker/AmazonGetItemWorker';
 
 const encryptionKey = BACKUP_ENCRYPTION_KEY;
 if (encryptionKey) {
@@ -13,6 +14,7 @@ if (encryptionKey) {
 }
 startAmazonShortURLRewriteWorker();
 startEntryImageWorker();
+startAmazonGetItemWorker();
 
 if (!process.env.BASIC_AUTH_USERNAME || !process.env.BASIC_AUTH_PASSWORD) {
 	console.error(

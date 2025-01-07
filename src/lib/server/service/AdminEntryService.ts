@@ -1,3 +1,4 @@
+import type { Entry } from '$lib/entity';
 import { HUB_URLS } from '$lib/config';
 import { buildLinkPalletData, type LinkPalletData } from '$lib/LinkPallet';
 import { notifyHub } from '../pubsubhubbub';
@@ -45,6 +46,21 @@ export class AdminEntryService {
 		);
 
 		return buildLinkPalletData(links, reverseLinks, twohopEntries, targetPath);
+	}
+
+	async updateEntryBody(
+		path: string,
+		data: {
+			body: string;
+		}
+	): Promise<Entry> {
+		const entry = await this.adminEntryRepository.updateEntryBody(path, data);
+
+		// TODO fix amzn.to links
+		// TODO resolve asin notation?
+		// TODO update entry_image?
+
+		return entry;
 	}
 
 	async updateEntryVisibility(path: string, newVisibility: 'private' | 'public'): Promise<void> {
