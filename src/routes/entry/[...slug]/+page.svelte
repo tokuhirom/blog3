@@ -3,6 +3,8 @@
 	import 'highlight.js/styles/github.css';
 	import PublicLinkPallet from './PublicLinkPallet.svelte';
 
+	import './page.css';
+
 	let { data }: { data: PageData } = $props();
 </script>
 
@@ -18,10 +20,10 @@
 <div class="container">
 	<div class="container-wrapper">
 		<h2 class="entry-title">{data.entry.title}</h2>
-		<p class="entry-body">
+		<div class="entry-body">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html data.body}
-		</p>
+		</div>
 		<div class="entry-meta">
 			<div>Published: <span class="entry-date">{data.entry.published_at}</span></div>
 			<div>Updated: <span class="entry-date">{data.entry.last_edited_at}</span></div>
