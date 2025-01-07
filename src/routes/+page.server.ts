@@ -6,7 +6,7 @@ export const load: PageServerLoad = async (params) => {
 
 	const page = getPage(params.url.searchParams.get('page'));
 
-	const { entries, hasNext } = await PublicEntryRepository.getPaginatedEntry(page, 28);
+	const { entries, hasNext } = await PublicEntryRepository.getPaginatedEntry(page, 30);
 	return {
 		entries,
 		page,

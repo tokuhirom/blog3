@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PublicEntryCardItem from '$lib/components/public/PublicEntryCardItem.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -10,11 +11,8 @@
 
 <div class="container">
 	<div class="flex-container">
-		{#each data.entries as entry}
-			<a href="/entry/{entry.path}" class="entry-link">
-				<h2 class="entry-title">{entry.title}</h2>
-				<p class="entry-body">{entry.body}</p>
-			</a>
+		{#each data.entries as entry (entry.path)}
+			<PublicEntryCardItem {entry} />
 		{/each}
 	</div>
 
