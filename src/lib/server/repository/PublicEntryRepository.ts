@@ -50,7 +50,7 @@ export class PublicEntryRepository {
 		page: number = 1,
 		entriesPerPage: number = 100
 	): Promise<{
-		entries: Entry[];
+		entries: (Entry & EntryImageAware)[];
 		hasNext: boolean;
 	}> {
 		if (page < 1) {
@@ -60,9 +60,11 @@ export class PublicEntryRepository {
 		const offset = (page - 1) * entriesPerPage; // OFFSET の計算
 
 		// クエリ実行
-		const [entries] = await db.query<Entry[] & RowDataPacket[]>(
+		const [entries] = await db.query<(Entry & EntryImageAware)[] & RowDataPacket[]>(
 			`
-			SELECT * FROM entry
+			SELECT entry.*, entry_image.url AS image_url
+			FROM entry
+				LEFT JOIN entry_image ON (entry.path = entry_image.path)
 			WHERE visibility = 'public'
 			ORDER BY published_at DESC
 			LIMIT ? OFFSET ?
