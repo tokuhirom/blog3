@@ -72,7 +72,35 @@
 		}
 	}
 
+	async function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'c' && !event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
+			event.preventDefault();
+			event.stopPropagation();
+			try {
+				const response = await fetch('/admin/api/entry', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({})
+				});
+				if (response.ok) {
+					const data = await response.json();
+					location.href = `/admin/entry/${data.path}`;
+				} else {
+					alert(`Failed to create new entry: ${response.status} ${response.statusText}`);
+				}
+			} catch (err) {
+				console.error(err);
+				alert(`Failed to create new entry: ${err}`);
+				return false;
+			}
+		}
+		return true;
+	}
+
 	onMount(() => {
+		window.addEventListener('keydown', handleKeydown);
 		loadInterval = setInterval(() => {
 			if (!isLoading && hasMore) {
 				loadMoreEntries();
@@ -83,6 +111,7 @@
 			if (loadInterval) {
 				clearInterval(loadInterval);
 			}
+			window.removeEventListener('keydown', handleKeydown);
 		};
 	});
 
