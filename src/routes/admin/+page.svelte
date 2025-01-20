@@ -6,7 +6,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import AdminEntryCardItem from './AdminEntryCardItem.svelte';
 
-	let searchKeyword = '';
+	let searchKeyword = $state('');
 	let { data }: { data: PageData } = $props();
 
 	if (!data.entries) {
@@ -14,19 +14,25 @@
 	}
 
 	let allEntries: (Entry & EntryImageAware)[] = $state(data.entries);
-	let filteredEntries: (Entry & EntryImageAware)[] = $state(data.entries);
+	let filteredEntries: (Entry & EntryImageAware)[] = $derived.by(() => {
+		if (searchKeyword === '') {
+			return allEntries;
+		}
+
+		const lowerKeyword = searchKeyword.toLowerCase();
+		return allEntries.filter(
+			(entry) =>
+				entry.title.toLowerCase().includes(lowerKeyword) ||
+				entry.body.toLowerCase().includes(lowerKeyword)
+		);
+	});
 
 	let isLoading = $state(false);
 	let hasMore = $state(true);
 	let loadInterval: ReturnType<typeof setInterval> | null = null;
 
 	function handleSearch(keyword: string) {
-		const lowerKeyword = keyword.toLowerCase();
-		filteredEntries = allEntries.filter(
-			(entry) =>
-				entry.title.toLowerCase().includes(lowerKeyword) ||
-				entry.body.toLowerCase().includes(lowerKeyword)
-		);
+		searchKeyword = keyword;
 	}
 
 	async function loadMoreEntries() {
@@ -62,7 +68,6 @@
 					hasMore = false;
 				} else {
 					allEntries = [...allEntries, ...addingNewEntries];
-					handleSearch(searchKeyword);
 				}
 			}
 		} catch (err) {
