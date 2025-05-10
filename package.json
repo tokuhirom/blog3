@@ -28,7 +28,7 @@
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^16.0.0",
 		"husky": "^9.1.7",
-		"lint-staged": "^15.2.11",
+		"lint-staged": "^16.0.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
 		"svelte": "^5.15.0",
