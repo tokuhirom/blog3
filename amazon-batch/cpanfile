@@ -1,4 +1,4 @@
-requires 'perl', '5.020';
+requires 'perl', '5.41.13';
 requires 'LWP::UserAgent', '6.78';
 requires 'Amazon::PAApi5::Signature', '0.05';
 requires 'LWP::Protocol::https', '6.14';
